@@ -119,7 +119,7 @@ const Inscripciones = () => {
             };
             try {
                 await axios.post(
-                    "https://willypaz.dev/projects/ohsansi-api/api/inscription/excel",
+                    "https://willypaz.dev/projects/ohsansi-api/api/inscriptions/excel",
                     data
                 );
                 setModalSuccess(true);

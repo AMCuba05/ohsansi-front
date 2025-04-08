@@ -53,7 +53,8 @@ const Areas = () => {
 
     const handleEditArea = async () => {
         try {
-            await axios.put(`https://willypaz.dev/projects/ohsansi-api/api/areas/${editArea.id}`, editArea);
+            let price = {price: editArea.price}
+            await axios.patch(`https://willypaz.dev/projects/ohsansi-api/api/areas/${editArea.id}/pricing`, price);
             setModalSuccess(true);
             setMessage("¡Área actualizada con éxito!");
             setShowModal(true);
@@ -117,6 +118,7 @@ const Areas = () => {
                             type="number"
                             placeholder="Precio"
                             value={newArea.price}
+                            max="999"
                             onChange={(e) => setNewArea({ ...newArea, price: e.target.value })}
                         />
                         <div className="modal-buttons">
