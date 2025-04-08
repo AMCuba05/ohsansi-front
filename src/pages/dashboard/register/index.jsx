@@ -89,7 +89,7 @@ const Inscripciones = () => {
     const onSubmit = async (data) => {
         try {
             await axios.post(
-                "https://willypaz.dev/projects/ohsansi-api/api/inscription",
+                "https://willypaz.dev/projects/ohsansi-api/api/inscriptions",
                 data
             );
             setModalSuccess(true);
@@ -119,7 +119,7 @@ const Inscripciones = () => {
             };
             try {
                 await axios.post(
-                    "https://willypaz.dev/projects/ohsansi-api/api/inscription",
+                    "https://willypaz.dev/projects/ohsansi-api/api/inscription/excel",
                     data
                 );
                 setModalSuccess(true);
@@ -277,7 +277,10 @@ const Inscripciones = () => {
             </form>
 
             {showModal && (
-                <Modal success={modalSuccess} onClose={() => setShowModal(false)}>
+                <Modal success={modalSuccess} onClose={() => {
+                    setShowModal(false)
+                    if(modalSuccess){ window.location.reload();}
+                }}>
                     {message}
                 </Modal>
             )}
