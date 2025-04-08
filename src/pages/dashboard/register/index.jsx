@@ -157,24 +157,24 @@ const Inscripciones = () => {
                 <div className="tutores-wrapper">
                     <div className="tutor-block">
                         <h3>Tutor Legal</h3>
-                        <input {...register("legal_tutor.ci", { required: true })} placeholder="CI" />
+                        <input type="number" {...register("legal_tutor.ci", { required: true })} placeholder="CI" />
                         <input {...register("legal_tutor.ci_expedition", { required: true })} placeholder="Lugar de Expedición" />
                         <input {...register("legal_tutor.names", { required: true })} placeholder="Nombres" />
                         <input {...register("legal_tutor.last_names", { required: true })} placeholder="Apellidos" />
                         <input type="date" {...register("legal_tutor.birthdate", { required: true })} />
                         <input {...register("legal_tutor.email", { required: true })} placeholder="Email" />
-                        <input {...register("legal_tutor.phone_number", { required: true })} placeholder="Teléfono" />
+                        <input type="number" {...register("legal_tutor.phone_number", { required: true })} placeholder="Teléfono" />
                     </div>
 
                     <div className="tutor-block">
                         <h3>Tutor Académico</h3>
-                        <input {...register("academic_tutor.ci", { required: true })} placeholder="CI" />
+                        <input type="number" {...register("academic_tutor.ci", { required: true })} placeholder="CI" />
                         <input {...register("academic_tutor.ci_expedition", { required: true })} placeholder="Lugar de Expedición" />
                         <input {...register("academic_tutor.names", { required: true })} placeholder="Nombres" />
                         <input {...register("academic_tutor.last_names", { required: true })} placeholder="Apellidos" />
                         <input type="date" {...register("academic_tutor.birthdate", { required: true })} />
                         <input {...register("academic_tutor.email", { required: true })} placeholder="Email" />
-                        <input {...register("academic_tutor.phone_number", { required: true })} placeholder="Teléfono" />
+                        <input type="number" {...register("academic_tutor.phone_number", { required: true })} placeholder="Teléfono" />
                     </div>
                 </div>
 
@@ -187,13 +187,13 @@ const Inscripciones = () => {
                                 <div key={field.id} className="competidor-card">
                                     <h4>Competidor {index + 1}</h4>
                                     <div className="competidor-grid">
-                                        <input {...register(`competitors.${index}.ci`, { required: true })} placeholder="CI" />
+                                        <input type="number" {...register(`competitors.${index}.ci`, { required: true })} placeholder="CI" />
                                         <input {...register(`competitors.${index}.ci_expedition`, { required: true })} placeholder="Lugar de Expedición" />
                                         <input {...register(`competitors.${index}.names`, { required: true })} placeholder="Nombres" />
                                         <input {...register(`competitors.${index}.last_names`, { required: true })} placeholder="Apellidos" />
                                         <input type="date" {...register(`competitors.${index}.birthdate`, { required: true })} />
                                         <input {...register(`competitors.${index}.email`)} placeholder="Email" />
-                                        <input {...register(`competitors.${index}.phone_number`)} placeholder="Teléfono" />
+                                        <input type="number" {...register(`competitors.${index}.phone_number`)} placeholder="Teléfono" />
                                         <input {...register(`competitors.${index}.school_data.name`)} placeholder="Nombre del Colegio" />
                                         <input {...register(`competitors.${index}.school_data.department`)} placeholder="Departamento" />
                                         <input {...register(`competitors.${index}.school_data.province`)} placeholder="Provincia" />

@@ -31,19 +31,27 @@ const Areas = () => {
     }, []);
 
     const handleCreateArea = async () => {
-        try {
-            await axios.post("https://willypaz.dev/projects/ohsansi-api/api/areas", newArea);
-            setModalSuccess(true);
-            setMessage("¡Área creada con éxito!");
-            setShowModal(true);
-            setShowAddModal(false);
-            setNewArea({ name: "", description: "", price: "" });
-            fetchAreas();
-        } catch (error) {
+
+        if(newArea.price > 999 || newArea.price < 0) {
             setModalSuccess(false);
-            setMessage("Error al crear el área.");
+            setMessage("Error al crear el área, verifique el precio.");
             setShowModal(true);
+        } else {
+            try {
+                await axios.post("https://willypaz.dev/projects/ohsansi-api/api/areas", newArea);
+                setModalSuccess(true);
+                setMessage("¡Área creada con éxito!");
+                setShowModal(true);
+                setShowAddModal(false);
+                setNewArea({ name: "", description: "", price: "" });
+                fetchAreas();
+            } catch (error) {
+                setModalSuccess(false);
+                setMessage("Error al crear el área.");
+                setShowModal(true);
+            }
         }
+
     };
 
     const openEditModal = (area) => {
@@ -52,18 +60,24 @@ const Areas = () => {
     };
 
     const handleEditArea = async () => {
-        try {
-            let price = {price: editArea.price}
-            await axios.patch(`https://willypaz.dev/projects/ohsansi-api/api/areas/${editArea.id}/pricing`, price);
-            setModalSuccess(true);
-            setMessage("¡Área actualizada con éxito!");
-            setShowModal(true);
-            setShowEditModal(false);
-            fetchAreas();
-        } catch (error) {
+        if(editArea.price > 999 || editArea.price < 0) {
             setModalSuccess(false);
-            setMessage("Error al actualizar el área.");
+            setMessage("Error al actualizar el área, verifique el precio.");
             setShowModal(true);
+        } else {
+            try {
+                let price = {price: editArea.price}
+                await axios.patch(`https://willypaz.dev/projects/ohsansi-api/api/areas/${editArea.id}/pricing`, price);
+                setModalSuccess(true);
+                setMessage("¡Área actualizada con éxito!");
+                setShowModal(true);
+                setShowEditModal(false);
+                fetchAreas();
+            } catch (error) {
+                setModalSuccess(false);
+                setMessage("Error al actualizar el área.");
+                setShowModal(true);
+            }
         }
     };
 
@@ -98,7 +112,6 @@ const Areas = () => {
                 </tbody>
             </table>
 
-            {/* Modal para crear área */}
             {showAddModal && (
                 <div className="modal-backdrop">
                     <div className="modal-content">
