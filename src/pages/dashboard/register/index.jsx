@@ -1,5 +1,5 @@
 // components/Pages/Inscripciones.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import axios from "axios";
 import { Trash2, PlusCircle } from "lucide-react";
@@ -11,12 +11,15 @@ const Inscripciones = () => {
     const [modalSuccess, setModalSuccess] = useState(true);
     const [message, setMessage] = useState("");
     const [method, setMethod] = useState("manual");
+    const [areas, setAreas] = useState([]);
+    const [excelFile, setExcelFile] = useState(null);
 
     const {
         register,
         control,
         handleSubmit,
         setValue,
+        watch,
         formState: { errors },
     } = useForm({
         defaultValues: {
@@ -61,6 +64,28 @@ const Inscripciones = () => {
 
     const { fields, append, remove } = useFieldArray({ control, name: "competitors" });
 
+    useEffect(() => {
+        const fetchAreas = async () => {
+            try {
+                const response = await axios.get("https://willypaz.dev/projects/ohsansi-api/api/areas");
+                setAreas(response.data.areas);
+            } catch (error) {
+                console.error("Error al obtener las áreas:", error);
+            }
+        };
+        fetchAreas();
+    }, []);
+
+    const handleAreaSelect = (competitorIndex, areaId) => {
+        const current = watch(`competitors.${competitorIndex}.selected_areas`) || [];
+        const updated = current.includes(areaId)
+            ? current.filter((id) => id !== areaId)
+            : current.length < 2
+                ? [...current, areaId]
+                : current;
+        setValue(`competitors.${competitorIndex}.selected_areas`, updated);
+    };
+
     const onSubmit = async (data) => {
         try {
             await axios.post(
@@ -77,49 +102,36 @@ const Inscripciones = () => {
         }
     };
 
-    const handleFileUpload = async (e) => {
+    const handleExcelChange = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = async () => {
-                const base64 = reader.result.split(",")[1];
-                const data = {
-                    excel: base64,
-                    legal_tutor: {
-                        ci: "",
-                        ci_expedition: "",
-                        names: "",
-                        last_names: "",
-                        birthdate: "",
-                        email: "",
-                        phone_number: "",
-                    },
-                    academic_tutor: {
-                        ci: "",
-                        ci_expedition: "",
-                        names: "",
-                        last_names: "",
-                        birthdate: "",
-                        email: "",
-                        phone_number: "",
-                    },
-                };
-                try {
-                    await axios.post(
-                        "https://willypaz.dev/projects/ohsansi-api/api/inscription",
-                        data
-                    );
-                    setModalSuccess(true);
-                    setMessage("¡Excel subido correctamente!");
-                    setShowModal(true);
-                } catch (err) {
-                    setModalSuccess(false);
-                    setMessage("Error al subir el Excel");
-                    setShowModal(true);
-                }
+        setExcelFile(file);
+    };
+
+    const handleExcelSubmit = async () => {
+        if (!excelFile) return;
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            const base64 = reader.result.split(",")[1];
+            const data = {
+                excel: base64,
+                legal_tutor: watch("legal_tutor"),
+                academic_tutor: watch("academic_tutor"),
             };
-            reader.readAsDataURL(file);
-        }
+            try {
+                await axios.post(
+                    "https://willypaz.dev/projects/ohsansi-api/api/inscription",
+                    data
+                );
+                setModalSuccess(true);
+                setMessage("¡Excel subido correctamente!");
+                setShowModal(true);
+            } catch (err) {
+                setModalSuccess(false);
+                setMessage("Error al subir el Excel");
+                setShowModal(true);
+            }
+        };
+        reader.readAsDataURL(excelFile);
     };
 
     return (
@@ -169,32 +181,51 @@ const Inscripciones = () => {
                 {method === "manual" && (
                     <>
                         <h3>Competidores</h3>
-                        {fields.map((field, index) => (
-                            <div key={field.id} className="competidor-card">
-                                <h4>Competidor {index + 1}</h4>
-                                <div className="competidor-grid">
-                                    <input {...register(`competitors.${index}.ci`, { required: true })} placeholder="CI" />
-                                    <input {...register(`competitors.${index}.ci_expedition`, { required: true })} placeholder="Lugar de Expedición" />
-                                    <input {...register(`competitors.${index}.names`, { required: true })} placeholder="Nombres" />
-                                    <input {...register(`competitors.${index}.last_names`, { required: true })} placeholder="Apellidos" />
-                                    <input type="date" {...register(`competitors.${index}.birthdate`, { required: true })} />
-                                    <input {...register(`competitors.${index}.email`)} placeholder="Email" />
-                                    <input {...register(`competitors.${index}.phone_number`)} placeholder="Teléfono" />
-                                    <input {...register(`competitors.${index}.school_data.name`)} placeholder="Nombre del Colegio" />
-                                    <input {...register(`competitors.${index}.school_data.department`)} placeholder="Departamento" />
-                                    <input {...register(`competitors.${index}.school_data.province`)} placeholder="Provincia" />
-                                    <input {...register(`competitors.${index}.school_data.course`)} placeholder="Curso" />
-                                </div>
+                        {fields.map((field, index) => {
+                            const selected = watch(`competitors.${index}.selected_areas`) || [];
+                            return (
+                                <div key={field.id} className="competidor-card">
+                                    <h4>Competidor {index + 1}</h4>
+                                    <div className="competidor-grid">
+                                        <input {...register(`competitors.${index}.ci`, { required: true })} placeholder="CI" />
+                                        <input {...register(`competitors.${index}.ci_expedition`, { required: true })} placeholder="Lugar de Expedición" />
+                                        <input {...register(`competitors.${index}.names`, { required: true })} placeholder="Nombres" />
+                                        <input {...register(`competitors.${index}.last_names`, { required: true })} placeholder="Apellidos" />
+                                        <input type="date" {...register(`competitors.${index}.birthdate`, { required: true })} />
+                                        <input {...register(`competitors.${index}.email`)} placeholder="Email" />
+                                        <input {...register(`competitors.${index}.phone_number`)} placeholder="Teléfono" />
+                                        <input {...register(`competitors.${index}.school_data.name`)} placeholder="Nombre del Colegio" />
+                                        <input {...register(`competitors.${index}.school_data.department`)} placeholder="Departamento" />
+                                        <input {...register(`competitors.${index}.school_data.province`)} placeholder="Provincia" />
+                                        <input {...register(`competitors.${index}.school_data.course`)} placeholder="Curso" />
+                                    </div>
 
-                                <button
-                                    type="button"
-                                    className="delete-btn"
-                                    onClick={() => remove(index)}
-                                >
-                                    <Trash2 size={16} /> Eliminar Competidor
-                                </button>
-                            </div>
-                        ))}
+                                    <div className="areas-selector">
+                                        <p>Selecciona 1 o 2 áreas:</p>
+                                        <div className="area-list">
+                                            {areas.map((area) => (
+                                                <label key={area.id} className={`area-option ${selected.includes(area.id) ? "selected" : ""}`}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selected.includes(area.id)}
+                                                        onChange={() => handleAreaSelect(index, area.id)}
+                                                    />
+                                                    {area.name}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        className="delete-btn"
+                                        onClick={() => remove(index)}
+                                    >
+                                        <Trash2 size={16} /> Eliminar Competidor
+                                    </button>
+                                </div>
+                            );
+                        })}
 
                         <button
                             type="button"
@@ -226,7 +257,15 @@ const Inscripciones = () => {
                 {method === "excel" && (
                     <div className="excel-upload">
                         <h3>Sube el archivo Excel</h3>
-                        <input type="file" accept=".xlsx,.xls" onChange={handleFileUpload} />
+                        <input type="file" accept=".xlsx,.xls" onChange={handleExcelChange} />
+                        <button
+                            type="button"
+                            className="submit-btn"
+                            onClick={handleExcelSubmit}
+                            disabled={!excelFile}
+                        >
+                            Enviar Excel
+                        </button>
                     </div>
                 )}
 
