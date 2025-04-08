@@ -54,7 +54,7 @@ const AreaCategories = () => {
 
     const handleCreateCategory = async () => {
         try {
-            await axios.post("https://willypaz.dev/projects/ohsansi-api/api/", {
+            await axios.post("https://willypaz.dev/projects/ohsansi-api/api/categories", {
                 ...newCategory,
                 area_id: parseInt(areaId)
             });
@@ -88,7 +88,9 @@ const AreaCategories = () => {
                 {categories.map((cat) => (
                     <tr key={cat.id}>
                         <td>{cat.name}</td>
-                        <td>{cat.range_course.join(", ")}</td>
+                        <td>{
+                            <span> {cat.range_course}</span>
+                        }</td>
                         <td>{cat.area.name}</td>
                     </tr>
                 ))}
@@ -118,8 +120,8 @@ const AreaCategories = () => {
                             ))}
                         </div>
                         <div className="modal-buttons">
-                            <button onClick={handleCreateCategory}>Crear</button>
-                            <button onClick={() => setShowAddModal(false)}>Cancelar</button>
+                            <button className="create" onClick={handleCreateCategory}>Crear</button>
+                            <button className="cancel" onClick={() => setShowAddModal(false)}>Cancelar</button>
                         </div>
                     </div>
                 </div>

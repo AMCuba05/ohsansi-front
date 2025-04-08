@@ -137,11 +137,13 @@ const Areas = () => {
                             placeholder="Nombre"
                             value={editArea.name}
                             onChange={(e) => setEditArea({ ...editArea, name: e.target.value })}
+                            disabled
                         />
                         <textarea
                             placeholder="Descripción"
                             value={editArea.description}
                             onChange={(e) => setEditArea({ ...editArea, description: e.target.value })}
+                            disabled
                         />
                         <input
                             type="number"
