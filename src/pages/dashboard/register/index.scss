@@ -1,0 +1,149 @@
+
+.inscripciones-container {
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h2, h3, h4 {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.selector-metodo {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  .metodo-btn {
+    padding: 0.5rem 1.2rem;
+    border: 2px solid #ccc;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &.active {
+      background-color: #0d9488;
+      color: white;
+      border-color: #0d9488;
+    }
+
+    &:hover {
+      background-color: #0d9488;
+      color: white;
+    }
+  }
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.tutores-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+
+  .tutor-block {
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
+    input {
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      margin-right: 0.7rem;
+      padding: 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+  }
+}
+
+.competidor-card {
+  background-color: #fefce8;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  h4 {
+    margin-bottom: 1rem;
+  }
+
+  .competidor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+
+    input {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+  }
+
+  .delete-btn {
+    margin-top: 1rem;
+    padding: 0.4rem 1rem;
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &:hover {
+      background-color: #dc2626;
+    }
+  }
+}
+
+.add-btn {
+  padding: 0.6rem 1.2rem;
+  background-color: #4ade80;
+  color: #065f46;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+
+  &:hover {
+    background-color: #22c55e;
+  }
+}
+
+.excel-upload {
+  input[type="file"] {
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+  }
+}
+
+.submit-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+
+  &:hover {
+    background-color: #1e40af;
+  }
+}
