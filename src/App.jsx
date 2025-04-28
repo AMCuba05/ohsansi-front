@@ -5,7 +5,7 @@ import DashboardLayout from "./pages/dashboard/index.jsx";
 import Register from "./pages/dashboard/register/index.jsx";
 import Areas from "./pages/dashboard/areas/index.jsx";
 import AreaCategories from "./pages/dashboard/areas/categories/index.jsx";
-
+import "./assets/scss/theme.scss";
 
 function App() {
     return (

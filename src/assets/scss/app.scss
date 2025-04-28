@@ -1,0 +1,88 @@
+/*
+Template Name: Skote - Admin & Dashboard Template
+Author: Themesbrand
+Version: 4.1.0.
+Website: https://themesbrand.com/
+Contact: themesbrand@gmail.com
+File: Main Css File
+*/
+
+//Fonts
+@use "custom/fonts/fonts";
+
+//Core files
+@use "bootstrap/scss/functions";
+@use "bootstrap/scss/variables";
+@use "variables";
+@use "variables-dark";
+@use "bootstrap/scss/mixins.scss";
+
+
+// Structure
+@use "custom/structure/general";
+@use "custom/structure/topbar";
+@use "custom/structure/page-head";
+@use "custom/structure/footer";
+@use "custom/structure/right-sidebar";
+@use "custom/structure/vertical";
+@use "custom/structure/horizontal-nav";
+@use "custom/structure/layouts";
+
+// Components
+@use "custom/components/waves";
+@use "custom/components/avatar";
+@use "custom/components/accordion";
+@use "custom/components/helper";
+@use "custom/components/preloader";
+@use "custom/components/forms";
+@use "custom/components/widgets";
+@use "custom/components/demos";
+@use "custom/components/print";
+@use "custom/components/badge";
+
+// Plugins
+@use "custom/plugins/custom-scrollbar";
+@use "custom/plugins/calendar";
+@use "custom/plugins/calendar-full";
+@use "custom/plugins/dragula";
+@use "custom/plugins/session-timeout";
+@use "custom/plugins/range-slider";
+@use "custom/plugins/sweatalert2";
+@use "custom/plugins/rating";
+@use "custom/plugins/toastr";
+@use "custom/plugins/parsley";
+@use "custom/plugins/select2";
+@use "custom/plugins/icons/fontawesome-all";
+@use "custom/plugins/switch";
+@use "custom/plugins/colorpicker";
+@use "custom/plugins/timepicker";
+@use "custom/plugins/datepicker";
+@use "custom/plugins/bootstrap-touchspin";
+@use "custom/plugins/form-editors";
+@use "custom/plugins/form-upload";
+@use "custom/plugins/form-wizard";
+@use "custom/plugins/datatable";
+@use "custom/plugins/responsive-table";
+@use "custom/plugins/table-editable";
+@use "custom/plugins/apexcharts";
+@use "custom/plugins/echarts";
+@use "custom/plugins/flot";
+@use "custom/plugins/sparkline-chart";
+@use "custom/plugins/google-map";
+@use "custom/plugins/vector-maps";
+@use "custom/plugins/leaflet-maps";
+
+
+// Pages
+@use "custom/pages/authentication";
+@use "custom/pages/ecommerce";
+@use "custom/pages/email";
+@use "custom/pages/file-manager";
+@use "custom/pages/chat";
+@use "custom/pages/projects";
+@use "custom/pages/contacts";
+@use "custom/pages/crypto";
+@use "custom/pages/coming-soon";
+@use "custom/pages/timeline";
+@use "custom/pages/extras-pages";
+@use "custom/pages/jobs";
