@@ -94,7 +94,7 @@ export const SecondStep = () => {
 
                 <form>
                     <InputGroup className="mb-3">
-                        <div className="form-label w-100">Carnet de identidad del tutor</div>
+                        <div className="form-label w-100">Carnet de identidad del Estudiante</div>
                         <FormControl
                             type="text"
                             placeholder="Ingresa el carnet de identidad"
