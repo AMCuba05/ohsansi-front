@@ -83,16 +83,15 @@ export const SixthStep = () => {
                 },
                 responsable: registerData.legal_tutor
             }
-            console.log(data)
             await axios.post(
                 "https://willypaz.dev/projects/ohsansi-api/api/inscriptions",
                 data
             );
-
-            console.log("¡Inscripción exitosa!");
+            setShowReceipt(true)
+            Alert("¡Inscripción exitosa!");
 
         } catch (error) {
-            console.log("Error al enviar la inscripción. Verifica los datos.");
+            Alert("Error al enviar la inscripción. Verifica los datos.");
         }
 
     }
@@ -163,7 +162,7 @@ export const SixthStep = () => {
                             disabled={seleccionadas.length > 2 || seleccionadas <= 0}
                             type="button"
                             className="btn btn-primary w-50"
-                            onClick={()=> setShowReceipt(true)}
+                            onClick={submitTest}
                         >
                             Completar
                         </button>
