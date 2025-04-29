@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Button, Table, Alert, Spinner } from 'react-bootstrap';
+import { ArrowLeft } from 'lucide-react';
 import axios from 'axios';
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 const OlympiadAreasCategories = () => {
     const { id: olympicId } = useParams();
+    const navigate = useNavigate();
     const [areas, setAreas] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedArea, setSelectedArea] = useState('');
@@ -117,6 +119,14 @@ const OlympiadAreasCategories = () => {
 
     return (
         <div className="container mt-4">
+            <Button
+                variant="link"
+                onClick={() => navigate(-1)}
+                className="mb-3 p-0 d-flex align-items-center text-decoration-none"
+            >
+                <ArrowLeft size={18} className="me-2" />
+                Volver
+            </Button>
             <h2>Asociar Áreas y Categorías</h2>
 
             {errors.form && <Alert variant="danger">{errors.form}</Alert>}
