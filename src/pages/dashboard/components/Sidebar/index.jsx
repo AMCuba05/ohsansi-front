@@ -26,7 +26,7 @@ const Sidebar = () => {
             <nav>
                 {/* Inscripciones principal */}
                 <button
-                    className={`logout-button ${inscripcionesOpen ? 'active' : ''}`}
+                    className={`logout-button`}
                     onClick={() => setInscripcionesOpen(!inscripcionesOpen)}
                 >
                     <Newspaper size={18}/> {!collapsed && <span>Inscripciones</span>}
@@ -37,18 +37,14 @@ const Sidebar = () => {
                 {/* Submenú Inscripciones */}
                 {inscripcionesOpen && (
                     <div className="submenu">
-                        <NavLink to="inscripciones"
-                                 className={({isActive}) => isActive ? 'logout-button active' : 'logout-button'}>
+                        <NavLink to="inscripcion-sencilla" className={({ isActive }) => isActive ? 'logout-button active' : 'logout-button'}>
                             {!collapsed && <span className={"sidebar-span"}>Inscripción Sencilla</span>}
                         </NavLink>
-                        <NavLink to="inscripcion-multiple-manual"
-                                 className={({isActive}) => isActive ? 'logout-button active' : 'logout-button'}>
-                            {!collapsed && <span className={"sidebar-span"}>Inscripción Múltiple (Manual)</span>}
+                        <NavLink to="inscripcion-multiple" className={({ isActive }) => isActive ? 'logout-button active' : 'logout-button'}>
+                             {!collapsed && <span className={"sidebar-span"}>Inscripción Múltiple (Manual)</span>}
                         </NavLink>
-                        <NavLink to="inscripcion-multiple-excel"
-                                 className={({isActive}) => isActive ? 'logout-button active' : 'logout-button'}>
-                            {!collapsed &&
-                                <span className={"sidebar-span"}>Inscripción Múltiple (Importar Excel)</span>}
+                        <NavLink to="inscripcion-excel" className={({ isActive }) => isActive ? 'logout-button active' : 'logout-button'}>
+                            {!collapsed && <span className={"sidebar-span"}>Inscripción Múltiple (Importar Excel)</span>}
                         </NavLink>
                     </div>
                 )}
