@@ -29,7 +29,7 @@ const AreaCategories = () => {
 
     const fetchCategories = async () => {
         try {
-            const res = await axios.get(`https://willypaz.dev/projects/ohsansi-api/api/categories/area/${areaId}`);
+            const res = await axios.get(`https://willypaz.dev/projects/ohsansi-api/api/area/${areaId}/categories`);
             setCategories(res.data.categorias);
         } catch (err) {
             console.error("Error fetching categories:", err);
