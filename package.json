@@ -15,9 +15,11 @@
     "formik": "^2.4.6",
     "lucide-react": "^0.487.0",
     "react": "^19.0.0",
+    "react-bootstrap": "^2.10.9",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",
     "react-router-dom": "6",
+    "react-step-builder": "^3.0.6",
     "reactstrap": "^9.2.3",
     "redux": "^5.0.1",
     "yup": "^1.6.1"
