@@ -4,11 +4,14 @@ import { StepsProvider } from 'react-step-builder'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css'
 import App from './App.jsx'
+import {RegisterProvider} from "./Context/RegisterContext.jsx";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-      <StepsProvider>
-          <App />
-      </StepsProvider>
+      <RegisterProvider>
+          <StepsProvider>
+              <App />
+          </StepsProvider>
+      </RegisterProvider>
   </StrictMode>,
 )

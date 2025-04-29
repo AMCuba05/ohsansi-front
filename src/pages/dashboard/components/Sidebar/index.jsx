@@ -46,6 +46,8 @@ const Sidebar = () => {
                         <NavLink to="inscripcion-excel" className={({ isActive }) => isActive ? 'logout-button active' : 'logout-button'}>
                             {!collapsed && <span className={"sidebar-span"}>Inscripción Múltiple (Importar Excel)</span>}
                         </NavLink>
+
+
                     </div>
                 )}
 

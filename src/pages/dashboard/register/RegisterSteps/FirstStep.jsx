@@ -2,29 +2,15 @@ import React, {useState, useEffect} from 'react';
 import {useSteps} from 'react-step-builder'
 import {Dropdown, ProgressBar, Card, Spinner} from 'react-bootstrap'
 import axios from "axios";
+import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
 
 export const FirstStep = () => {
+    const { registerData, setRegisterData } = useRegisterContext()
     const stepsState = useSteps()
     const [found, setFound] = useState(false)
     const [hasBeenQueried, setHasBeenQueried] = useState(false)
-    const [ci, setCi] = useState("")
     const [olympiads, setOlympiads] = useState()
     const [loading, setLoading] = useState(true)
-
-    const olimpiadas = [
-        {
-            title: 'Olimpiada de Matemáticas',
-            description: 'Competencia donde los estudiantes demuestran sus habilidades en resolución de problemas matemáticos de diferentes niveles de dificultad.'
-        },
-        {
-            title: 'Olimpiada de Ciencias',
-            description: 'Evento académico donde se evalúan los conocimientos y habilidades en diversas ramas de la ciencia como física, química y biología.'
-        },
-        {
-            title: 'Olimpiada de Informática',
-            description: 'Competencia de programación y algoritmos donde los estudiantes resuelven desafíos computacionales utilizando diferentes lenguajes de programación.'
-        }
-    ];
 
     const [selected, setSelected] = useState(null);
 
@@ -44,14 +30,23 @@ export const FirstStep = () => {
             });
     }, []);
 
-    function validate() {
+    const validate = () => {
         if (selected == null) return false;
         return true;
     }
 
+    const submit = () => {
+        setRegisterData({
+            ...registerData,
+            olympic_id: selected.id,
+            olympic_name: selected.title
+        })
+        stepsState.next()
+    }
+
     return (
-        <div className="container mt-5 d-flex justify-content-center">
-            <div className="card shadow p-4" style={{ width: '40vw' }}>
+        <div className="container d-flex justify-content-center">
+            <div className="card p-4" >
                 <span>Paso {stepsState.current} de {stepsState.total} </span>
                 <ProgressBar
                     now={stepsState.progress * 100}
@@ -92,6 +87,9 @@ export const FirstStep = () => {
                         <Card className="mt-4">
                             <Card.Body>
                                 <Card.Title>{selected.title}</Card.Title>
+                                <Card.Text>
+                                    <strong>Precio de inscripción por área:</strong> {selected.price} Bs
+                                </Card.Text>
                                 <Card.Text>{selected.description}</Card.Text>
                             </Card.Body>
                         </Card>
@@ -112,7 +110,7 @@ export const FirstStep = () => {
                             disabled={!stepsState.hasNext || !validate()}
                             type="submit"
                             className="btn btn-primary w-50"
-                            onClick={stepsState.next}
+                            onClick={submit}
                         >
                             Siguiente
                         </button>
