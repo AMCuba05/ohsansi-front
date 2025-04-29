@@ -1,5 +1,5 @@
 
-const provincias = [
+export const provincies = [
     "COCHABAMBA (CERCADO)",
     "ARANI",
     "ARQUE",
@@ -18,8 +18,32 @@ const provincias = [
     "TIRAQUE"
 ];
 
+export const grades = [
+    "3ro Primaria",
+    "4to Primaria",
+    "5to Primaria",
+    "6to Primaria",
+    "1ro Secundaria",
+    "2do Secundaria",
+    "3ro Secundaria",
+    "4to Secundaria",
+    "5to Secundaria",
+    "6to Secundaria"
+]
 
-const colegios = [
+export const states = [
+    "Cochabamba",
+    "LA PAZ",
+    "SANTA CRUZ",
+    "ORURO",
+    "PANDO",
+    "BENI",
+    "POTOSI",
+    "CHUQUISACA",
+    "TARIJA"
+]
+
+export const schools = [
     "** NO PRESENTE EN LA LISTA **",
     "21 DE SEPTIEMBRE",
     "23 DE MARZO",

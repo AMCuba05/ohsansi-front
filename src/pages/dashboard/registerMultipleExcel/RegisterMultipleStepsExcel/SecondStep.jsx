@@ -2,18 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import axios from "axios";
-import { Trash2, PlusCircle } from "lucide-react";
-import Modal from "./Modal/index.jsx";
-import "./index.scss";
-import {Steps} from "react-step-builder";
-import {FirstStep} from "./RegisterSteps/FirstStep.jsx";
-import {SecondStep} from "./RegisterSteps/SecondStep.jsx";
-import {ThirdStep} from "./RegisterSteps/ThirdStep.jsx";
-import {FouthStep} from "./RegisterSteps/FouthStep.jsx";
-import {FifthStep} from "./RegisterSteps/FifthStep.jsx";
-import {SixthStep} from "./RegisterSteps/SixthStep.jsx";
+import Modal from "./../Modal/index.jsx";
+import "./../index.scss";
 
-const Inscripciones = () => {
+const SecondStep = () => {
     const [showModal, setShowModal] = useState(false);
     const [modalSuccess, setModalSuccess] = useState(true);
     const [message, setMessage] = useState("");
@@ -142,29 +134,60 @@ const Inscripciones = () => {
     };
 
     return (
-        <div className="inscripciones-container">
-            <Steps>
-                <div>
-                    <FirstStep/>
+        <>
+            <h2>Formulario de Inscripción</h2>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="formulario">
+                <div className="tutores-wrapper">
+                    <div className="tutor-block">
+                        <h3>Tutor Legal</h3>
+                        <input type="number" {...register("legal_tutor.ci", { required: true })} placeholder="CI" />
+                        <input {...register("legal_tutor.ci_expedition", { required: true })} placeholder="Lugar de Expedición" />
+                        <input {...register("legal_tutor.names", { required: true })} placeholder="Nombres" />
+                        <input {...register("legal_tutor.last_names", { required: true })} placeholder="Apellidos" />
+                        <input type="date" {...register("legal_tutor.birthdate", { required: true })} />
+                        <input {...register("legal_tutor.email", { required: true })} placeholder="Email" />
+                        <input type="number" {...register("legal_tutor.phone_number", { required: true })} placeholder="Teléfono" />
+                    </div>
+
+                    <div className="tutor-block">
+                        <h3>Tutor Académico</h3>
+                        <input type="number" {...register("academic_tutor.ci", { required: true })} placeholder="CI" />
+                        <input {...register("academic_tutor.ci_expedition", { required: true })} placeholder="Lugar de Expedición" />
+                        <input {...register("academic_tutor.names", { required: true })} placeholder="Nombres" />
+                        <input {...register("academic_tutor.last_names", { required: true })} placeholder="Apellidos" />
+                        <input type="date" {...register("academic_tutor.birthdate", { required: true })} />
+                        <input {...register("academic_tutor.email", { required: true })} placeholder="Email" />
+                        <input type="number" {...register("academic_tutor.phone_number", { required: true })} placeholder="Teléfono" />
+                    </div>
                 </div>
-                <div>
-                    <SecondStep/>
+
+
+
+                <div className="excel-upload">
+                    <h3>Sube el archivo Excel</h3>
+                    <input type="file" accept=".xlsx,.xls" onChange={handleExcelChange} />
+                    <button
+                        type="button"
+                        className="submit-btn"
+                        onClick={handleExcelSubmit}
+                        disabled={!excelFile}
+                    >
+                        Enviar Excel
+                    </button>
                 </div>
-                <div>
-                    <ThirdStep/>
-                </div>
-                <div>
-                    <FouthStep/>
-                </div>
-                <div>
-                    <FifthStep/>
-                </div>
-                <div>
-                    <SixthStep/>
-                </div>
-            </Steps>
-        </div>
+            </form>
+
+            {showModal && (
+                <Modal success={modalSuccess} onClose={() => {
+                    setShowModal(false)
+                    if(modalSuccess){ window.location.reload();}
+                }}>
+                    {message}
+                </Modal>
+            )}
+        </>
     );
 };
 
-export default Inscripciones;
+export default SecondStep;
