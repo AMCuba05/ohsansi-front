@@ -1,7 +1,7 @@
 // components/Dashboard/Sidebar.jsx
 import React, { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
-import { Home, Layers, LogOut, Menu, Newspaper, ChevronDown, ChevronRight } from "lucide-react";
+import { Home, Layers, LogOut, Menu, Newspaper, ChevronDown, ChevronRight, UserRoundPen } from "lucide-react";
 import "./index.scss";
 
 const Sidebar = () => {
@@ -29,7 +29,7 @@ const Sidebar = () => {
                     className={`logout-button`}
                     onClick={() => setInscripcionesOpen(!inscripcionesOpen)}
                 >
-                    <Newspaper size={18}/> {!collapsed && <span>Inscripciones</span>}
+                    <UserRoundPen  size={18}/> {!collapsed && <span>Inscripciones</span>}
                     {!collapsed && (inscripcionesOpen ? <ChevronDown size={14} style={{marginLeft: 'auto'}}/> :
                         <ChevronRight size={14} style={{marginLeft: 'auto'}}/>)}
                 </button>
