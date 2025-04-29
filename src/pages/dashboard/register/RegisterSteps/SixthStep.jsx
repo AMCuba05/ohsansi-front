@@ -88,10 +88,10 @@ export const SixthStep = () => {
                 data
             );
             setShowReceipt(true)
-            Alert("¡Inscripción exitosa!");
+            alert("¡Inscripción exitosa!");
 
         } catch (error) {
-            Alert("Error al enviar la inscripción. Verifica los datos.");
+            alert("Error al enviar la inscripción. Verifica los datos.");
         }
 
     }
