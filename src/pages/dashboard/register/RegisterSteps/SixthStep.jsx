@@ -3,15 +3,27 @@ import {useSteps} from 'react-step-builder'
 import {Dropdown, ProgressBar, Form, Spinner, Alert} from 'react-bootstrap'
 import axios from "axios";
 import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
+import {PDFDownloadLink} from "@react-pdf/renderer";
+import PaymentReceipt from "../../components/PaymentReceipt/index.jsx";
 
 export const SixthStep = () => {
     const stepsState = useSteps()
     const { registerData, setRegisterData } = useRegisterContext()
     const [found, setFound] = useState(false)
-    const [hasBeenQueried, setHasBeenQueried] = useState(false)
+    const [showReceipt, setShowReceipt] = useState(false)
     const [areas, setAreas] = useState()
     const [filteredAreas, setFilteredAreas] = useState([])
     const [loading, setLoading] = useState(true)
+
+    const boletaData = {
+        nombre: `${registerData.legal_tutor.names} ${registerData.legal_tutor.last_names}`,
+        ci: registerData.legal_tutor.ci,
+        fechaPago: Date.now().toString(),
+        detalles: [
+            { concepto: `Incripcion Olimpiada: ${registerData.olympic_name} `, monto: 15 },
+        ],
+        total: 15,
+    };
 
     const [seleccionadas, setSeleccionadas] = useState([]);
     const handleCheck = (id) => {
@@ -151,10 +163,22 @@ export const SixthStep = () => {
                             disabled={seleccionadas.length > 2 || seleccionadas <= 0}
                             type="button"
                             className="btn btn-primary w-50"
-                            onClick={submitTest}
+                            onClick={()=> setShowReceipt(true)}
                         >
                             Completar
                         </button>
+                    </div>
+                    <div>
+                        {
+                            showReceipt ?
+                                <PDFDownloadLink
+                                    document={<PaymentReceipt data={boletaData} />}
+                                    fileName="boleta_pago.pdf"
+                                >
+                                    {({ loading }) => (loading ? "Generando PDF..." : "Descargar Boleta")}
+                                </PDFDownloadLink> : null
+                        }
+
                     </div>
                 </form>
             </div>
