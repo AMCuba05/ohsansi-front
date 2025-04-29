@@ -102,13 +102,10 @@ const OlympiadAreasCategories = () => {
             setSelectedCategory('');
             setCategories([]);
         } catch (error) {
-            if (error.response?.data?.errors) {
-                const backendErrors = error.response.data.errors;
-                const formattedErrors = {};
-                for (const key in backendErrors) {
-                    formattedErrors[key] = backendErrors[key][0];
-                }
-                setErrors(formattedErrors);
+            let xError = error.response.data.message;
+            if (xError) {
+                const backendErrors = xError;
+                setErrors({form: backendErrors});
             } else {
                 setErrors({ form: 'Error al asociar el área y la categoría.' });
             }

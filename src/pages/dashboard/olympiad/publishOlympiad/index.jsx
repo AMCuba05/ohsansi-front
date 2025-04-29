@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {useNavigate, useParams} from "react-router-dom";
-import {Button} from "react-bootstrap";
-import {ArrowLeft} from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Button } from "react-bootstrap";
+import { ArrowLeft } from "lucide-react";
 
 const PublishOlympiad = () => {
     const { id: olympicId } = useParams();
     const navigate = useNavigate();
     const [olympiadData, setOlympiadData] = useState(null);
     const [formData, setFormData] = useState({
+        title: '',
+        description: '',
+        price: '',
+        start_date: '',
+        end_date: '',
         presentation: '',
         requirements: '',
         awards: '',
@@ -23,7 +28,19 @@ const PublishOlympiad = () => {
         const fetchOlympiadData = async () => {
             try {
                 const res = await axios.get(`https://willypaz.dev/projects/ohsansi-api/api/olympics/getOlympicInfo/${olympicId}`);
-                setOlympiadData(res.data);
+                const data = res.data;
+                setOlympiadData(data);
+                setFormData({
+                    title: data.title || '',
+                    description: data.description || '',
+                    price: data.price?.toFixed(2) || '',
+                    start_date: data.Start_date || '',
+                    end_date: data.End_date || '',
+                    presentation: '',
+                    requirements: '',
+                    awards: '',
+                    contacts: '',
+                });
             } catch (error) {
                 setErrors({ api: 'Error al cargar la olimpiada.' });
             } finally {
@@ -42,10 +59,12 @@ const PublishOlympiad = () => {
 
     const validate = () => {
         const newErrors = {};
-        if (!formData.presentation) newErrors.presentation = 'Campo requerido';
-        if (!formData.requirements) newErrors.requirements = 'Campo requerido';
-        if (!formData.awards) newErrors.awards = 'Campo requerido';
-        if (!formData.contacts) newErrors.contacts = 'Campo requerido';
+        const requiredFields = ['title', 'description', 'price', 'start_date', 'end_date', 'presentation', 'requirements', 'awards', 'contacts'];
+        requiredFields.forEach(field => {
+            if (!formData[field]) {
+                newErrors[field] = 'Campo requerido';
+            }
+        });
         return newErrors;
     };
 
@@ -61,14 +80,18 @@ const PublishOlympiad = () => {
         setSubmitting(true);
         try {
             await axios.patch(`https://willypaz.dev/projects/ohsansi-api/api/olympics/${olympicId}/publish`, {
+                Title: formData.title,
+                Description: formData.description,
+                Price: parseFloat(formData.price),
+                Start_date: formData.start_date,
+                End_date: formData.end_date,
                 Presentation: formData.presentation,
                 Requirements: formData.requirements,
                 awards: formData.awards,
                 Contacts: formData.contacts,
-                start_date: olympiadData.Start_date,
-                end_date: olympiadData.End_date,
+                status: true,
             });
-            setSuccessMessage('Olimpiada publicada correctamente.');
+            setSuccessMessage('Olimpiada publicada exitosamente.');
         } catch (err) {
             setErrors({ api: 'Error al publicar la olimpiada.' });
         } finally {
@@ -94,17 +117,19 @@ const PublishOlympiad = () => {
             {successMessage && <div className="alert alert-success">{successMessage}</div>}
 
             <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
-                {/* TÍTULO (solo lectura) */}
+
+                {/* TÍTULO */}
                 <div className="mb-3">
                     <label className="form-label">Título</label>
                     <input
                         type="text"
-                        className="form-control"
-                        value={olympiadData.title}
-                        readOnly
+                        name="title"
+                        className={`form-control ${errors.title ? 'is-invalid' : ''}`}
+                        value={formData.title}
+                        onChange={handleChange}
                     />
+                    {errors.title && <div className="invalid-feedback">{errors.title}</div>}
                 </div>
-
 
                 {/* PRESENTACIÓN */}
                 <div className="mb-3">
@@ -123,43 +148,52 @@ const PublishOlympiad = () => {
                 <div className="mb-3">
                     <label className="form-label">Descripción</label>
                     <textarea
-                        className="form-control"
+                        className={`form-control ${errors.description ? 'is-invalid' : ''}`}
+                        name="description"
                         rows="3"
-                        value={olympiadData.description}
-                        readOnly
+                        value={formData.description}
+                        onChange={handleChange}
                     />
+                    {errors.description && <div className="invalid-feedback">{errors.description}</div>}
                 </div>
 
                 {/* PRECIO */}
                 <div className="mb-3">
                     <label className="form-label">Precio</label>
                     <input
-                        type="text"
-                        className="form-control"
-                        value={`$${(olympiadData.price / 100).toFixed(2)}`}
-                        readOnly
+                        type="number"
+                        step="0.01"
+                        name="price"
+                        className={`form-control ${errors.price ? 'is-invalid' : ''}`}
+                        value={formData.price}
+                        onChange={handleChange}
                     />
+                    {errors.price && <div className="invalid-feedback">{errors.price}</div>}
                 </div>
 
                 {/* FECHAS */}
                 <div className="mb-3">
                     <label className="form-label">Fecha de Inicio</label>
                     <input
-                        type="text"
-                        className="form-control"
-                        value={olympiadData.Start_date}
-                        readOnly
+                        type="date"
+                        name="start_date"
+                        className={`form-control ${errors.start_date ? 'is-invalid' : ''}`}
+                        value={formData.start_date}
+                        onChange={handleChange}
                     />
+                    {errors.start_date && <div className="invalid-feedback">{errors.start_date}</div>}
                 </div>
 
                 <div className="mb-3">
                     <label className="form-label">Fecha de Fin</label>
                     <input
-                        type="text"
-                        className="form-control"
-                        value={olympiadData.End_date}
-                        readOnly
+                        type="date"
+                        name="end_date"
+                        className={`form-control ${errors.end_date ? 'is-invalid' : ''}`}
+                        value={formData.end_date}
+                        onChange={handleChange}
                     />
+                    {errors.end_date && <div className="invalid-feedback">{errors.end_date}</div>}
                 </div>
 
                 {/* REQUISITOS */}

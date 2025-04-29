@@ -62,8 +62,8 @@ const CreateOlympiad = () => {
 
         try {
             await axios.post('https://willypaz.dev/projects/ohsansi-api/api/olympics', formData);
-            setSuccessMessage('¡Olimpiada creada exitosamente!');
-            setTimeout(() => navigate('/'), 1500);
+            setSuccessMessage('¡Olimpiada registrada correctamente.!');
+            setTimeout(() => navigate('/dashboard/olympiad'), 1500);
         } catch (err) {
             const backendErrors = {};
 
@@ -71,7 +71,7 @@ const CreateOlympiad = () => {
             if (err.response && err.response.data && err.response.data.errors) {
                 const errorData = err.response.data.errors;
                 Object.keys(errorData).forEach(field => {
-                    backendErrors[field] = errorData[field][0]; // Agarra el primer error de cada campo
+                    backendErrors[field] = errorData[field][0];
                 });
             } else {
                 backendErrors.api = 'Error inesperado al crear la olimpiada.';
@@ -118,7 +118,7 @@ const CreateOlympiad = () => {
 
                 {/* PRECIO */}
                 <div className="mb-3">
-                    <label className="form-label">Precio (en centavos)</label>
+                    <label className="form-label">Precio</label>
                     <input
                         type="number"
                         className={`form-control ${errors.price ? 'is-invalid' : ''}`}

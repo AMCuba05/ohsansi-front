@@ -1,10 +1,6 @@
-// components/Pages/Areas.jsx
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import {
-    Container,
-    Table,
     Button,
     Modal,
     ModalHeader,
@@ -14,100 +10,75 @@ import {
     FormGroup,
     Label,
     Input,
+    Table,
 } from "reactstrap";
-import FeedbackModal from "../register/Modal/index.jsx";
 
-const Areas = () => {
+const AreasComponent = () => {
     const [areas, setAreas] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [modalSuccess, setModalSuccess] = useState(true);
-    const [message, setMessage] = useState("");
     const [showAddModal, setShowAddModal] = useState(false);
-    const [showEditModal, setShowEditModal] = useState(false);
     const [newArea, setNewArea] = useState({ name: "", description: "", price: "" });
-    const [editArea, setEditArea] = useState({ id: null, name: "", description: "", price: "" });
-
-    const navigate = useNavigate();
-
-    const fetchAreas = async () => {
-        try {
-            const res = await axios.get("https://willypaz.dev/projects/ohsansi-api/api/areas");
-            setAreas(res.data.areas);
-        } catch (err) {
-            console.error("Error fetching areas:", err);
-        }
-    };
+    const [formMessage, setFormMessage] = useState({ type: "", text: "" });
 
     useEffect(() => {
         fetchAreas();
     }, []);
 
+    const fetchAreas = async () => {
+        try {
+            const response = await axios.get("https://willypaz.dev/projects/ohsansi-api/api/areas");
+            setAreas(response.data.areas);
+        } catch (error) {
+            console.error("Error al obtener las áreas:", error);
+        }
+    };
+
     const handleCreateArea = async () => {
-        if (newArea.price > 999 || newArea.price < 0) {
-            setModalSuccess(false);
-            setMessage("Error al crear el área, verifique el precio.");
-            setShowModal(true);
+        const { name, description, price } = newArea;
+
+        // Validación de campos
+        if (!name || !description) {
+            setFormMessage({ type: "error", text: "Todos los campos son obligatorios." });
             return;
         }
 
         try {
             await axios.post("https://willypaz.dev/projects/ohsansi-api/api/areas", newArea);
-            setModalSuccess(true);
-            setMessage("¡Área creada con éxito!");
-            setShowModal(true);
-            setShowAddModal(false);
-            setNewArea({ name: "", description: "", price: "" });
+            setFormMessage({ type: "success", text: "¡Área creada con éxito!" });
             fetchAreas();
+            setNewArea({ name: "", description: ""});
         } catch (error) {
-            setModalSuccess(false);
-            setMessage("Error al crear el área.");
-            setShowModal(true);
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.errors &&
+                error.response.data.errors.name &&
+                error.response.data.errors.name[0] === "El área ya existe"
+            ) {
+                setFormMessage({ type: "error", text: "El área ya existe." });
+            } else {
+                setFormMessage({ type: "error", text: "Error al crear el área." });
+            }
         }
     };
 
-    const openEditModal = (area) => {
-        setEditArea(area);
-        setShowEditModal(true);
-    };
-
-    const handleEditArea = async () => {
-        if (editArea.price > 999 || editArea.price < 0) {
-            setModalSuccess(false);
-            setMessage("Error al actualizar el área, verifique el precio.");
-            setShowModal(true);
-            return;
-        }
-
-        try {
-            const price = { price: editArea.price };
-            await axios.patch(`https://willypaz.dev/projects/ohsansi-api/api/areas/${editArea.id}/pricing`, price);
-            setModalSuccess(true);
-            setMessage("¡Área actualizada con éxito!");
-            setShowModal(true);
-            setShowEditModal(false);
-            fetchAreas();
-        } catch (error) {
-            setModalSuccess(false);
-            setMessage("Error al actualizar el área.");
-            setShowModal(true);
-        }
+    const closeModal = () => {
+        setShowAddModal(false);
+        setFormMessage({ type: "", text: "" });
+        setNewArea({ name: "", description: "", price: "" });
     };
 
     return (
-        <Container className="my-5">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 className="mb-0">Áreas Registradas</h2>
-                <Button color="primary" onClick={() => setShowAddModal(true)}>
-                    + Añadir Nueva Área
-                </Button>
-            </div>
+        <div className="container mt-4">
+            <h2>Áreas</h2>
+            <Button color="primary" onClick={() => setShowAddModal(true)}>
+                Crear Nueva Área
+            </Button>
 
-            <Table bordered hover responsive>
-                <thead className="table-light">
+            <Table className="mt-3">
+                <thead>
                 <tr>
                     <th>Nombre</th>
                     <th>Descripción</th>
-                    <th>Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -115,21 +86,25 @@ const Areas = () => {
                     <tr key={area.id}>
                         <td>{area.name}</td>
                         <td>{area.description}</td>
-                        <td>
-                            <Button color="warning" size="sm" onClick={() => openEditModal(area)}>
-                                Editar
-                            </Button>
-                        </td>
                     </tr>
                 ))}
                 </tbody>
             </Table>
 
-            <Modal isOpen={showAddModal} toggle={() => setShowAddModal(false)}>
-                <ModalHeader toggle={() => setShowAddModal(false)}>Nueva Área</ModalHeader>
+            <Modal isOpen={showAddModal} toggle={closeModal}>
+                <ModalHeader toggle={closeModal}>Nueva Área</ModalHeader>
                 <ModalBody>
+                    {formMessage.text && (
+                        <div
+                            className={`alert ${
+                                formMessage.type === "success" ? "alert-success" : "alert-danger"
+                            }`}
+                        >
+                            {formMessage.text}
+                        </div>
+                    )}
                     <Form>
-                        <FormGroup  style={{textAlign: "start"}}>
+                        <FormGroup style={{textAlign: "start"}}>
                             <Label>Nombre</Label>
                             <Input
                                 type="text"
@@ -137,7 +112,7 @@ const Areas = () => {
                                 onChange={(e) => setNewArea({ ...newArea, name: e.target.value })}
                             />
                         </FormGroup>
-                        <FormGroup  style={{textAlign: "start"}}>
+                        <FormGroup style={{textAlign: "start"}}>
                             <Label>Descripción</Label>
                             <Input
                                 type="textarea"
@@ -148,48 +123,16 @@ const Areas = () => {
                     </Form>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="success" onClick={handleCreateArea}>
+                    <Button color="secondary" onClick={closeModal}>
+                        Cancelar
+                    </Button>
+                    <Button color="primary" onClick={handleCreateArea}>
                         Crear
-                    </Button>{" "}
-                    <Button color="secondary" onClick={() => setShowAddModal(false)}>
-                        Cancelar
                     </Button>
                 </ModalFooter>
             </Modal>
-
-            {/* Modal: Editar Área */}
-            <Modal isOpen={showEditModal} toggle={() => setShowEditModal(false)}>
-                <ModalHeader toggle={() => setShowEditModal(false)}>Editar Área</ModalHeader>
-                <ModalBody>
-                    <Form>
-                        <FormGroup>
-                            <Label>Nombre</Label>
-                            <Input value={editArea.name} disabled />
-                        </FormGroup>
-                        <FormGroup>
-                            <Label>Descripción</Label>
-                            <Input type="textarea" value={editArea.description} disabled />
-                        </FormGroup>
-                    </Form>
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="success" onClick={handleEditArea}>
-                        Guardar
-                    </Button>{" "}
-                    <Button color="secondary" onClick={() => setShowEditModal(false)}>
-                        Cancelar
-                    </Button>
-                </ModalFooter>
-            </Modal>
-
-            {/* Modal de confirmación */}
-            {showModal && (
-                <FeedbackModal success={modalSuccess} onClose={() => setShowModal(false)}>
-                    {message}
-                </FeedbackModal>
-            )}
-        </Container>
+        </div>
     );
 };
 
-export default Areas;
+export default AreasComponent;
