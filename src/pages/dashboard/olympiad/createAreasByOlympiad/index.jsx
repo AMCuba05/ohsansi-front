@@ -13,9 +13,10 @@ const OlympiadAreasCategories = () => {
     const [errors, setErrors] = useState({});
     const [loadingAreas, setLoadingAreas] = useState(false);
     const [loadingCategories, setLoadingCategories] = useState(false);
+    const [loadingAssociations, setLoadingAssociations] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
-    // Cargar áreas al montar el componente
+    // Cargar áreas
     useEffect(() => {
         const fetchAreas = async () => {
             setLoadingAreas(true);
@@ -32,7 +33,27 @@ const OlympiadAreasCategories = () => {
         fetchAreas();
     }, []);
 
-    // Cargar categorías cuando se selecciona un área
+    // Cargar asociaciones existentes
+    useEffect(() => {
+        fetchAssociations();
+    }, [olympicId]);
+
+    const fetchAssociations = async () => {
+        setLoadingAssociations(true);
+        try {
+            const response = await axios.get(
+                `https://willypaz.dev/projects/ohsansi-api/api/olimpiadas-categorias/${olympicId}/areas-categories`
+            );
+            console.log(response.data.areas)
+            setAssociations(response.data.areas); // Se espera que sea un array de áreas con categorías
+        } catch (error) {
+            console.error('Error al cargar asociaciones:', error);
+        } finally {
+            setLoadingAssociations(false);
+        }
+    };
+
+    // Cargar categorías cuando cambia el área
     useEffect(() => {
         const fetchCategories = async () => {
             if (selectedArea) {
@@ -71,26 +92,15 @@ const OlympiadAreasCategories = () => {
                 category_id: selectedCategory,
             });
 
-            // Obtener detalles del área y categoría seleccionadas
-            const area = areas.find((a) => a.id === parseInt(selectedArea));
-            const category = categories.find((c) => c.id === parseInt(selectedCategory));
+            // Refrescar lista de asociaciones después de guardar
+            await fetchAssociations();
 
-            // Agregar la nueva asociación a la lista
-            setAssociations((prev) => [
-                ...prev,
-                {
-                    areaName: area.name,
-                    categoryName: category.name,
-                    rangeCourse: category.range_course.join(', '),
-                },
-            ]);
-
-            // Limpiar selecciones
+            // Reset de inputs
             setSelectedArea('');
             setSelectedCategory('');
             setCategories([]);
         } catch (error) {
-            if (error.response && error.response.data && error.response.data.errors) {
+            if (error.response?.data?.errors) {
                 const backendErrors = error.response.data.errors;
                 const formattedErrors = {};
                 for (const key in backendErrors) {
@@ -158,32 +168,38 @@ const OlympiadAreasCategories = () => {
             </Form>
 
             <h3>Asociaciones Existentes</h3>
-            <Table striped bordered hover responsive>
-                <thead>
-                <tr>
-                    <th>Área</th>
-                    <th>Nombre de Categoría</th>
-                    <th>Rangos</th>
-                </tr>
-                </thead>
-                <tbody>
-                {associations.length === 0 ? (
+            {loadingAssociations ? (
+                <Spinner animation="border" />
+            ) : (
+                <Table striped bordered hover responsive>
+                    <thead>
                     <tr>
-                        <td colSpan="3" className="text-center">
-                            No hay asociaciones registradas.
-                        </td>
+                        <th>Área</th>
+                        <th>Categoría</th>
+                        <th>Rangos</th>
                     </tr>
-                ) : (
-                    associations.map((assoc, index) => (
-                        <tr key={index}>
-                            <td>{assoc.areaName}</td>
-                            <td>{assoc.categoryName}</td>
-                            <td>{assoc.rangeCourse}</td>
+                    </thead>
+                    <tbody>
+                    {associations.length === 0 ? (
+                        <tr>
+                            <td colSpan="3" className="text-center">
+                                No hay asociaciones registradas.
+                            </td>
                         </tr>
-                    ))
-                )}
-                </tbody>
-            </Table>
+                    ) : (
+                        associations.map((area) =>
+                            area.categories.map((category) => (
+                                <tr key={`${area.id}-${category.id}`}>
+                                    <td>{area.area.name}</td>
+                                    <td>{category.name}</td>
+                                    <td>{category.range_course?.join(', ') || '-'}</td>
+                                </tr>
+                            ))
+                        )
+                    )}
+                    </tbody>
+                </Table>
+            )}
         </div>
     );
 };
