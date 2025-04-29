@@ -38,7 +38,7 @@ const Olympiads = () => {
                                 <Link to={`/dashboard/olympiad/${olympiad.id}/associate`} className="btn btn-sm btn-outline-secondary">
                                     Asociar Áreas/Categorías
                                 </Link>
-                                <Link to={`/olympiad/${olympiad.id}/publish`} className="btn btn-sm btn-outline-success">
+                                <Link to={`/dashboard/olympiad/${olympiad.id}/publish`} className="btn btn-sm btn-outline-success">
                                     Publicar Olimpiada
                                 </Link>
                             </div>

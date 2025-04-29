@@ -2,8 +2,20 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Modal from "../register/Modal/index.jsx";
-import "./index.scss";
+import {
+    Container,
+    Table,
+    Button,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Form,
+    FormGroup,
+    Label,
+    Input,
+} from "reactstrap";
+import FeedbackModal from "../register/Modal/index.jsx";
 
 const Areas = () => {
     const [areas, setAreas] = useState([]);
@@ -31,27 +43,26 @@ const Areas = () => {
     }, []);
 
     const handleCreateArea = async () => {
-
-        if(newArea.price > 999 || newArea.price < 0) {
+        if (newArea.price > 999 || newArea.price < 0) {
             setModalSuccess(false);
             setMessage("Error al crear el área, verifique el precio.");
             setShowModal(true);
-        } else {
-            try {
-                await axios.post("https://willypaz.dev/projects/ohsansi-api/api/areas", newArea);
-                setModalSuccess(true);
-                setMessage("¡Área creada con éxito!");
-                setShowModal(true);
-                setShowAddModal(false);
-                setNewArea({ name: "", description: "", price: "" });
-                fetchAreas();
-            } catch (error) {
-                setModalSuccess(false);
-                setMessage("Error al crear el área.");
-                setShowModal(true);
-            }
+            return;
         }
 
+        try {
+            await axios.post("https://willypaz.dev/projects/ohsansi-api/api/areas", newArea);
+            setModalSuccess(true);
+            setMessage("¡Área creada con éxito!");
+            setShowModal(true);
+            setShowAddModal(false);
+            setNewArea({ name: "", description: "", price: "" });
+            fetchAreas();
+        } catch (error) {
+            setModalSuccess(false);
+            setMessage("Error al crear el área.");
+            setShowModal(true);
+        }
     };
 
     const openEditModal = (area) => {
@@ -60,38 +71,42 @@ const Areas = () => {
     };
 
     const handleEditArea = async () => {
-        if(editArea.price > 999 || editArea.price < 0) {
+        if (editArea.price > 999 || editArea.price < 0) {
             setModalSuccess(false);
             setMessage("Error al actualizar el área, verifique el precio.");
             setShowModal(true);
-        } else {
-            try {
-                let price = {price: editArea.price}
-                await axios.patch(`https://willypaz.dev/projects/ohsansi-api/api/areas/${editArea.id}/pricing`, price);
-                setModalSuccess(true);
-                setMessage("¡Área actualizada con éxito!");
-                setShowModal(true);
-                setShowEditModal(false);
-                fetchAreas();
-            } catch (error) {
-                setModalSuccess(false);
-                setMessage("Error al actualizar el área.");
-                setShowModal(true);
-            }
+            return;
+        }
+
+        try {
+            const price = { price: editArea.price };
+            await axios.patch(`https://willypaz.dev/projects/ohsansi-api/api/areas/${editArea.id}/pricing`, price);
+            setModalSuccess(true);
+            setMessage("¡Área actualizada con éxito!");
+            setShowModal(true);
+            setShowEditModal(false);
+            fetchAreas();
+        } catch (error) {
+            setModalSuccess(false);
+            setMessage("Error al actualizar el área.");
+            setShowModal(true);
         }
     };
 
     return (
-        <div className="areas-container">
-            <h2>Áreas Registradas</h2>
-            <button className="add-btn" onClick={() => setShowAddModal(true)}>+ Añadir Nueva Área</button>
+        <Container className="my-5">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h2 className="mb-0">Áreas Registradas</h2>
+                <Button color="primary" onClick={() => setShowAddModal(true)}>
+                    + Añadir Nueva Área
+                </Button>
+            </div>
 
-            <table className="areas-table">
-                <thead>
+            <Table bordered hover responsive>
+                <thead className="table-light">
                 <tr>
                     <th>Nombre</th>
                     <th>Descripción</th>
-                    <th>Precio</th>
                     <th>Acciones</th>
                 </tr>
                 </thead>
@@ -100,86 +115,80 @@ const Areas = () => {
                     <tr key={area.id}>
                         <td>{area.name}</td>
                         <td>{area.description}</td>
-                        <td>{area.price} Bs</td>
                         <td>
-                            <button className="cat-btn" onClick={() => navigate(`/dashboard/areas/${area.id}/categories`)}>
-                                Categorías
-                            </button>
-                            <button className="edit-btn" onClick={() => openEditModal(area)}>Editar</button>
+                            <Button color="warning" size="sm" onClick={() => openEditModal(area)}>
+                                Editar
+                            </Button>
                         </td>
                     </tr>
                 ))}
                 </tbody>
-            </table>
+            </Table>
 
-            {showAddModal && (
-                <div className="modal-backdrop">
-                    <div className="modal-content">
-                        <h3>Nueva Área</h3>
-                        <input
-                            type="text"
-                            placeholder="Nombre"
-                            value={newArea.name}
-                            onChange={(e) => setNewArea({ ...newArea, name: e.target.value })}
-                        />
-                        <textarea
-                            placeholder="Descripción"
-                            value={newArea.description}
-                            onChange={(e) => setNewArea({ ...newArea, description: e.target.value })}
-                        />
-                        <input
-                            type="number"
-                            placeholder="Precio"
-                            value={newArea.price}
-                            max="999"
-                            onChange={(e) => setNewArea({ ...newArea, price: e.target.value })}
-                        />
-                        <div className="modal-buttons">
-                            <button onClick={handleCreateArea}>Crear</button>
-                            <button onClick={() => setShowAddModal(false)}>Cancelar</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <Modal isOpen={showAddModal} toggle={() => setShowAddModal(false)}>
+                <ModalHeader toggle={() => setShowAddModal(false)}>Nueva Área</ModalHeader>
+                <ModalBody>
+                    <Form>
+                        <FormGroup  style={{textAlign: "start"}}>
+                            <Label>Nombre</Label>
+                            <Input
+                                type="text"
+                                value={newArea.name}
+                                onChange={(e) => setNewArea({ ...newArea, name: e.target.value })}
+                            />
+                        </FormGroup>
+                        <FormGroup  style={{textAlign: "start"}}>
+                            <Label>Descripción</Label>
+                            <Input
+                                type="textarea"
+                                value={newArea.description}
+                                onChange={(e) => setNewArea({ ...newArea, description: e.target.value })}
+                            />
+                        </FormGroup>
+                    </Form>
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="success" onClick={handleCreateArea}>
+                        Crear
+                    </Button>{" "}
+                    <Button color="secondary" onClick={() => setShowAddModal(false)}>
+                        Cancelar
+                    </Button>
+                </ModalFooter>
+            </Modal>
 
-            {/* Modal para editar área */}
-            {showEditModal && (
-                <div className="modal-backdrop">
-                    <div className="modal-content">
-                        <h3>Editar Área</h3>
-                        <input
-                            type="text"
-                            placeholder="Nombre"
-                            value={editArea.name}
-                            onChange={(e) => setEditArea({ ...editArea, name: e.target.value })}
-                            disabled
-                        />
-                        <textarea
-                            placeholder="Descripción"
-                            value={editArea.description}
-                            onChange={(e) => setEditArea({ ...editArea, description: e.target.value })}
-                            disabled
-                        />
-                        <input
-                            type="number"
-                            placeholder="Precio"
-                            value={editArea.price}
-                            onChange={(e) => setEditArea({ ...editArea, price: e.target.value })}
-                        />
-                        <div className="modal-buttons">
-                            <button onClick={handleEditArea}>Guardar</button>
-                            <button onClick={() => setShowEditModal(false)}>Cancelar</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Modal: Editar Área */}
+            <Modal isOpen={showEditModal} toggle={() => setShowEditModal(false)}>
+                <ModalHeader toggle={() => setShowEditModal(false)}>Editar Área</ModalHeader>
+                <ModalBody>
+                    <Form>
+                        <FormGroup>
+                            <Label>Nombre</Label>
+                            <Input value={editArea.name} disabled />
+                        </FormGroup>
+                        <FormGroup>
+                            <Label>Descripción</Label>
+                            <Input type="textarea" value={editArea.description} disabled />
+                        </FormGroup>
+                    </Form>
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="success" onClick={handleEditArea}>
+                        Guardar
+                    </Button>{" "}
+                    <Button color="secondary" onClick={() => setShowEditModal(false)}>
+                        Cancelar
+                    </Button>
+                </ModalFooter>
+            </Modal>
 
+            {/* Modal de confirmación */}
             {showModal && (
-                <Modal success={modalSuccess} onClose={() => setShowModal(false)}>
+                <FeedbackModal success={modalSuccess} onClose={() => setShowModal(false)}>
                     {message}
-                </Modal>
+                </FeedbackModal>
             )}
-        </div>
+        </Container>
     );
 };
 
