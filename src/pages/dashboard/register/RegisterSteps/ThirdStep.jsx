@@ -4,18 +4,21 @@ import {FormControl, ProgressBar} from 'react-bootstrap'
 import { Search, Check, X } from 'lucide-react';
 import {Button, InputGroup} from "reactstrap";
 import axios from "axios";
+import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
 
 export const ThirdStep = () => {
     const stepsState = useSteps()
     const [found, setFound] = useState(false)
+    const { registerData, setRegisterData } = useRegisterContext()
     const [hasBeenQueried, setHasBeenQueried] = useState(false)
     const [name, setName] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
     const [phone, setPhone] = useState("")
     const [ci, setCi] = useState("")
-
-    function validate() {
+    const [ciExp, setCiExp] = useState("")
+    const [birthDate, setBirthDate] = useState('');
+    const validate = () => {
         if (!name.trim()) return false;
         if (!lastName.trim()) return false;
         if (!email.trim()) return false;
@@ -23,6 +26,22 @@ export const ThirdStep = () => {
         if (!ci.trim()) return false;
 
         return true;
+    }
+
+    const submit = () => {
+        setRegisterData({
+            ...registerData,
+            legal_tutor: {
+                ci: Number(ci),
+                ci_expedition: ciExp,
+                names: name,
+                last_names: lastName,
+                birthdate: birthDate,
+                email: email,
+                phone_number: phone
+            },
+        })
+        stepsState.next()
     }
 
     const onSearchTutor = async () => {
@@ -38,6 +57,8 @@ export const ThirdStep = () => {
                 setFound(true)
                 setName(personal_data.names)
                 setLastName(personal_data.last_names)
+                setCiExp(personal_data.ci_expedition)
+                setBirthDate(personal_data.birthdate)
                 setEmail(personal_data.email)
                 setPhone(personal_data.phone_number)
             }
@@ -46,14 +67,16 @@ export const ThirdStep = () => {
             setFound(false)
             setName("")
             setLastName("")
+            setCiExp("")
+            setBirthDate("")
             setEmail("")
             setPhone("")
         }
     };
 
     return (
-        <div className="container mt-5 d-flex justify-content-center">
-            <div className="card shadow p-4" style={{ width: '40vw' }}>
+        <div className="container d-flex justify-content-center">
+            <div className="card p-4">
                 <span>Paso {stepsState.current} de {stepsState.total} </span>
                 <ProgressBar
                     now={stepsState.progress * 100}
@@ -63,7 +86,7 @@ export const ThirdStep = () => {
                     variant={"success"}
                     style={{ height: '1.5rem', fontSize: '0.9rem' }}
                 />
-                <h2 className="mb-3 mt-4">Paso 2: Información del tutor legal o apoderado</h2>
+                <h2 className="mb-3 mt-4">Paso 3: Información del tutor legal o apoderado</h2>
                 <p className="text-muted mb-4">
                     Por favor, ingresa los datos del tutor legal del estudiante para completar su inscripción en la olimpiada. Esta información es necesaria para validar el consentimiento y garantizar la autorización correspondiente.
                 </p>
@@ -91,6 +114,19 @@ export const ThirdStep = () => {
                         hasBeenQueried ?
                             <>
                                 <div className="mb-3">
+                                    <label htmlFor="exp" className="form-label">Lugar de Expedición</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="exp"
+                                        placeholder="Lugar de Expedición"
+                                        value={ciExp}
+                                        style={{ textTransform: 'uppercase' }}
+                                        onChange={e => setCiExp(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="mb-3">
                                     <label htmlFor="nombre" className="form-label">Nombres</label>
                                     <input
                                         type="text"
@@ -98,6 +134,7 @@ export const ThirdStep = () => {
                                         id="nombre"
                                         placeholder="Nombres"
                                         value={name}
+                                        style={{ textTransform: 'uppercase' }}
                                         onChange={e => setName(e.target.value)}
                                     />
                                 </div>
@@ -110,7 +147,19 @@ export const ThirdStep = () => {
                                         id="apellido"
                                         placeholder="Apellidos"
                                         value={lastName}
+                                        style={{ textTransform: 'uppercase' }}
                                         onChange={e => setLastName(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="mb-3">
+                                    <label htmlFor="fechaNacimiento" className="form-label">Fecha de Nacimiento</label>
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        id="fechaNacimiento"
+                                        value={birthDate}
+                                        onChange={e => setBirthDate(e.target.value)}
                                     />
                                 </div>
 
@@ -153,7 +202,7 @@ export const ThirdStep = () => {
                             disabled={!stepsState.hasNext || !validate()}
                             type="submit"
                             className="btn btn-primary w-50"
-                            onClick={stepsState.next}
+                            onClick={submit}
                         >
                             Siguiente
                         </button>

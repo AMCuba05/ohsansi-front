@@ -4,18 +4,21 @@ import {FormControl, ProgressBar} from 'react-bootstrap'
 import { Search, Check, X } from 'lucide-react';
 import {Button, InputGroup} from "reactstrap";
 import axios from "axios";
+import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
 
 export const FouthStep = () => {
     const stepsState = useSteps()
-    const [found, setFound] = useState(false)
-    const [hasBeenQueried, setHasBeenQueried] = useState(false)
+    const { registerData, setRegisterData } = useRegisterContext()
     const [name, setName] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
     const [phone, setPhone] = useState("")
     const [ci, setCi] = useState("")
+    const [ciExp, setCiExp] = useState("")
+    const [birthDate, setBirthDate] = useState('');
 
-    function validate() {
+
+    const validate = () => {
         if (!name.trim()) return false;
         if (!lastName.trim()) return false;
         if (!email.trim()) return false;
@@ -25,9 +28,41 @@ export const FouthStep = () => {
         return true;
     }
 
+    const submit = () => {
+        setRegisterData({
+            ...registerData,
+            responsable:{
+                ci: Number(ci),
+                ci_expedition: ciExp,
+                names: name,
+                last_names: lastName,
+                birthdate: birthDate,
+                email: email,
+                phone_number: phone
+            }
+        })
+        stepsState.next()
+    }
+
+    const skip = () => {
+        setRegisterData({
+            ...registerData,
+            responsable:{
+                ci: "",
+                ci_expedition: "",
+                names: "",
+                last_names: "",
+                birthdate: "",
+                email: "",
+                phone_number: ""
+            }
+        })
+        stepsState.next()
+    }
+
     return (
-        <div className="container mt-5 d-flex justify-content-center">
-            <div className="card shadow p-4" style={{ width: '40vw' }}>
+        <div className="container d-flex justify-content-center">
+            <div className="card p-4" >
                 <span>Paso {stepsState.current} de {stepsState.total} </span>
                 <ProgressBar
                     now={stepsState.progress * 100}
@@ -37,7 +72,7 @@ export const FouthStep = () => {
                     variant={"success"}
                     style={{ height: '1.5rem', fontSize: '0.9rem' }}
                 />
-                <h2 className="mb-3 mt-4">Paso 3: Información del tutor académico (Opcional)</h2>
+                <h2 className="mb-3 mt-4">Paso 4: Información del tutor académico (Opcional)</h2>
                 <p className="text-muted mb-4">
                     Puedes registrar un tutor académico que apoye al estudiante durante la olimpiada. Esta información es opcional
                 </p>
@@ -53,9 +88,18 @@ export const FouthStep = () => {
                             onChange={e => setCi(e.target.value)}
                         />
                     </InputGroup>
-                    {hasBeenQueried && !found ? <p className="text-danger">Carnet no encontrado, ingresa los datos manualmente</p> : null}
-                    {hasBeenQueried && found ?  <p className="text-success">Datos cargados correctamente.</p> : null}
-
+                    <div className="mb-3">
+                        <label htmlFor="exp" className="form-label">Lugar de Expedición</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="exp"
+                            placeholder="Lugar de Expedición"
+                            value={ciExp}
+                            style={{ textTransform: 'uppercase' }}
+                            onChange={e => setCiExp(e.target.value)}
+                        />
+                    </div>
                     <div className="mb-3">
                         <label htmlFor="nombre" className="form-label">Nombres</label>
                         <input
@@ -64,6 +108,7 @@ export const FouthStep = () => {
                             id="nombre"
                             placeholder="Nombres"
                             value={name}
+                            style={{ textTransform: 'uppercase' }}
                             onChange={e => setName(e.target.value)}
                         />
                     </div>
@@ -76,7 +121,19 @@ export const FouthStep = () => {
                             id="apellido"
                             placeholder="Apellidos"
                             value={lastName}
+                            style={{ textTransform: 'uppercase' }}
                             onChange={e => setLastName(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="mb-3">
+                        <label htmlFor="fechaNacimiento" className="form-label">Fecha de Nacimiento</label>
+                        <input
+                            type="date"
+                            className="form-control"
+                            id="fechaNacimiento"
+                            value={birthDate}
+                            onChange={e => setBirthDate(e.target.value)}
                         />
                     </div>
 
@@ -118,7 +175,7 @@ export const FouthStep = () => {
                             disabled={!stepsState.hasNext || !validate()}
                             type="submit"
                             className="btn btn-primary w-50"
-                            onClick={stepsState.next}
+                            onClick={submit}
                         >
                             Siguiente
                         </button>
@@ -126,7 +183,7 @@ export const FouthStep = () => {
                     <button
                         type="submit"
                         className="btn btn-link w-100"
-                        onClick={stepsState.next}
+                        onClick={skip}
                     >
                         Omitir
                     </button>

@@ -1,13 +1,14 @@
 // components/Dashboard/Sidebar.jsx
 import React, { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
-import { Home, Layers, LogOut, Menu, Newspaper, ChevronDown, ChevronRight } from "lucide-react";
+import { Home, Layers, LogOut, Menu, Newspaper, ChevronDown, ChevronRight, UserRoundPen } from "lucide-react";
 import "./index.scss";
 
 const Sidebar = () => {
     const navigate = useNavigate();
     const [collapsed, setCollapsed] = useState(false);
     const [inscripcionesOpen, setInscripcionesOpen] = useState(false);
+    const [olympiadOpen, setOlympiadOpen] = useState(false);
 
     const handleLogout = () => {
         navigate("/");
@@ -28,8 +29,9 @@ const Sidebar = () => {
                     className={`logout-button`}
                     onClick={() => setInscripcionesOpen(!inscripcionesOpen)}
                 >
-                    <Newspaper size={18} /> {!collapsed && <span>Inscripciones</span>}
-                    {!collapsed && (inscripcionesOpen ? <ChevronDown size={14} style={{ marginLeft: 'auto' }} /> : <ChevronRight size={14} style={{ marginLeft: 'auto' }} />)}
+                    <UserRoundPen  size={18}/> {!collapsed && <span>Inscripciones</span>}
+                    {!collapsed && (inscripcionesOpen ? <ChevronDown size={14} style={{marginLeft: 'auto'}}/> :
+                        <ChevronRight size={14} style={{marginLeft: 'auto'}}/>)}
                 </button>
 
                 {/* Submenú Inscripciones */}
@@ -44,15 +46,39 @@ const Sidebar = () => {
                         <NavLink to="inscripcion-excel" className={({ isActive }) => isActive ? 'logout-button active' : 'logout-button'}>
                             {!collapsed && <span className={"sidebar-span"}>Inscripción Múltiple (Importar Excel)</span>}
                         </NavLink>
+
+
                     </div>
                 )}
 
-                <NavLink to="areas" className={({ isActive }) => isActive ? 'logout-button active' : 'logout-button'}>
-                    <Layers size={18} /> {!collapsed && <span>Áreas</span>}
+                <button
+                    className={`logout-button ${olympiadOpen ? 'active' : ''}`}
+                    onClick={() => setOlympiadOpen(!olympiadOpen)}
+                >
+                    <Newspaper size={18}/> {!collapsed && <span>Olimpiadas</span>}
+                    {!collapsed && (olympiadOpen ? <ChevronDown size={14} style={{marginLeft: 'auto'}}/> :
+                        <ChevronRight size={14} style={{marginLeft: 'auto'}}/>)}
+                </button>
+
+                {olympiadOpen && (
+                    <div className="submenu">
+                        <NavLink to="olympiad"
+                                 className={({isActive}) => isActive ? 'logout-button active' : 'logout-button'}>
+                            {!collapsed && <span className={"sidebar-span"}>Versiones</span>}
+                        </NavLink>
+                        <NavLink to="createOlympiad"
+                                 className={({isActive}) => isActive ? 'logout-button active' : 'logout-button'}>
+                            {!collapsed && <span className={"sidebar-span"}>Crear Olimpiada</span>}
+                        </NavLink>
+                    </div>
+                )}
+
+                <NavLink to="areas" className={({isActive}) => isActive ? 'logout-button active' : 'logout-button'}>
+                    <Layers size={18}/> {!collapsed && <span>Áreas</span>}
                 </NavLink>
 
                 <button className="logout-button" onClick={handleLogout}>
-                    <LogOut size={18} /> {!collapsed && <span>Cerrar Sesión</span>}
+                    <LogOut size={18}/> {!collapsed && <span>Cerrar Sesión</span>}
                 </button>
             </nav>
         </div>
