@@ -14,7 +14,7 @@ const OlympiadDetail = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const resInfo = await axios.get(`https://willypaz.dev/projects/ohsansi-api/api/olympics/getOlympicInfo/${id}`);
+                const resInfo = await axios.get(`https://willypaz.dev/projects/ohsansi-api/api/olympiads/getOlympicInfo/${id}`);
                 console.log(resInfo.data);
                 setOlympiad(resInfo.data);
 

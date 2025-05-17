@@ -19,9 +19,9 @@ export const FirstStep = () => {
     };
 
     useEffect(() => {
-        axios.get('https://willypaz.dev/projects/ohsansi-api/api/olympics')
+        axios.get('https://willypaz.dev/projects/ohsansi-api/api/olympiads')
             .then(response => {
-                setOlympiads(response.data.Olympics);
+                setOlympiads(response.data.data);
                 setLoading(false);
             })
             .catch(error => {

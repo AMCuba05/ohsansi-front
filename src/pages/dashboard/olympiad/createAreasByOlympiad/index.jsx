@@ -89,7 +89,7 @@ const OlympiadAreasCategories = () => {
         setSubmitting(true);
         try {
             await axios.post('https://willypaz.dev/projects/ohsansi-api/api/olimpiadas-categorias', {
-                olympic_id: olympicId,
+                olympiad_id: olympicId,
                 area_id: selectedArea,
                 category_id: selectedCategory,
             });

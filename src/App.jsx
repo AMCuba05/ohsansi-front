@@ -14,6 +14,9 @@ import OlympiadAreasCategories from "./pages/dashboard/olympiad/createAreasByOly
 import PublishOlympiad from "./pages/dashboard/olympiad/publishOlympiad/index.jsx";
 import Home from "./pages/Home/index.jsx";
 import OlympiadDetail from "./pages/Home/olympiadDetail/index.jsx";
+import Records from "./pages/dashboard/records/index.jsx";
+import ListOfInscriptions from "./pages/dashboard/listOfInscriptions/index.jsx";
+import Payment from "./pages/dashboard/payment/index.jsx";
 
 function App() {
     return (
@@ -27,8 +30,11 @@ function App() {
                     <Route path="inscripcion-sencilla" element={<RegisterSingle />} />
                     <Route path="inscripcion-multiple" element={<RegisterMultiple />} />
                     <Route path="inscripcion-excel" element={<RegisterExcel />} />
+                    <Route path="payments" element={<Payment/>}/>
                     <Route path="areas" element={<Areas />} />
                     <Route path="areas/:id/categories" element={<AreaCategories />} />
+                    <Route path="records" element={<Records/>} />
+                    <Route path="listInscriptions" element={<ListOfInscriptions />} />
                     <Route path="olympiad" element={<Olympiads />} />
                     <Route path="createOlympiad" element={<CreateOlympiad/>} />
                     <Route path="olympiad/:id/associate" element={<OlympiadAreasCategories/>} />

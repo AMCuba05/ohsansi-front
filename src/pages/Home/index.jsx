@@ -10,7 +10,7 @@ const Home = () => {
     useEffect(() => {
         const fetchOlympiads = async () => {
             try {
-                const res = await axios.get('https://willypaz.dev/projects/ohsansi-api/api/olympics');
+                const res = await axios.get('https://willypaz.dev/projects/ohsansi-api/api/olympiads');
                 console.log(res);
                 const filtered = res.data.Olympics.filter(o => o.status === true || o.status ==='Publico');
                 setOlympiads(filtered);
