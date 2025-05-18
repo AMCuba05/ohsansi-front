@@ -9,10 +9,11 @@ const Olympiads = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    console.log(olympiads)
     useEffect(() => {
         axios.get(`${API_URL}/api/olympics`)
             .then(response => {
-                setOlympiads(response.data.Olympics);
+                setOlympiads(response.data.data);
                 setLoading(false);
             })
             .catch(error => {
@@ -39,9 +40,12 @@ const Olympiads = () => {
                                 <Link to={`/dashboard/olympiad/${olympiad.id}/associate`} className="btn btn-sm btn-outline-secondary">
                                     Asociar Áreas/Categorías
                                 </Link>
-                                <Link to={`/dashboard/olympiad/${olympiad.id}/publish`} className="btn btn-sm btn-outline-success">
-                                    Publicar Olimpiada
-                                </Link>
+                                {
+
+                                    <Link to={`/dashboard/olympiad/${olympiad.id}/publish`} className="btn btn-sm btn-outline-success">
+                                        Publicar Olimpiada
+                                    </Link>
+                                }
                             </div>
                         </div>
                     ))}
