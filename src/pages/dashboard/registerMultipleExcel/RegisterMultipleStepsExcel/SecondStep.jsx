@@ -1,193 +1,128 @@
-// components/Pages/Inscripciones.jsx
-import React, { useState, useEffect } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
-import axios from "axios";
-import Modal from "./../Modal/index.jsx";
-import "./../index.scss";
+import React, { useState } from 'react';
+import { useSteps } from 'react-step-builder';
+import { ProgressBar } from 'react-bootstrap';
+import { useRegisterContext } from '../../../../Context/RegisterContext.jsx';
+import * as XLSX from 'xlsx';
 
-const SecondStep = () => {
-    const [showModal, setShowModal] = useState(false);
-    const [modalSuccess, setModalSuccess] = useState(true);
-    const [message, setMessage] = useState("");
-    const [method, setMethod] = useState("manual");
-    const [areas, setAreas] = useState([]);
-    const [excelFile, setExcelFile] = useState(null);
+export const SecondStep = () => {
+    const stepsState = useSteps();
+    const { registerData, setRegisterData } = useRegisterContext();
 
-    const {
-        register,
-        control,
-        handleSubmit,
-        setValue,
-        watch,
-        formState: { errors },
-    } = useForm({
-        defaultValues: {
-            competitors: [
-                {
-                    ci: "",
-                    ci_expedition: "",
-                    names: "",
-                    last_names: "",
-                    birthdate: "",
-                    email: "",
-                    phone_number: "",
-                    school_data: {
-                        name: "",
-                        department: "",
-                        province: "",
-                        course: "",
-                    },
-                    selected_areas: [],
-                },
-            ],
-            legal_tutor: {
-                ci: "",
-                ci_expedition: "",
-                names: "",
-                last_names: "",
-                birthdate: "",
-                email: "",
-                phone_number: "",
-            },
-            academic_tutor: {
-                ci: "",
-                ci_expedition: "",
-                names: "",
-                last_names: "",
-                birthdate: "",
-                email: "",
-                phone_number: "",
-            },
-        },
-    });
+    const [fileName, setFileName] = useState('');
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
 
-    const { fields, append, remove } = useFieldArray({ control, name: "competitors" });
+    const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-    useEffect(() => {
-        const fetchAreas = async () => {
-            try {
-                const response = await axios.get("https://willypaz.dev/projects/ohsansi-api/api/areas");
-                setAreas(response.data.areas);
-            } catch (error) {
-                console.error("Error al obtener las áreas:", error);
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const binaryStr = event.target.result;
+            const workbook = XLSX.read(binaryStr, { type: 'binary' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const data = XLSX.utils.sheet_to_json(sheet);
+
+            if (data.length === 0) {
+                setError('El archivo está vacío o mal formado.');
+                return;
             }
-        };
-        fetchAreas();
-    }, []);
 
-    const handleAreaSelect = (competitorIndex, areaId) => {
-        const current = watch(`competitors.${competitorIndex}.selected_areas`) || [];
-        const updated = current.includes(areaId)
-            ? current.filter((id) => id !== areaId)
-            : current.length < 2
-                ? [...current, areaId]
-                : current;
-        setValue(`competitors.${competitorIndex}.selected_areas`, updated);
+            const student = data[0];
+            if (!student.ci || !student.names) {
+                setError('El archivo no contiene los campos necesarios.');
+                return;
+            }
+
+            setRegisterData({
+                ...registerData,
+                competitor: {
+                    ci: Number(student.ci),
+                    ci_expedition: student.ci_expedition || '',
+                    names: student.names || '',
+                    last_names: student.last_names || '',
+                    birthdate: student.birthdate || '',
+                    email: student.email || '',
+                    phone_number: student.phone_number || '',
+                }
+            });
+
+            setFileName(file.name);
+            setError('');
+            setSuccess(true);
+        };
+        reader.readAsBinaryString(file);
     };
 
-    const onSubmit = async (data) => {
-        try {
-            await axios.post(
-                "https://willypaz.dev/projects/ohsansi-api/api/inscriptions",
-                data
-            );
-            setModalSuccess(true);
-            setMessage("¡Inscripción exitosa!");
-            setShowModal(true);
-        } catch (error) {
-            setModalSuccess(false);
-            setMessage("Error al enviar la inscripción. Verifica los datos.");
-            setShowModal(true);
+    const handleNext = () => {
+        if (success) {
+            stepsState.next();
         }
     };
 
-    const handleExcelChange = (e) => {
-        const file = e.target.files[0];
-        setExcelFile(file);
-    };
-
-    const handleExcelSubmit = async () => {
-        if (!excelFile) return;
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-            const base64 = reader.result.split(",")[1];
-            const data = {
-                excel: base64,
-                legal_tutor: watch("legal_tutor"),
-                academic_tutor: watch("academic_tutor"),
-            };
-            try {
-                await axios.post(
-                    "https://willypaz.dev/projects/ohsansi-api/api/inscriptions/excel",
-                    data
-                );
-                setModalSuccess(true);
-                setMessage("¡Excel subido correctamente!");
-                setShowModal(true);
-            } catch (err) {
-                setModalSuccess(false);
-                setMessage("Error al subir el Excel");
-                setShowModal(true);
-            }
-        };
-        reader.readAsDataURL(excelFile);
-    };
-
     return (
-        <>
-            <h2>Formulario de Inscripción</h2>
+        <div className="container d-flex justify-content-center">
+            <div className="card p-4">
+                <span>Paso {stepsState.current} de {stepsState.total}</span>
+                <ProgressBar
+                    now={stepsState.progress * 100}
+                    label={`${Math.round(stepsState.progress * 100)}%`}
+                    animated
+                    striped
+                    variant={"success"}
+                    style={{ height: '1.5rem', fontSize: '0.9rem' }}
+                />
+                <h2 className="mb-3 mt-4">Paso 2: Subir datos del estudiante</h2>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="formulario">
-                <div className="tutores-wrapper">
-                    <div className="tutor-block">
-                        <h3>Tutor Legal</h3>
-                        <input type="number" {...register("legal_tutor.ci", { required: true })} placeholder="CI" />
-                        <input {...register("legal_tutor.ci_expedition", { required: true })} placeholder="Lugar de Expedición" />
-                        <input {...register("legal_tutor.names", { required: true })} placeholder="Nombres" />
-                        <input {...register("legal_tutor.last_names", { required: true })} placeholder="Apellidos" />
-                        <input type="date" {...register("legal_tutor.birthdate", { required: true })} />
-                        <input {...register("legal_tutor.email", { required: true })} placeholder="Email" />
-                        <input type="number" {...register("legal_tutor.phone_number", { required: true })} placeholder="Teléfono" />
-                    </div>
+                <p className="text-muted mb-4">
+                    Descarga la plantilla, complétala y súbela aquí.
+                </p>
 
-                    <div className="tutor-block">
-                        <h3>Tutor Académico</h3>
-                        <input type="number" {...register("academic_tutor.ci", { required: true })} placeholder="CI" />
-                        <input {...register("academic_tutor.ci_expedition", { required: true })} placeholder="Lugar de Expedición" />
-                        <input {...register("academic_tutor.names", { required: true })} placeholder="Nombres" />
-                        <input {...register("academic_tutor.last_names", { required: true })} placeholder="Apellidos" />
-                        <input type="date" {...register("academic_tutor.birthdate", { required: true })} />
-                        <input {...register("academic_tutor.email", { required: true })} placeholder="Email" />
-                        <input type="number" {...register("academic_tutor.phone_number", { required: true })} placeholder="Teléfono" />
-                    </div>
+                <div className="mb-3">
+                    <a
+                        href="../../../../Constants/plantilla_estudiante.xlsx"
+                        download
+                        className="btn btn-outline-primary"
+                    >
+                        Descargar plantilla Excel
+                    </a>
                 </div>
 
+                <div className="mb-3">
+                    <label htmlFor="formFile" className="form-label">Sube tu archivo Excel</label>
+                    <input
+                        className="form-control"
+                        type="file"
+                        accept=".xlsx, .xls"
+                        id="formFile"
+                        onChange={handleFileUpload}
+                    />
+                </div>
 
+                {fileName && <p className="text-success">Archivo cargado: {fileName}</p>}
+                {error && <p className="text-danger">{error}</p>}
 
-                <div className="excel-upload">
-                    <h3>Sube el archivo Excel</h3>
-                    <input type="file" accept=".xlsx,.xls" onChange={handleExcelChange} />
+                <div className="d-flex gap-2">
                     <button
+                        disabled={!stepsState.hasPrev}
                         type="button"
-                        className="submit-btn"
-                        onClick={handleExcelSubmit}
-                        disabled={!excelFile}
+                        className="btn btn-secondary w-50"
+                        onClick={stepsState.prev}
                     >
-                        Enviar Excel
+                        Anterior
+                    </button>
+                    <button
+                        disabled={!stepsState.hasNext || !success}
+                        type="button"
+                        className="btn btn-primary w-50"
+                        onClick={handleNext}
+                    >
+                        Siguiente
                     </button>
                 </div>
-            </form>
-
-            {showModal && (
-                <Modal success={modalSuccess} onClose={() => {
-                    setShowModal(false)
-                    if(modalSuccess){ window.location.reload();}
-                }}>
-                    {message}
-                </Modal>
-            )}
-        </>
+            </div>
+        </div>
     );
 };
-
 export default SecondStep;

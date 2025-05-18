@@ -1,258 +1,238 @@
-// components/Pages/Inscripciones.jsx
-import React, { useState, useEffect } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import React, { useState } from 'react';
+import { useSteps } from 'react-step-builder';
+import { FormControl, ProgressBar, Accordion, Card } from 'react-bootstrap';
+import { Search, Check, X, Plus, Trash } from 'lucide-react';
+import { Button, InputGroup } from "reactstrap";
 import axios from "axios";
-import { Trash2, PlusCircle } from "lucide-react";
-import Modal from "./../Modal/index.jsx";
-import "./../index.scss";
-import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
-import {Dropdown} from "react-bootstrap";
-import {grades, provincies, schools, states} from "../../../../Constants/Provincies.js";
+import { useRegisterContext } from "../../../../Context/RegisterContext.jsx";
 
-const SecondStep = () => {
-    const [showModal, setShowModal] = useState(false);
-    const { registerData, setRegisterData } = useRegisterContext()
-    const [modalSuccess, setModalSuccess] = useState(true);
-    const [message, setMessage] = useState("");
-    const [areas, setAreas] = useState([]);
+const emptyStudent = {
+    found: false,
+    hasBeenQueried: false,
+    name: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    ci: '',
+    ciExp: '',
+    birthDate: '',
+};
 
-    const {
-        register,
-        control,
-        handleSubmit,
-        setValue,
-        watch,
-        formState: { errors },
-    } = useForm({
-        defaultValues: {
-            olympic_id: registerData.olympic_id,
-            competitors: [
-                {
-                    ci: "",
-                    ci_expedition: "",
-                    names: "",
-                    last_names: "",
-                    birthdate: "",
-                    email: "",
-                    phone_number: "",
-                    school_data: {
-                        name: "",
-                        department: "",
-                        province: "",
-                        course: "",
-                    },
-                    selected_areas: [],
-                },
-            ],
-            legal_tutor: {
-                ci: "",
-                ci_expedition: "",
-                names: "",
-                last_names: "",
-                birthdate: "",
-                email: "",
-                phone_number: "",
-            },
-            academic_tutor: {
-                ci: "",
-                ci_expedition: "",
-                names: "",
-                last_names: "",
-                birthdate: "",
-                email: "",
-                phone_number: "",
-            },
-        },
-    });
+export const SecondStep = () => {
+    const stepsState = useSteps();
+    const { registerData, setRegisterData } = useRegisterContext();
+    const [students, setStudents] = useState([ { ...emptyStudent } ]);
 
-    const { fields, append, remove } = useFieldArray({ control, name: "competitors" });
-
-    useEffect(() => {
-        const fetchAreas = async () => {
-            try {
-                const response = await axios.get("https://willypaz.dev/projects/ohsansi-api/api/areas");
-                setAreas(response.data.areas);
-            } catch (error) {
-                console.error("Error al obtener las áreas:", error);
-            }
-        };
-        fetchAreas();
-    }, []);
-
-    const handleAreaSelect = (competitorIndex, areaId) => {
-        const current = watch(`competitors.${competitorIndex}.selected_areas`) || [];
-        const updated = current.includes(areaId)
-            ? current.filter((id) => id !== areaId)
-            : current.length < 2
-                ? [...current, areaId]
-                : current;
-        setValue(`competitors.${competitorIndex}.selected_areas`, updated);
+    const handleStudentChange = (index, field, value) => {
+        const updated = [...students];
+        updated[index][field] = value;
+        setStudents(updated);
     };
 
-    const onSubmit = async (data) => {
+    const validateStudent = (student) => {
+        return student.name.trim() && student.lastName.trim() &&
+            student.email.trim() && student.phone.trim() &&
+            student.ci.trim();
+    };
+
+    const validateAll = () => students.every(validateStudent);
+
+    const onSearchStudent = async (index) => {
+        const ci = students[index].ci;
         try {
-            await axios.post(
-                "https://willypaz.dev/projects/ohsansi-api/api/inscriptions",
-                data
-            );
-            setModalSuccess(true);
-            setMessage("¡Inscripción exitosa!");
-            setShowModal(true);
-        } catch (error) {
-            setModalSuccess(false);
-            setMessage("Error al enviar la inscripción. Verifica los datos.");
-            setShowModal(true);
+            const { data } = await axios.get(`https://willypaz.dev/projects/ohsansi-api/api/search-student/${ci}`);
+            const updated = [...students];
+            updated[index].hasBeenQueried = true;
+
+            if (Object.keys(data).length === 0) {
+                updated[index].found = false;
+            } else {
+                updated[index] = {
+                    ...updated[index],
+                    found: true,
+                    name: data.names,
+                    lastName: data.last_names,
+                    ciExp: data.ci_expedition,
+                    birthDate: data.birthdate,
+                    email: data.email,
+                    phone: data.phone_number,
+                };
+            }
+
+            setStudents(updated);
+        } catch (err) {
+            const updated = [...students];
+            updated[index] = { ...emptyStudent, ci, hasBeenQueried: true, found: false };
+            setStudents(updated);
         }
     };
 
+    const addStudent = () => setStudents([...students, { ...emptyStudent }]);
+    const removeStudent = (index) => {
+        const updated = students.filter((_, i) => i !== index);
+        setStudents(updated);
+    };
+
+    const submit = () => {
+        setRegisterData({
+            ...registerData,
+            competitors: students.map(s => ({
+                ci: Number(s.ci),
+                ci_expedition: s.ciExp,
+                names: s.name,
+                last_names: s.lastName,
+                birthdate: s.birthDate,
+                email: s.email,
+                phone_number: s.phone,
+            }))
+        });
+        stepsState.next();
+    };
+
     return (
-        <>
-            <h2>Formulario de Inscripción para: {registerData.olympic_name}</h2>
+        <div className="container">
+            <div className="card p-4">
+                <span>Paso {stepsState.current} de {stepsState.total}</span>
+                <ProgressBar
+                    now={stepsState.progress * 100}
+                    label={`${Math.round(stepsState.progress * 100)}%`}
+                    animated
+                    striped
+                    variant={"success"}
+                    style={{ height: '1.5rem', fontSize: '0.9rem' }}
+                />
+                <h2 className="mb-3 mt-4">Paso 2: Registro de Estudiantes para la Olimpiada {registerData.olympic_name}</h2>
+                <p className="text-muted mb-4">
+                    Complete los datos de cada estudiante. Puede registrar varios participantes.
+                </p>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="formulario">
-                <div className="tutores-wrapper">
-                    <div className="tutor-block">
-                        <h3>Tutor Legal</h3>
-                        <input type="number" {...register("legal_tutor.ci", { required: true })} placeholder="CI" />
-                        <input {...register("legal_tutor.ci_expedition", { required: true })} placeholder="Lugar de Expedición" />
-                        <input {...register("legal_tutor.names", { required: true })} placeholder="Nombres" />
-                        <input {...register("legal_tutor.last_names", { required: true })} placeholder="Apellidos" />
-                        <input type="date" {...register("legal_tutor.birthdate", { required: true })} />
-                        <input {...register("legal_tutor.email", { required: true })} placeholder="Email" />
-                        <input type="number" {...register("legal_tutor.phone_number", { required: true })} placeholder="Teléfono" />
-                    </div>
+                <Accordion defaultActiveKey="0" alwaysOpen>
+                    {students.map((student, index) => (
+                        <Accordion.Item eventKey={index.toString()} key={index}>
+                            <Accordion.Header>
+                                Estudiante #{index + 1} {student.name && `- ${student.name} ${student.lastName}`}
+                            </Accordion.Header>
+                            <Accordion.Body>
+                                <InputGroup className="mb-3">
+                                    <div className="form-label w-100">Carnet de identidad</div>
+                                    <FormControl
+                                        type="text"
+                                        value={student.ci}
+                                        onChange={e => handleStudentChange(index, 'ci', e.target.value)}
+                                        placeholder="Carnet de identidad"
+                                    />
+                                    <Button onClick={() => onSearchStudent(index)} variant="outline-secondary">
+                                        {student.found ? <Check size={16} /> : <Search size={16} />}
+                                    </Button>
+                                </InputGroup>
 
-                    <div className="tutor-block">
-                        <h3>Tutor Académico (Opcional)</h3>
-                        <input type="number" {...register("academic_tutor.ci", { required: true })} placeholder="CI" />
-                        <input {...register("academic_tutor.ci_expedition", { required: true })} placeholder="Lugar de Expedición" />
-                        <input {...register("academic_tutor.names", { required: true })} placeholder="Nombres" />
-                        <input {...register("academic_tutor.last_names", { required: true })} placeholder="Apellidos" />
-                        <input type="date" {...register("academic_tutor.birthdate", { required: true })} />
-                        <input {...register("academic_tutor.email", { required: true })} placeholder="Email" />
-                        <input type="number" {...register("academic_tutor.phone_number", { required: true })} placeholder="Teléfono" />
+                                {student.hasBeenQueried && !student.found && (
+                                    <p className="text-danger">Carnet no encontrado, ingrese los datos manualmente.</p>
+                                )}
+                                {student.hasBeenQueried && student.found && (
+                                    <p className="text-success">Datos cargados correctamente.</p>
+                                )}
+
+                                <div className="mb-3">
+                                    <label className="form-label">Lugar de Expedición</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={student.ciExp}
+                                        style={{ textTransform: 'uppercase' }}
+                                        onChange={e => handleStudentChange(index, 'ciExp', e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="mb-3">
+                                    <label className="form-label">Nombres</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={student.name}
+                                        style={{ textTransform: 'uppercase' }}
+                                        onChange={e => handleStudentChange(index, 'name', e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="mb-3">
+                                    <label className="form-label">Apellidos</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={student.lastName}
+                                        style={{ textTransform: 'uppercase' }}
+                                        onChange={e => handleStudentChange(index, 'lastName', e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="mb-3">
+                                    <label className="form-label">Fecha de Nacimiento</label>
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        value={student.birthDate}
+                                        onChange={e => handleStudentChange(index, 'birthDate', e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="mb-3">
+                                    <label className="form-label">Correo electrónico</label>
+                                    <input
+                                        type="email"
+                                        className="form-control"
+                                        value={student.email}
+                                        onChange={e => handleStudentChange(index, 'email', e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="mb-3">
+                                    <label className="form-label">Teléfono</label>
+                                    <input
+                                        type="tel"
+                                        className="form-control"
+                                        value={student.phone}
+                                        onChange={e => handleStudentChange(index, 'phone', e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="text-end">
+                                    {students.length > 1 && (
+                                        <Button color="danger" onClick={() => removeStudent(index)}>
+                                            <Trash size={16} /> Eliminar estudiante
+                                        </Button>
+                                    )}
+                                </div>
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    ))}
+                </Accordion>
+
+                <div className="d-flex justify-content-between mt-4">
+                    <Button color="success" onClick={addStudent}>
+                        <Plus size={16} /> Agregar Estudiante
+                    </Button>
+
+                    <div className="d-flex gap-2">
+                        <button
+                            disabled={!stepsState.hasPrev}
+                            className="btn btn-secondary"
+                            onClick={stepsState.prev}
+                        >
+                            Anterior
+                        </button>
+                        <button
+                            className="btn btn-primary"
+                            disabled={!stepsState.hasNext || !validateAll()}
+                            onClick={submit}
+                        >
+                            Siguiente
+                        </button>
                     </div>
                 </div>
-
-
-                <h3>Competidores</h3>
-                {fields.map((field, index) => {
-                    const selected = watch(`competitors.${index}.selected_areas`) || [];
-                    return (
-                        <div key={field.id} className="competidor-card">
-                            <h4>Competidor {index + 1}</h4>
-                            <div className="competidor-grid">
-                                <input type="number" {...register(`competitors.${index}.ci`, { required: true })} placeholder="CI" />
-                                <input {...register(`competitors.${index}.ci_expedition`, { required: true })} placeholder="Lugar de Expedición" />
-                                <input {...register(`competitors.${index}.names`, { required: true })} placeholder="Nombres" />
-                                <input {...register(`competitors.${index}.last_names`, { required: true })} placeholder="Apellidos" />
-                                <input type="date" {...register(`competitors.${index}.birthdate`, { required: true })} />
-                                <input {...register(`competitors.${index}.email`)} placeholder="Email" />
-                                <input type="number" {...register(`competitors.${index}.phone_number`)} placeholder="Teléfono" />
-                                <select {...register(`competitors.${index}.school_data.name`, { required: true })}>
-                                    <option value="">Nombre del Colegio</option>
-                                    {schools.map((school, idx) => (
-                                        <option key={idx} value={school}>
-                                            {school}
-                                        </option>
-                                    ))}
-                                </select>
-                                <select {...register(`competitors.${index}.school_data.department`, { required: true })}>
-                                    <option value="">Selecciona un departamento</option>
-                                    {states.map((state, idx) => (
-                                        <option key={idx} value={state}>
-                                            {state}
-                                        </option>
-                                    ))}
-                                </select>
-                                <select {...register(`competitors.${index}.school_data.province`, { required: true })}>
-                                    <option value="">Selecciona una provincia</option>
-                                    {provincies.map((province, idx) => (
-                                        <option key={idx} value={province}>
-                                            {province}
-                                        </option>
-                                    ))}
-                                </select>
-                                <select {...register(`competitors.${index}.school_data.course`, { required: true })}>
-                                    <option value="">Selecciona un curso</option>
-                                    {grades.map((course, idx) => (
-                                        <option key={idx} value={course}>
-                                            {course}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="areas-selector">
-                                <p>Selecciona 1 o 2 áreas:</p>
-                                <div className="area-list">
-                                    {areas.map((area) => (
-                                        <label key={area.id} className={`area-option ${selected.includes(area.id) ? "selected" : ""}`}>
-                                            <input
-                                                type="checkbox"
-                                                checked={selected.includes(area.id)}
-                                                onChange={() => handleAreaSelect(index, area.id)}
-                                            />
-                                            {area.name}
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <button
-                                type="button"
-                                className="delete-btn"
-                                onClick={() => remove(index)}
-                            >
-                                <Trash2 size={16} /> Eliminar Competidor
-                            </button>
-                        </div>
-                    );
-                })}
-
-                <button
-                    type="button"
-                    onClick={() =>
-                        append({
-                            ci: "",
-                            ci_expedition: "",
-                            names: "",
-                            last_names: "",
-                            birthdate: "",
-                            email: "",
-                            phone_number: "",
-                            school_data: {
-                                name: "",
-                                department: "",
-                                province: "",
-                                course: "",
-                            },
-                            selected_areas: [],
-                        })
-                    }
-                    className="add-btn"
-                >
-                    <PlusCircle size={16} /> Añadir Competidor
-                </button>
-
-
-
-                <button type="submit" className="submit-btn">
-                    Enviar Inscripción
-                </button>
-
-            </form>
-
-            {showModal && (
-                <Modal success={modalSuccess} onClose={() => {
-                    setShowModal(false)
-                    if(modalSuccess){ window.location.reload();}
-                }}>
-                    {message}
-                </Modal>
-            )}
-        </>
+            </div>
+        </div>
     );
 };
 
-export default SecondStep;
+export default SecondStep

@@ -61,7 +61,7 @@ const CreateOlympiad = () => {
         if (!validate()) return;
 
         try {
-            await axios.post('https://willypaz.dev/projects/ohsansi-api/api/olympics', formData);
+            await axios.post('https://willypaz.dev/projects/ohsansi-api/api/olympiads', formData);
             setSuccessMessage('¡Olimpiada registrada correctamente.!');
             setTimeout(() => navigate('/dashboard/olympiad'), 1500);
         } catch (err) {
