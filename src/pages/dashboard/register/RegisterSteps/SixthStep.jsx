@@ -5,6 +5,7 @@ import axios from "axios";
 import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
 import {PDFDownloadLink} from "@react-pdf/renderer";
 import PaymentReceipt from "../../components/PaymentReceipt/index.jsx";
+import {API_URL} from "../../../../Constants/Utils.js";
 
 export const SixthStep = () => {
     const stepsState = useSteps()
@@ -37,7 +38,7 @@ export const SixthStep = () => {
     };
 
     useEffect(() => {
-        axios.get(`https://willypaz.dev/projects/ohsansi-api/api/olimpiadas-categorias/${registerData.olympic_id}/areas-categories`)
+        axios.get(`${API_URL}/api/olimpiadas-categorias/${registerData.olympic_id}/areas-categories`)
             .then(response => {
                 setAreas(response.data);
                 setFilteredAreas(filterAreasByCourse(response.data, registerData.competitor.school_data.course))
@@ -84,7 +85,7 @@ export const SixthStep = () => {
                 responsable: registerData.legal_tutor
             }
             await axios.post(
-                "https://willypaz.dev/projects/ohsansi-api/api/inscriptions",
+                `${API_URL}/api/inscriptions`,
                 data
             );
             setShowReceipt(true)

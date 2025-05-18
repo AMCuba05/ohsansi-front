@@ -5,6 +5,7 @@ import { Search, Check, X } from 'lucide-react';
 import {Button, InputGroup} from "reactstrap";
 import axios from "axios";
 import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
+import {API_URL} from "../../../../Constants/Utils.js";
 
 export const ThirdStep = () => {
     const stepsState = useSteps()
@@ -47,7 +48,7 @@ export const ThirdStep = () => {
     const onSearchTutor = async () => {
         try {
             const {data} = await axios.get(
-                `https://willypaz.dev/projects/ohsansi-api/api/legal-tutor/${ci}`
+                `${API_URL}/api/legal-tutor/${ci}`
             );
             setHasBeenQueried(true)
             const {personal_data} = data

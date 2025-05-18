@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import Modal from "../../register/Modal/index.jsx";
 import "./index.scss";
+import {API_URL} from "../../../../Constants/Utils.js";
 
 const allCourses = [
     "3ro Primaria",
@@ -29,7 +30,7 @@ const AreaCategories = () => {
 
     const fetchCategories = async () => {
         try {
-            const res = await axios.get(`https://willypaz.dev/projects/ohsansi-api/api/area/${areaId}/categories`);
+            const res = await axios.get(`${API_URL}/api/area/${areaId}/categories`);
             setCategories(res.data.categorias);
         } catch (err) {
             console.error("Error fetching categories:", err);
@@ -54,7 +55,7 @@ const AreaCategories = () => {
 
     const handleCreateCategory = async () => {
         try {
-            await axios.post("https://willypaz.dev/projects/ohsansi-api/api/categories", {
+            await axios.post(`${API_URL}/api/categories`, {
                 ...newCategory,
                 area_id: parseInt(areaId)
             });

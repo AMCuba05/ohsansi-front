@@ -12,6 +12,8 @@ import {ThirdStep} from "./RegisterSteps/ThirdStep.jsx";
 import {FouthStep} from "./RegisterSteps/FouthStep.jsx";
 import {FifthStep} from "./RegisterSteps/FifthStep.jsx";
 import {SixthStep} from "./RegisterSteps/SixthStep.jsx";
+import {API_URL} from "../../../Constants/Utils.js";
+import {RecoverSessionStep} from "./RegisterSteps/RecoverSessionStep.jsx";
 
 const Inscripciones = () => {
     const [showModal, setShowModal] = useState(false);
@@ -74,7 +76,7 @@ const Inscripciones = () => {
     useEffect(() => {
         const fetchAreas = async () => {
             try {
-                const response = await axios.get("https://willypaz.dev/projects/ohsansi-api/api/areas");
+                const response = await axios.get(`${API_URL}/api/areas`);
                 setAreas(response.data.areas);
             } catch (error) {
                 console.error("Error al obtener las áreas:", error);
@@ -96,7 +98,7 @@ const Inscripciones = () => {
     const onSubmit = async (data) => {
         try {
             await axios.post(
-                "https://willypaz.dev/projects/ohsansi-api/api/inscriptions",
+                `${API_URL}/api/inscriptions`,
                 data
             );
             setModalSuccess(true);
@@ -126,7 +128,7 @@ const Inscripciones = () => {
             };
             try {
                 await axios.post(
-                    "https://willypaz.dev/projects/ohsansi-api/api/inscriptions/excel",
+                    `${API_URL}/api/inscriptions/excel`,
                     data
                 );
                 setModalSuccess(true);
@@ -146,6 +148,9 @@ const Inscripciones = () => {
             <Steps>
                 <div>
                     <FirstStep/>
+                </div>
+                <div>
+                    <RecoverSessionStep/>
                 </div>
                 <div>
                     <SecondStep/>

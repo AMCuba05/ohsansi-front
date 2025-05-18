@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {API_URL} from "../../../../Constants/Utils.js";
 
 const CreateOlympiad = () => {
     const navigate = useNavigate();
@@ -61,7 +62,7 @@ const CreateOlympiad = () => {
         if (!validate()) return;
 
         try {
-            await axios.post('https://willypaz.dev/projects/ohsansi-api/api/olympics', formData);
+            await axios.post(`${API_URL}/api/olympics`, formData);
             setSuccessMessage('¡Olimpiada registrada correctamente.!');
             setTimeout(() => navigate('/dashboard/olympiad'), 1500);
         } catch (err) {

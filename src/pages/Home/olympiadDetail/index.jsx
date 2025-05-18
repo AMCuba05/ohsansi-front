@@ -3,6 +3,7 @@ import {useNavigate, useParams} from 'react-router-dom';
 import axios from 'axios';
 import {ArrowLeft} from "lucide-react";
 import {Button} from "react-bootstrap";
+import {API_URL} from "../../../Constants/Utils.js";
 
 const OlympiadDetail = () => {
     const { id } = useParams();
@@ -14,11 +15,11 @@ const OlympiadDetail = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const resInfo = await axios.get(`https://willypaz.dev/projects/ohsansi-api/api/olympics/getOlympicInfo/${id}`);
+                const resInfo = await axios.get(`${API_URL}/api/olympics/getOlympicInfo/${id}`);
                 console.log(resInfo.data);
                 setOlympiad(resInfo.data);
 
-                const resAreas = await axios.get(`https://willypaz.dev/projects/ohsansi-api/api/olimpiadas-categorias/${id}/areas-categories`);
+                const resAreas = await axios.get(`${API_URL}/api/olimpiadas-categorias/${id}/areas-categories`);
                 console.log(resAreas.data)
                 setAreas(resAreas.data.areas);
             } catch (err) {

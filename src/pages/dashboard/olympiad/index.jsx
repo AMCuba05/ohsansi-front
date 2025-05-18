@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {API_URL} from "../../../Constants/Utils.js";
 
 const Olympiads = () => {
     const [olympiads, setOlympiads] = useState([]);
@@ -9,7 +10,7 @@ const Olympiads = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get('https://willypaz.dev/projects/ohsansi-api/api/olympics')
+        axios.get(`${API_URL}/api/olympics`)
             .then(response => {
                 setOlympiads(response.data.Olympics);
                 setLoading(false);

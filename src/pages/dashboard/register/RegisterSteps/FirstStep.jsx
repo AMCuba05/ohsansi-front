@@ -3,6 +3,7 @@ import {useSteps} from 'react-step-builder'
 import {Dropdown, ProgressBar, Card, Spinner} from 'react-bootstrap'
 import axios from "axios";
 import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
+import {API_URL} from "../../../../Constants/Utils.js";
 
 export const FirstStep = () => {
     const { registerData, setRegisterData } = useRegisterContext()
@@ -19,9 +20,10 @@ export const FirstStep = () => {
     };
 
     useEffect(() => {
-        axios.get('https://willypaz.dev/projects/ohsansi-api/api/olympics')
+        axios.get(`${API_URL}/api/olympiads`)
             .then(response => {
-                setOlympiads(response.data.Olympics);
+                setOlympiads(response.data.data);
+                console.log(response.data);
                 setLoading(false);
             })
             .catch(error => {

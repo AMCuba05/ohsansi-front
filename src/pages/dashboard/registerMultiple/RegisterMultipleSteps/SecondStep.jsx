@@ -8,6 +8,7 @@ import "./../index.scss";
 import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
 import {Dropdown} from "react-bootstrap";
 import {grades, provincies, schools, states} from "../../../../Constants/Provincies.js";
+import {API_URL} from "../../../../Constants/Utils.js";
 
 const SecondStep = () => {
     const [showModal, setShowModal] = useState(false);
@@ -70,7 +71,7 @@ const SecondStep = () => {
     useEffect(() => {
         const fetchAreas = async () => {
             try {
-                const response = await axios.get("https://willypaz.dev/projects/ohsansi-api/api/areas");
+                const response = await axios.get(`${API_URL}/api/areas`);
                 setAreas(response.data.areas);
             } catch (error) {
                 console.error("Error al obtener las áreas:", error);
@@ -92,7 +93,7 @@ const SecondStep = () => {
     const onSubmit = async (data) => {
         try {
             await axios.post(
-                "https://willypaz.dev/projects/ohsansi-api/api/inscriptions",
+                `${API_URL}/api/inscriptions`,
                 data
             );
             setModalSuccess(true);
