@@ -56,9 +56,9 @@ export const FouthStep = () => {
                 },
             })
             alert("La pre inscripcion se ha realizado con exito")
+            stepsState.next()
         } catch (e) {
-            console.log(e)
-            alert("Ha ocurrido un error en la pre inscripcion")
+            alert(e.response.data.errors.details)
         }
     }
 

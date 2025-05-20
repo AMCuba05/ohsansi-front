@@ -63,7 +63,7 @@ export const SecondStep = () => {
             console.log(data)
             stepsState.next()
         } catch (error) {
-            console.log(error)
+            alert(error.response.data.errors)
         }
     }
 
