@@ -3,6 +3,7 @@ import { Form, Button, Table, Alert, Spinner } from 'react-bootstrap';
 import { ArrowLeft } from 'lucide-react';
 import axios from 'axios';
 import {useNavigate, useParams} from "react-router-dom";
+import {API_URL} from "../../../../Constants/Utils.js";
 
 const OlympiadAreasCategories = () => {
     const { id: olympicId } = useParams();
@@ -23,7 +24,7 @@ const OlympiadAreasCategories = () => {
         const fetchAreas = async () => {
             setLoadingAreas(true);
             try {
-                const response = await axios.get('https://willypaz.dev/projects/ohsansi-api/api/areas');
+                const response = await axios.get(`${API_URL}/api/areas`);
                 setAreas(response.data.areas);
             } catch (error) {
                 console.error('Error al cargar las áreas:', error);
@@ -44,7 +45,7 @@ const OlympiadAreasCategories = () => {
         setLoadingAssociations(true);
         try {
             const response = await axios.get(
-                `https://willypaz.dev/projects/ohsansi-api/api/olimpiadas-categorias/${olympicId}/areas-categories`
+                `${API_URL}/api/olimpiadas-categorias/${olympicId}/areas-categories`
             );
             console.log(response.data.areas)
             setAssociations(response.data.areas); // Se espera que sea un array de áreas con categorías
@@ -62,7 +63,7 @@ const OlympiadAreasCategories = () => {
                 setLoadingCategories(true);
                 try {
                     const response = await axios.get(
-                        `https://willypaz.dev/projects/ohsansi-api/api/area/${selectedArea}/categories`
+                        `${API_URL}/api/area/${selectedArea}/categories`
                     );
                     setCategories(response.data.categorias);
                 } catch (error) {
@@ -88,7 +89,7 @@ const OlympiadAreasCategories = () => {
 
         setSubmitting(true);
         try {
-            await axios.post('https://willypaz.dev/projects/ohsansi-api/api/olimpiadas-categorias', {
+            await axios.post(`${API_URL}/api/olimpiadas-categorias`, {
                 olympic_id: olympicId,
                 area_id: selectedArea,
                 category_id: selectedCategory,

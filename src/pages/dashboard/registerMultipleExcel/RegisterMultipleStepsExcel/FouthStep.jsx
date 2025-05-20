@@ -5,13 +5,11 @@ import { Search, Check, X } from 'lucide-react';
 import {Button, InputGroup} from "reactstrap";
 import axios from "axios";
 import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
-import {API_URL} from "../../../../Constants/Utils.js";
 
 export const FouthStep = () => {
     const stepsState = useSteps()
     const { registerData, setRegisterData } = useRegisterContext()
     const [name, setName] = useState("")
-    const [gender, setGender] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
     const [phone, setPhone] = useState("")
@@ -30,38 +28,21 @@ export const FouthStep = () => {
         return true;
     }
 
-    const storeAccountable = async () => {
-        try {
-            await axios.post(`${API_URL}/api/olympiads/${registerData.olympic_id}/inscriptions/${registerData.inscription_id}/accountables`,
-                {
-                    ci: Number(ci),
-                    ci_expedition: ciExp,
-                    names: name,
-                    last_names: lastName,
-                    birthdate: birthDate,
-                    email: email,
-                    phone_number: phone,
-                    gender: gender
-                })
-            setRegisterData({
-                ...registerData,
-                legal_tutor: {
-                    ci: Number(ci),
-                    ci_expedition: ciExp,
-                    names: name,
-                    last_names: lastName,
-                    birthdate: birthDate,
-                    email: email,
-                    phone_number: phone
-                },
-            })
-            alert("La pre inscripcion se ha realizado con exito")
-            stepsState.next()
-        } catch (e) {
-            alert(e.response.data.errors.details)
-        }
+    const submit = () => {
+        setRegisterData({
+            ...registerData,
+            responsable:{
+                ci: Number(ci),
+                ci_expedition: ciExp,
+                names: name,
+                last_names: lastName,
+                birthdate: birthDate,
+                email: email,
+                phone_number: phone
+            }
+        })
+        stepsState.next()
     }
-
 
     const skip = () => {
         setRegisterData({
@@ -91,14 +72,14 @@ export const FouthStep = () => {
                     variant={"success"}
                     style={{ height: '1.5rem', fontSize: '0.9rem' }}
                 />
-                <h2 className="mb-3 mt-4">Paso 7: Información del responsable de pago</h2>
+                <h2 className="mb-3 mt-4">Paso 4: Información del tutor académico (Opcional)</h2>
                 <p className="text-muted mb-4">
                     Puedes registrar un tutor académico que apoye al estudiante durante la olimpiada. Esta información es opcional
                 </p>
 
                 <form>
                     <InputGroup className="mb-3">
-                        <div className="form-label w-100">Carnet de identidad del responsable</div>
+                        <div className="form-label w-100">Carnet de identidad del tutor</div>
                         <FormControl
                             type="text"
                             placeholder="Ingresa el carnet de identidad"
@@ -115,7 +96,7 @@ export const FouthStep = () => {
                             id="exp"
                             placeholder="Lugar de Expedición"
                             value={ciExp}
-                            style={{textTransform: 'uppercase'}}
+                            style={{ textTransform: 'uppercase' }}
                             onChange={e => setCiExp(e.target.value)}
                         />
                     </div>
@@ -127,7 +108,7 @@ export const FouthStep = () => {
                             id="nombre"
                             placeholder="Nombres"
                             value={name}
-                            style={{textTransform: 'uppercase'}}
+                            style={{ textTransform: 'uppercase' }}
                             onChange={e => setName(e.target.value)}
                         />
                     </div>
@@ -140,7 +121,7 @@ export const FouthStep = () => {
                             id="apellido"
                             placeholder="Apellidos"
                             value={lastName}
-                            style={{textTransform: 'uppercase'}}
+                            style={{ textTransform: 'uppercase' }}
                             onChange={e => setLastName(e.target.value)}
                         />
                     </div>
@@ -179,19 +160,6 @@ export const FouthStep = () => {
                             onChange={e => setPhone(e.target.value)}
                         />
                     </div>
-                    <div className="mb-3">
-                        <label htmlFor="genero" className="form-label">Género</label>
-                        <select
-                            className="form-select"
-                            id="genero"
-                            value={gender}
-                            onChange={e => setGender(e.target.value)}
-                        >
-                            <option value="">Selecciona una opción</option>
-                            <option value="M">Masculino</option>
-                            <option value="F">Femenino</option>
-                        </select>
-                    </div>
 
 
                     <div className="d-flex gap-2">
@@ -204,14 +172,21 @@ export const FouthStep = () => {
                             Anterior
                         </button>
                         <button
-                            disabled={ !validate()}
-                            type="button"
+                            disabled={!stepsState.hasNext || !validate()}
+                            type="submit"
                             className="btn btn-primary w-50"
-                            onClick={async () => await storeAccountable()}
+                            onClick={submit}
                         >
                             Siguiente
                         </button>
                     </div>
+                    <button
+                        type="submit"
+                        className="btn btn-link w-100"
+                        onClick={skip}
+                    >
+                        Omitir
+                    </button>
                 </form>
             </div>
         </div>

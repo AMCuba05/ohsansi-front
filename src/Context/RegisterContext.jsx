@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState } from 'react';
 const initialRegisterData = {
     olympic_id: null,
     olympic_name: "",
+    inscription_id: null,
     legal_tutor: {
         ci: null,
         ci_expedition: "",
@@ -28,6 +29,7 @@ const initialRegisterData = {
         last_names: "",
         birthdate: "",
         email: "",
+        gender: "",
         phone_number: "",
         school_data: {
             name: "",

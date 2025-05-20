@@ -9,6 +9,7 @@ const Sidebar = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [inscripcionesOpen, setInscripcionesOpen] = useState(false);
     const [olympiadOpen, setOlympiadOpen] = useState(false);
+    const [recordsOpen, setRecordsOpen] = useState(false);
 
     const handleLogout = () => {
         navigate("/");
@@ -46,6 +47,9 @@ const Sidebar = () => {
                         <NavLink to="inscripcion-excel" className={({ isActive }) => isActive ? 'logout-button active' : 'logout-button'}>
                             {!collapsed && <span className={"sidebar-span"}>Inscripción Múltiple (Importar Excel)</span>}
                         </NavLink>
+                        <NavLink to="payments" className={({ isActive }) => isActive ? 'logout-button active' : 'logout-button'}>
+                            {!collapsed && <span className={"sidebar-span"}>Completar Pago de Inscripción</span>}
+                        </NavLink>
 
 
                     </div>
@@ -69,6 +73,27 @@ const Sidebar = () => {
                         <NavLink to="createOlympiad"
                                  className={({isActive}) => isActive ? 'logout-button active' : 'logout-button'}>
                             {!collapsed && <span className={"sidebar-span"}>Crear Olimpiada</span>}
+                        </NavLink>
+                    </div>
+                )}
+                <button
+                    className={`logout-button ${recordsOpen ? 'active' : ''}`}
+                    onClick={() => setRecordsOpen(!recordsOpen)}
+                >
+                    <Newspaper size={18}/> {!collapsed && <span>Registros</span>}
+                    {!collapsed && (recordsOpen ? <ChevronDown size={14} style={{marginLeft: 'auto'}}/> :
+                        <ChevronRight size={14} style={{marginLeft: 'auto'}}/>)}
+                </button>
+
+                {recordsOpen && (
+                    <div className="submenu">
+                        <NavLink to="listInscriptions"
+                                 className={({isActive}) => isActive ? 'logout-button active' : 'logout-button'}>
+                            {!collapsed && <span className={"sidebar-span"}>Estados de inscripcion</span>}
+                        </NavLink>
+                        <NavLink to="records"
+                                 className={({isActive}) => isActive ? 'logout-button active' : 'logout-button'}>
+                            {!collapsed && <span className={"sidebar-span"}>Reporte de inscritos</span>}
                         </NavLink>
                     </div>
                 )}
