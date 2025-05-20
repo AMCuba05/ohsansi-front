@@ -14,6 +14,7 @@ import {FifthStep} from "./RegisterSteps/FifthStep.jsx";
 import {SixthStep} from "./RegisterSteps/SixthStep.jsx";
 import {API_URL} from "../../../Constants/Utils.js";
 import {RecoverSessionStep} from "./RegisterSteps/RecoverSessionStep.jsx";
+import {LastStep} from "./RegisterSteps/LastStep.jsx";
 
 const Inscripciones = () => {
     const [showModal, setShowModal] = useState(false);
@@ -159,13 +160,16 @@ const Inscripciones = () => {
                     <ThirdStep/>
                 </div>
                 <div>
-                    <FouthStep/>
-                </div>
-                <div>
                     <FifthStep/>
                 </div>
                 <div>
                     <SixthStep/>
+                </div>
+                <div>
+                    <FouthStep/>
+                </div>
+                <div>
+                    <LastStep/>
                 </div>
             </Steps>
         </div>

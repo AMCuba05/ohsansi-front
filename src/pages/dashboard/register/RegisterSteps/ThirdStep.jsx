@@ -12,6 +12,7 @@ export const ThirdStep = () => {
     const [found, setFound] = useState(false)
     const { registerData, setRegisterData } = useRegisterContext()
     const [hasBeenQueried, setHasBeenQueried] = useState(false)
+    const [gender, setGender] = useState("")
     const [name, setName] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
@@ -43,6 +44,37 @@ export const ThirdStep = () => {
             },
         })
         stepsState.next()
+    }
+
+    const storeTutor = async () => {
+        try {
+            await axios.post(`${API_URL}/api/olympiads/${registerData.olympic_id}/inscriptions/${registerData.inscription_id}/tutors`,
+                {
+                    ci: Number(ci),
+                    ci_expedition: ciExp,
+                    names: name,
+                    last_names: lastName,
+                    birthdate: birthDate,
+                    email: email,
+                    phone_number: phone,
+                    gender: gender
+                })
+            setRegisterData({
+                ...registerData,
+                legal_tutor: {
+                    ci: Number(ci),
+                    ci_expedition: ciExp,
+                    names: name,
+                    last_names: lastName,
+                    birthdate: birthDate,
+                    email: email,
+                    phone_number: phone
+                },
+            })
+            stepsState.next()
+        } catch (e) {
+            alert(e.response.data.errors.details)
+        }
     }
 
     const onSearchTutor = async () => {
@@ -87,7 +119,7 @@ export const ThirdStep = () => {
                     variant={"success"}
                     style={{ height: '1.5rem', fontSize: '0.9rem' }}
                 />
-                <h2 className="mb-3 mt-4">Paso 3: Información del tutor legal o apoderado</h2>
+                <h2 className="mb-3 mt-4">Paso 4: Información del tutor legal o apoderado</h2>
                 <p className="text-muted mb-4">
                     Por favor, ingresa los datos del tutor legal del estudiante para completar su inscripción en la olimpiada. Esta información es necesaria para validar el consentimiento y garantizar la autorización correspondiente.
                 </p>
@@ -104,91 +136,97 @@ export const ThirdStep = () => {
                         />
                         <Button onClick={onSearchTutor} variant="outline-secondary">
                             {
-                                found ? <Check size={16} /> : <Search size={16} />
+                                found ? <Check size={16}/> : <Search size={16}/>
                             }
                         </Button>
                     </InputGroup>
-                    {hasBeenQueried && !found ? <p className="text-danger">Carnet no encontrado, ingresa los datos manualmente</p> : null}
-                    {hasBeenQueried && found ?  <p className="text-success">Datos cargados correctamente.</p> : null}
 
-                    {
-                        hasBeenQueried ?
-                            <>
-                                <div className="mb-3">
-                                    <label htmlFor="exp" className="form-label">Lugar de Expedición</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        id="exp"
-                                        placeholder="Lugar de Expedición"
-                                        value={ciExp}
-                                        style={{ textTransform: 'uppercase' }}
-                                        onChange={e => setCiExp(e.target.value)}
-                                    />
-                                </div>
+                    <div className="mb-3">
+                        <label htmlFor="exp" className="form-label">Lugar de Expedición</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="exp"
+                            placeholder="Lugar de Expedición"
+                            value={ciExp}
+                            style={{textTransform: 'uppercase'}}
+                            onChange={e => setCiExp(e.target.value)}
+                        />
+                    </div>
 
-                                <div className="mb-3">
-                                    <label htmlFor="nombre" className="form-label">Nombres</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        id="nombre"
-                                        placeholder="Nombres"
-                                        value={name}
-                                        style={{ textTransform: 'uppercase' }}
-                                        onChange={e => setName(e.target.value)}
-                                    />
-                                </div>
+                    <div className="mb-3">
+                        <label htmlFor="nombre" className="form-label">Nombres</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="nombre"
+                            placeholder="Nombres"
+                            value={name}
+                            style={{textTransform: 'uppercase'}}
+                            onChange={e => setName(e.target.value)}
+                        />
+                    </div>
 
-                                <div className="mb-3">
-                                    <label htmlFor="apellido" className="form-label">Apellidos</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        id="apellido"
-                                        placeholder="Apellidos"
-                                        value={lastName}
-                                        style={{ textTransform: 'uppercase' }}
-                                        onChange={e => setLastName(e.target.value)}
-                                    />
-                                </div>
+                    <div className="mb-3">
+                        <label htmlFor="apellido" className="form-label">Apellidos</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="apellido"
+                            placeholder="Apellidos"
+                            value={lastName}
+                            style={{textTransform: 'uppercase'}}
+                            onChange={e => setLastName(e.target.value)}
+                        />
+                    </div>
 
-                                <div className="mb-3">
-                                    <label htmlFor="fechaNacimiento" className="form-label">Fecha de Nacimiento</label>
-                                    <input
-                                        type="date"
-                                        className="form-control"
-                                        id="fechaNacimiento"
-                                        value={birthDate}
-                                        onChange={e => setBirthDate(e.target.value)}
-                                    />
-                                </div>
+                    <div className="mb-3">
+                        <label htmlFor="fechaNacimiento" className="form-label">Fecha de Nacimiento</label>
+                        <input
+                            type="date"
+                            className="form-control"
+                            id="fechaNacimiento"
+                            value={birthDate}
+                            onChange={e => setBirthDate(e.target.value)}
+                        />
+                    </div>
 
-                                <div className="mb-3">
-                                    <label htmlFor="correo" className="form-label">Correo electrónico</label>
-                                    <input
-                                        type="email"
-                                        className="form-control"
-                                        id="correo"
-                                        placeholder="ejemplo@correo.com"
-                                        value={email}
-                                        onChange={e => setEmail(e.target.value)}
-                                    />
-                                </div>
+                    <div className="mb-3">
+                        <label htmlFor="correo" className="form-label">Correo electrónico</label>
+                        <input
+                            type="email"
+                            className="form-control"
+                            id="correo"
+                            placeholder="ejemplo@correo.com"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                        />
+                    </div>
 
-                                <div className="mb-3">
-                                    <label htmlFor="telefono" className="form-label">Teléfono</label>
-                                    <input
-                                        type="tel"
-                                        className="form-control"
-                                        id="telefono"
-                                        placeholder="+591 70000000"
-                                        value={phone}
-                                        onChange={e => setPhone(e.target.value)}
-                                    />
-                                </div>
-                            </> : null
-                    }
+                    <div className="mb-3">
+                        <label htmlFor="telefono" className="form-label">Teléfono</label>
+                        <input
+                            type="tel"
+                            className="form-control"
+                            id="telefono"
+                            placeholder="+591 70000000"
+                            value={phone}
+                            onChange={e => setPhone(e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="genero" className="form-label">Género</label>
+                        <select
+                            className="form-select"
+                            id="genero"
+                            value={gender}
+                            onChange={e => setGender(e.target.value)}
+                        >
+                            <option value="">Selecciona una opción</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                        </select>
+                    </div>
 
                     <div className="d-flex gap-2">
                         <button
@@ -201,9 +239,9 @@ export const ThirdStep = () => {
                         </button>
                         <button
                             disabled={!stepsState.hasNext || !validate()}
-                            type="submit"
+                            type="button"
                             className="btn btn-primary w-50"
-                            onClick={submit}
+                            onClick={async () => await storeTutor()}
                         >
                             Siguiente
                         </button>

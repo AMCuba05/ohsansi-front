@@ -8,7 +8,7 @@ import PaymentReceipt from '../../components/PaymentReceipt/index.jsx';
 import { API_URL } from '../../../../Constants/Utils.js';
 import {AcademicTutor} from "../../components/AcademicTutor/index.jsx";
 
-export const SixthStep = () => {
+export const LastStep = () => {
     const stepsState = useSteps();
     const { registerData } = useRegisterContext();
     const [areas, setAreas] = useState([]);
@@ -134,100 +134,20 @@ export const SixthStep = () => {
                     animated
                     striped
                     variant="success"
-                    style={{ height: '1.5rem', fontSize: '0.9rem' }}
+                    style={{height: '1.5rem', fontSize: '0.9rem'}}
                 />
-                <h2 className="mb-3 mt-4">Paso 6: Selecciona hasta 2 Categorías</h2>
+                <h2 className="mb-3 mt-4">Paso 8: Ya puedes descargar la boleta de pago</h2>
                 <p className="text-muted mb-4">
-                    Puedes elegir una o dos categorías según el perfil del estudiante. Estas categorías
-                    definirán las áreas temáticas en las que participará durante la olimpiada. Asegúrate de que
-                    las selecciones sean apropiadas para su nivel educativo.
+                    Presenta esta boleta de pagos en las cajas facultativas de la universidad, siempre puedes regresar a est pantalla con los datos del responsable del pago
                 </p>
-
-                <Form>
-                    <h5>Selecciona hasta 2 áreas</h5>
-                    {loading ? (
-                        <Spinner animation="border" />
-                    ) : error ? (
-                        <Alert variant="danger">{error}</Alert>
-                    ) : filteredAreas.length === 0 ? (
-                        <Alert variant="warning">No areas available for the selected course.</Alert>
-                    ) : (
-                        filteredAreas.map((area) => (
-                            <div key={area.id} className="mb-3">
-                                <Form.Check
-                                    type="checkbox"
-                                    label={area.name || 'Unnamed Area'}
-                                    checked={seleccionadas.includes(area.id)}
-                                    onChange={() => handleCheckArea(area.id)}
-                                    disabled={!seleccionadas.includes(area.id) && seleccionadas.length >= 2}
-                                />
-                                {seleccionadas.includes(area.id) && (
-                                    <div className="ms-4 mt-2">
-                                        <h6>Categorías disponibles:</h6>
-                                        {area.olympiad_categories?.length > 0 ? (
-                                            area.olympiad_categories.map((category) => (
-                                                <Form.Check
-                                                    key={category.id}
-                                                    type="checkbox"
-                                                    label={category.name || 'Unnamed Category'}
-                                                    checked={categorias.includes(category.id)}
-                                                    onChange={() => handleCheckCategory(category.id, area.id)}
-                                                    disabled={
-                                                        !categorias.includes(category.id) &&
-                                                        categorias.length >= seleccionadas.length
-                                                    }
-                                                />
-                                            ))
-
-                                        ) : (
-                                            <p>No categories available for this area.</p>
-                                        )}
-                                        <AcademicTutor
-                                            academicTutorData={academicTutorData}
-                                            setAcademicTutorData={setAcademicTutorData}
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                        ))
-                    )}
-
-                    {seleccionadas.length === 2 && (
-                        <Alert variant="info" className="mt-3">
-                            Ya seleccionaste 2 áreas.
-                        </Alert>
-                    )}
-
-                    <div className="d-flex gap-2 mt-4">
-                        <button
-                            disabled={!stepsState.hasPrev}
-                            type="button"
-                            className="btn btn-secondary w-50"
-                            onClick={stepsState.prev}
-                        >
-                            Anterior
-                        </button>
-                        <button
-                            disabled={seleccionadas.length === 0 || categorias.length === 0}
-                            type="button"
-                            className="btn btn-primary w-50"
-                            onClick={submitTest}
-                        >
-                            Completar
-                        </button>
-                    </div>
-
-                    {showReceipt && (
-                        <div className="mt-3">
-                            <PDFDownloadLink
-                                document={<PaymentReceipt data={boletaData} />}
-                                fileName="boleta_pago.pdf"
-                            >
-                                {({ loading }) => (loading ? 'Generando PDF...' : 'Descargar Boleta')}
-                            </PDFDownloadLink>
-                        </div>
-                    )}
-                </Form>
+                <div className="mt-3">
+                    <PDFDownloadLink
+                        document={<PaymentReceipt data={boletaData}/>}
+                        fileName="boleta_pago.pdf"
+                    >
+                        {({loading}) => (loading ? 'Generando PDF...' : 'Descargar Boleta de pago')}
+                    </PDFDownloadLink>
+                </div>
             </div>
         </div>
     );

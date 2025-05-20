@@ -52,7 +52,11 @@ export const RecoverSessionStep = () => {
                 setEmail(data.email)
                 setPhone(data.phone_number)
             }
-            stepsState.next()
+            if (data.data.is_accountable) {
+                stepsState.jump(8)
+            } else {
+                stepsState.next()
+            }
         } catch (error) {
             setHasBeenQueried(true)
             setFound(false)
