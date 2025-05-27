@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { ArrowLeft } from "lucide-react";
+import {API_URL} from "../../../../Constants/Utils.js";
 
 const PublishOlympiad = () => {
     const { id: olympicId } = useParams();
@@ -79,7 +80,7 @@ const PublishOlympiad = () => {
 
         setSubmitting(true);
         try {
-            await axios.patch(`https://willypaz.dev/projects/ohsansi-api/api/olympics/${olympicId}/publish`, {
+            await axios.patch(`${API_URL}/api/olympics/${olympicId}/publish`, {
                 Title: formData.title,
                 Description: formData.description,
                 Price: parseFloat(formData.price),

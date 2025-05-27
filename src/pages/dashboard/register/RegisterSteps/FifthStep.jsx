@@ -4,6 +4,7 @@ import {Dropdown, ProgressBar, Form, Spinner} from 'react-bootstrap'
 import axios from "axios";
 import {grades, provincies, schools, states} from "../../../../Constants/Provincies.js";
 import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
+import {API_URL} from "../../../../Constants/Utils.js";
 
 export const FifthStep = () => {
     const stepsState = useSteps()
@@ -11,7 +12,7 @@ export const FifthStep = () => {
     const [found, setFound] = useState(false)
     const [hasBeenQueried, setHasBeenQueried] = useState(false)
     const [olympiads, setOlympiads] = useState()
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
 
     const [selected, setSelected] = useState(null);
     const [selectedState, setSelectedState] = useState(null);
@@ -50,17 +51,31 @@ export const FifthStep = () => {
         stepsState.next()
     }
 
-    useEffect(() => {
-        axios.get('https://willypaz.dev/projects/ohsansi-api/api/olympiads')
-            .then(response => {
-                setOlympiads(response.data.Olympics);
-                setLoading(false);
+    const storeSchoolData = async () => {
+        try {
+            await axios.post(`${API_URL}/api/olympiads/${registerData.olympic_id}/inscriptions/${registerData.inscription_id}/schools`, {
+                name: selectedSchool,
+                department: selectedState,
+                province: selectedProvince,
+                course: selected
             })
-            .catch(error => {
-                console.error('Error al obtener las olimpiadas:', error);
-                setLoading(false);
-            });
-    }, []);
+            setRegisterData({
+                ...registerData,
+                competitor: {
+                    ...registerData.competitor,
+                    school_data: {
+                        name: selectedSchool,
+                        department: selectedState,
+                        province: selectedProvince,
+                        course: selected
+                    },
+                }
+            })
+            stepsState.next()
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
     function validate() {
         if (selected == null) return false;
@@ -194,9 +209,9 @@ export const FifthStep = () => {
                         </button>
                         <button
                             disabled={!stepsState.hasNext || !validate()}
-                            type="submit"
+                            type="button"
                             className="btn btn-primary w-50"
-                            onClick={submit}
+                            onClick={async () => await storeSchoolData()}
                         >
                             Siguiente
                         </button>

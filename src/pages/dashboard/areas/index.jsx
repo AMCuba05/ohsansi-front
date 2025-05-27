@@ -12,6 +12,7 @@ import {
     Input,
     Table,
 } from "reactstrap";
+import {API_URL} from "../../../Constants/Utils.js";
 
 const AreasComponent = () => {
     const [areas, setAreas] = useState([]);
@@ -25,7 +26,7 @@ const AreasComponent = () => {
 
     const fetchAreas = async () => {
         try {
-            const response = await axios.get("https://willypaz.dev/projects/ohsansi-api/api/areas");
+            const response = await axios.get(`${API_URL}/api/areas`);
             setAreas(response.data.areas);
         } catch (error) {
             console.error("Error al obtener las áreas:", error);
@@ -42,7 +43,7 @@ const AreasComponent = () => {
         }
 
         try {
-            await axios.post("https://willypaz.dev/projects/ohsansi-api/api/areas", newArea);
+            await axios.post(`${API_URL}/api/areas`, newArea);
             setFormMessage({ type: "success", text: "¡Área creada con éxito!" });
             fetchAreas();
             setNewArea({ name: "", description: ""});

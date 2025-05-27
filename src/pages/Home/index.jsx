@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import {API_URL} from "../../Constants/Utils.js";
 
 const Home = () => {
     const [olympiads, setOlympiads] = useState([]);
@@ -10,7 +11,7 @@ const Home = () => {
     useEffect(() => {
         const fetchOlympiads = async () => {
             try {
-                const res = await axios.get('https://willypaz.dev/projects/ohsansi-api/api/olympiads');
+                const res = await axios.get(`${API_URL}/api/olympics`);
                 console.log(res);
                 const filtered = res.data.Olympics.filter(o => o.status === true || o.status ==='Publico');
                 setOlympiads(filtered);
