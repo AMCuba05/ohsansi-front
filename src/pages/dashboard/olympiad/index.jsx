@@ -40,12 +40,15 @@ const Olympiads = () => {
                                 <Link to={`/dashboard/olympiad/${olympiad.id}/associate`} className="btn btn-sm btn-outline-secondary">
                                     Asociar Áreas/Categorías
                                 </Link>
-                                {
-
+                                {olympiad.areas.length > 0 ?
                                     <Link to={`/dashboard/olympiad/${olympiad.id}/publish`} className="btn btn-sm btn-outline-success">
                                         Publicar Olimpiada
-                                    </Link>
+                                    </Link> :
+                                    null
                                 }
+                                <Link to={`/dashboard/olympiad/${olympiad.id}/edit`} className="btn btn-sm btn-outline-info">
+                                    Editar Precio Olimpiada
+                                </Link>
                             </div>
                         </div>
                     ))}

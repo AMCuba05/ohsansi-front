@@ -28,7 +28,7 @@ const PublishOlympiad = () => {
     useEffect(() => {
         const fetchOlympiadData = async () => {
             try {
-                const res = await axios.get(`${API_URL}/api/olympics/getOlympicInfo/${olympicId}`);
+                const res = await axios.get(`https://willypaz.dev/projects/ohsansi-api/api/olympiads/getOlympicInfo/${olympicId}`);
                 const data = res.data;
                 setOlympiadData(data);
                 setFormData({
