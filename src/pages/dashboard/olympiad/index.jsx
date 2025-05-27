@@ -11,7 +11,7 @@ const Olympiads = () => {
 
     console.log(olympiads)
     useEffect(() => {
-        axios.get(`${API_URL}/api/olympics`)
+        axios.get(`https://willypaz.dev/projects/ohsansi-api/api/olympiads`)
             .then(response => {
                 setOlympiads(response.data.data);
                 setLoading(false);
