@@ -17,6 +17,7 @@ import OlympiadDetail from "./pages/Home/olympiadDetail/index.jsx";
 import Records from "./pages/dashboard/records/index.jsx";
 import ListOfInscriptions from "./pages/dashboard/listOfInscriptions/index.jsx";
 import Payment from "./pages/dashboard/payment/index.jsx";
+import EditOlympiad from "./pages/dashboard/olympiad/editOlympiad/index.jsx";
 
 function App() {
     return (
@@ -39,6 +40,7 @@ function App() {
                     <Route path="createOlympiad" element={<CreateOlympiad/>} />
                     <Route path="olympiad/:id/associate" element={<OlympiadAreasCategories/>} />
                     <Route path="olympiad/:id/publish" element={<PublishOlympiad/>} />
+                    <Route path="olympiad/:id/edit" element={<EditOlympiad/>} />
                 </Route>
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

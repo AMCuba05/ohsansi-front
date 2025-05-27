@@ -9,14 +9,12 @@ const ListOfInscriptions = () => {
     const [loading, setLoading] = useState(false);
     const [totals, setTotals] = useState({ paid: 0, pending: 0 });
 
-    // Paginación
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const fetchInscriptions = async () => {
         setLoading(true);
         try {
             const response = await axios.get('https://willypaz.dev/projects/ohsansi-api/api/inscriptions');
-            console.log(response.data)
             const data = response.data || [];
             setInscriptions(data);
             setFilteredInscriptions(data);
@@ -32,8 +30,10 @@ const ListOfInscriptions = () => {
         let pending = 0;
 
         data.forEach(item => {
-            const hasPaid = item.inscription?.selected_areas?.some(area => area.paid_at);
-            if (hasPaid) paid++;
+            const areas = item.inscription?.selected_areas || [];
+            const hasPaidAll = areas.length > 0 && areas.every(area => area.paid_at !== null);
+
+            if (hasPaidAll) paid++;
             else pending++;
         });
 
