@@ -1,0 +1,247 @@
+.home-container {
+    font-family: 'Poppins', sans-serif;
+    background-color: #FFFFFF;
+}
+
+.intro-section {
+    background-color: #F8F9FA;
+    border-radius: 10px;
+    padding: 20px 0;
+}
+
+.hero-section {
+    background: linear-gradient(90deg, rgba(200, 16, 46, 0.8), rgba(0, 48, 135, 0.8)), url('/images/hero.jpg');
+    background-size: cover;
+    background-position: center;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.olympiad-card {
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    cursor: pointer;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #FFFFFF;
+    animation: float 3s ease-in-out infinite;
+}
+
+.olympiad-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25) !important;
+}
+
+.olympiad-card .card-img-top {
+    background: #C8102E;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.objectives-section {
+    border-radius: 15px;
+}
+
+.objective-card {
+    border: 2px solid #003087;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.objective-card:hover {
+    transform: scale(1.05);
+}
+
+.gallery-section {
+    border-radius: 15px;
+}
+
+.custom-carousel {
+    position: relative;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.carousel-wrapper {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.carousel-slide {
+    flex: 0 0 100%;
+    display: none;
+}
+
+.carousel-slide.active {
+    display: block;
+}
+
+.carousel-slide img {
+    max-height: 500px;
+    object-fit: cover;
+    border: 3px solid #FFFFFF;
+}
+
+.carousel-caption {
+    background: rgba(0, 48, 135, 0.7);
+    border-radius: 5px;
+    color: #FFFFFF;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 48, 135, 0.5);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    background-color: rgba(0, 48, 135, 0.8);
+}
+
+.carousel-control-prev {
+    left: 10px;
+}
+
+.carousel-control-next {
+    right: 10px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.carousel-control-prev-icon {
+    background-image: url('data:image/svg+xml;charset=UTF8,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="%23fff" viewBox="0 0 8 8"%3E%3Cpath d="M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z"/%3E%3C/svg%3E');
+}
+
+.carousel-control-next-icon {
+    background-image: url('data:image/svg+xml;charset=UTF8,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="%23fff" viewBox="0 0 8 8"%3E%3Cpath d="M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z"/%3E%3C/svg%3E');
+}
+
+.testimonials-section {
+    background-color: #F8F9FA;
+    border-radius: 15px;
+}
+
+.testimonial-card {
+    border: 2px solid #C8102E;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.testimonial-card:hover {
+    transform: scale(1.05);
+}
+
+.faq-section {
+    border-radius: 15px;
+}
+
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    margin-bottom: 10px;
+    border: 1px solid #003087;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.faq-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #FFFFFF;
+    color: #003087;
+    font-weight: 600;
+    text-align: left;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.faq-button:hover {
+    background-color: #F8F9FA;
+}
+
+.faq-button.active {
+    background-color: #C8102E;
+    color: #FFFFFF;
+}
+
+.faq-content {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 15px;
+    background-color: #FFFFFF;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.faq-content.show {
+    max-height: 200px;
+    padding: 15px;
+}
+
+.faq-content p {
+    margin: 0;
+    color: #333;
+}
+
+.info-section {
+    border-radius: 15px;
+    background-color: #F8F9FA;
+}
+
+.cta-section {
+    background: linear-gradient(90deg, #C8102E, #003087);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary-home {
+    background-color: #C8102E;
+    border: none;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary-home:hover {
+    background-color: #A00D24;
+}
+
+.btn-outline-primary {
+    border-color: #003087;
+    color: #003087;
+}
+
+.btn-outline-primary:hover {
+    background-color: #FFFFFF;
+    color: #C8102E;
+}
+
+.text-primary {
+    color: #003087 !important;
+}
