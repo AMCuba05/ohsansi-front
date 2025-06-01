@@ -11,9 +11,9 @@ const Home = () => {
     useEffect(() => {
         const fetchOlympiads = async () => {
             try {
-                const res = await axios.get(`${API_URL}/api/olympics`);
+                const res = await axios.get(`${API_URL}/api/olympiads`);
                 console.log(res);
-                const filtered = res.data.Olympics.filter(o => o.status === true || o.status ==='Publico');
+                const filtered = res.data.data.filter(o => o.status === true || o.status ==='published');
                 setOlympiads(filtered);
             } catch (err) {
                 console.error('Error al cargar las olimpiadas', err);
@@ -25,7 +25,7 @@ const Home = () => {
     }, []);
 
     const handleClick = (id) => {
-        navigate(`/olympiad/${id}`);
+        navigate(`/dashboard/Home/olympiad/${id}/info`);
     };
 
     return (

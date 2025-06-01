@@ -9,7 +9,7 @@ const DashboardLayout = () => {
 
     useEffect(() => {
         if (location.pathname === "/dashboard") {
-            navigate("/dashboard/inscripcion-sencilla", { replace: true });
+            navigate("/dashboard/Home", { replace: true });
         }
     }, [location, navigate]);
 

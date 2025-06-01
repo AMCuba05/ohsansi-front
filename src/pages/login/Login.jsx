@@ -1,20 +1,40 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./Login.scss";
 
 const Login = () => {
     const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState("");
+
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm();
 
-    const onSubmit = (data) => {
-        console.log(data);
-        navigate("/dashboard");
+    const onSubmit = async (data) => {
+        try {
+            const response = await axios.post("https://willypaz.dev/projects/ohsansi-api/api/login", {
+                email: data.email,
+                password: data.password,
+            });
+
+            const { token, user } = response.data;
+
+            // Guarda el token (puedes usar sessionStorage si prefieres)
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(user));
+
+            navigate("/dashboard");
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
+                setErrorMessage("Credenciales inválidas");
+            } else {
+                setErrorMessage("Ocurrió un error inesperado. Intenta de nuevo.");
+            }
+        }
     };
 
     return (
@@ -22,6 +42,7 @@ const Login = () => {
             <div className="login-card">
                 <h2 className="login-title">Iniciar Sesión</h2>
                 <form onSubmit={handleSubmit(onSubmit)} className="login-form">
+                    {errorMessage && <p className="error-text">{errorMessage}</p>}
                     <div className="form-group">
                         <label htmlFor="email">Correo Electrónico</label>
                         <input

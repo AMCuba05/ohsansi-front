@@ -5,13 +5,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css'
 import App from './App.jsx'
 import {RegisterProvider} from "./Context/RegisterContext.jsx";
+import {AuthProvider} from "./Context/AuthContext.jsx";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
       <RegisterProvider>
-          <StepsProvider>
-              <App />
-          </StepsProvider>
+          <AuthProvider>
+              <StepsProvider>
+                  <App />
+              </StepsProvider>
+          </AuthProvider>
       </RegisterProvider>
   </StrictMode>,
 )
