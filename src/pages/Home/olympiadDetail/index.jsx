@@ -16,6 +16,7 @@ const OlympiadDetail = () => {
         const fetchData = async () => {
             try {
                 const resInfo = await axios.get(`${API_URL}/api/olympiads/getOlympicInfo/${id}`);
+                console.log(resInfo.data);
                 setOlympiad(resInfo.data);
 
                 const resAreas = await axios.get(`${API_URL}/api/olimpiadas-categorias/${id}/areas-categories`);
