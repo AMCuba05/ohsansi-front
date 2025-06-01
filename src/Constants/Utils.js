@@ -1,1 +1,1 @@
-export const API_URL = "https://ohsansi.publicvm.com"
+export const API_URL = "https://willypaz.dev/projects/ohsansi-api"

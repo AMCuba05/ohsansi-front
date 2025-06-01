@@ -15,8 +15,7 @@ const OlympiadDetail = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const resInfo = await axios.get(`${API_URL}/api/olympics/getOlympicInfo/${id}`);
-                console.log(resInfo.data);
+                const resInfo = await axios.get(`${API_URL}/api/olympiads/getOlympicInfo/${id}`);
                 setOlympiad(resInfo.data);
 
                 const resAreas = await axios.get(`${API_URL}/api/olimpiadas-categorias/${id}/areas-categories`);
@@ -112,7 +111,7 @@ const OlympiadDetail = () => {
                 {/* Premios */}
                 <div className="mb-4">
                     <h5 className="text-primary">Premios</h5>
-                    <p>{olympiad.awards}</p>
+                    <p>{olympiad.Awards}</p>
                 </div>
 
                 {/* Información de contacto */}
@@ -123,7 +122,7 @@ const OlympiadDetail = () => {
 
                 {/* Precio */}
                 <div className="mb-2">
-                    <h6><strong>Precio:</strong> Bs {parseFloat(olympiad.price / 100).toFixed(2)}</h6>
+                    <h6><strong>Precio:</strong> Bs {parseFloat(olympiad.price).toFixed(2)}</h6>
                 </div>
             </div>
         </div>

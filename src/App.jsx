@@ -18,29 +18,36 @@ import Records from "./pages/dashboard/records/index.jsx";
 import ListOfInscriptions from "./pages/dashboard/listOfInscriptions/index.jsx";
 import Payment from "./pages/dashboard/payment/index.jsx";
 import EditOlympiad from "./pages/dashboard/olympiad/editOlympiad/index.jsx";
+import PrivateRoute from "./Context/PrivateRoute.jsx";
 
 function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/Home" element={<Home />} />
-                <Route path="/olympiad/:id" element={<OlympiadDetail />} />
+                <Route path="/" element={<Navigate to="/dashboard/Home" replace />} />
+                <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<DashboardLayout />}>
-                    <Route index element={<Navigate to="inscripcion-sencilla" replace />} />
+                    <Route index element={<Navigate to="Home" replace />} />
+                    <Route path="Home" element={<Home />} />
+                    <Route path="Home/olympiad/:id/info" element={<OlympiadDetail />} />
                     <Route path="inscripcion-sencilla" element={<RegisterSingle />} />
                     <Route path="inscripcion-multiple" element={<RegisterMultiple />} />
                     <Route path="inscripcion-excel" element={<RegisterExcel />} />
-                    <Route path="payments" element={<Payment/>}/>
                     <Route path="areas" element={<Areas />} />
                     <Route path="areas/:id/categories" element={<AreaCategories />} />
-                    <Route path="records" element={<Records/>} />
-                    <Route path="listInscriptions" element={<ListOfInscriptions />} />
+
+                    {/* RUTAS PRIVADAS */}
+                    <Route element={<PrivateRoute />}>
+                        <Route path="payments" element={<Payment />} />
+                        <Route path="records" element={<Records />} />
+                        <Route path="listInscriptions" element={<ListOfInscriptions />} />
+                        <Route path="createOlympiad" element={<CreateOlympiad />} />
+                        <Route path="olympiad/:id/associate" element={<OlympiadAreasCategories />} />
+                        <Route path="olympiad/:id/publish" element={<PublishOlympiad />} />
+                        <Route path="olympiad/:id/edit" element={<EditOlympiad />} />
+                    </Route>
+
                     <Route path="olympiad" element={<Olympiads />} />
-                    <Route path="createOlympiad" element={<CreateOlympiad/>} />
-                    <Route path="olympiad/:id/associate" element={<OlympiadAreasCategories/>} />
-                    <Route path="olympiad/:id/publish" element={<PublishOlympiad/>} />
-                    <Route path="olympiad/:id/edit" element={<EditOlympiad/>} />
                 </Route>
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
