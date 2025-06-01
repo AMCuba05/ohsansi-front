@@ -80,7 +80,7 @@ const PublishOlympiad = () => {
 
         setSubmitting(true);
         try {
-            await axios.patch(`${API_URL}/api/olympics/${olympicId}/publish`, {
+            await axios.patch(`${API_URL}/api/olympiads/${olympicId}/publish`, {
                 Title: formData.title,
                 Description: formData.description,
                 Price: parseFloat(formData.price),

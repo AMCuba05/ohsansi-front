@@ -8,5 +8,47 @@
 }
 
 .main-content{
-  width: 70%;
+  margin-top: 5px;
+  margin-right: 3rem;
+  margin-left: 3rem;
+}
+
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+
+  .sidebar {
+    transition: all 0.3s ease;
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    transition: margin 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+
+    .sidebar {
+      width: 100%;
+      height: 60px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+
+    .main-content {
+      margin-top: 60px;
+      margin-left: 0;
+      padding: 10px;
+      margin-right: 0;
+    }
+
+    .sidebar-menu.open ~ .main-content {
+      margin-top: 0;
+      filter: brightness(0.7); // Dim content when menu is open
+    }
+  }
 }

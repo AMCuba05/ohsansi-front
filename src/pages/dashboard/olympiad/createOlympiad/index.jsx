@@ -127,6 +127,7 @@ const CreateOlympiad = () => {
                         value={formData.price}
                         onChange={handleChange}
                         min="0"
+                        max="999"
                     />
                     {errors.price && <div className="invalid-feedback">{errors.price}</div>}
                 </div>
