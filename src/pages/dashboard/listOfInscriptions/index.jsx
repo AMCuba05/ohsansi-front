@@ -16,6 +16,7 @@ const ListOfInscriptions = () => {
         try {
             const response = await axios.get('https://willypaz.dev/projects/ohsansi-api/api/inscriptions');
             const data = response.data || [];
+            console.log(response.data)
             setInscriptions(data);
             setFilteredInscriptions(data);
             calculateTotals(data);
@@ -42,7 +43,7 @@ const ListOfInscriptions = () => {
 
     const fetchByStatus = async (status) => {
         setLoading(true);
-        const statusEs = status === 'Pendiente' ? 'pending' : 'completed'
+        const statusEs = status === 'completed' ? 'completed' : 'pending'
         const data  = inscriptions.filter(i => i.status === statusEs)
         setFilteredInscriptions(data);
 
@@ -88,7 +89,7 @@ const ListOfInscriptions = () => {
                     <Form.Select value={statusFilter} onChange={handleStatusChange}>
                         <option value="">Filtrar por estado</option>
                         <option value="Pendiente">Pendiente</option>
-                        <option value="En proceso">Completado</option>
+                        <option value="En proceso">Pagados</option>
                     </Form.Select>
                 </Col>
             </Row>
@@ -131,7 +132,7 @@ const ListOfInscriptions = () => {
                                     <td>{item.competitor}</td>
                                     <td>{item.accountable}</td>
                                     <td>{item.school || '-'}</td>
-                                    <td>{item.status !== "pending" ? 'Pagado' : 'Pendiente'}</td>
+                                    <td>{item.status === "completed" ? 'Pagado' : 'Pendiente'}</td>
 
 
                                 </tr>
