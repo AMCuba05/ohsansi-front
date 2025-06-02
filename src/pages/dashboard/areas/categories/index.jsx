@@ -1,10 +1,12 @@
-// components/Pages/Categories.jsx
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
-import Modal from "../../register/Modal/index.jsx";
+import { API_URL } from "../../../../Constants/Utils.js";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.scss";
-import {API_URL} from "../../../../Constants/Utils.js";
+import {ArrowLeft} from "lucide-react";
+import {Button} from "react-bootstrap";
+import {Alert} from "reactstrap"; // Keep for custom styles if needed
 
 const allCourses = [
     "3ro Primaria",
@@ -16,17 +18,16 @@ const allCourses = [
     "3ro Secundaria",
     "4to Secundaria",
     "5to Secundaria",
-    "6to Secundaria"
+    "6to Secundaria",
 ];
 
 const AreaCategories = () => {
+    const navigate = useNavigate();
     const { id: areaId } = useParams();
     const [categories, setCategories] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [modalSuccess, setModalSuccess] = useState(true);
-    const [message, setMessage] = useState("");
     const [showAddModal, setShowAddModal] = useState(false);
     const [newCategory, setNewCategory] = useState({ name: "", range_course: [] });
+    const [formMessage, setFormMessage] = useState({ text: "", type: "" });
 
     const fetchCategories = async () => {
         try {
@@ -34,6 +35,10 @@ const AreaCategories = () => {
             setCategories(res.data.categorias);
         } catch (err) {
             console.error("Error fetching categories:", err);
+            setFormMessage({
+                text: "Error al cargar las categorías.",
+                type: "danger",
+            });
         }
     };
 
@@ -48,90 +53,188 @@ const AreaCategories = () => {
                 ...prev,
                 range_course: exists
                     ? prev.range_course.filter((c) => c !== course)
-                    : [...prev.range_course, course]
+                    : [...prev.range_course, course],
             };
         });
     };
 
     const handleCreateCategory = async () => {
+        if (!newCategory.name || newCategory.range_course.length === 0) {
+            setFormMessage({
+                text: "Por favor, ingrese un nombre y seleccione al menos un curso.",
+                type: "danger",
+            });
+            return;
+        }
+
         try {
             await axios.post(`${API_URL}/api/categories`, {
                 ...newCategory,
-                area_id: parseInt(areaId)
+                area_id: parseInt(areaId),
             });
-            setModalSuccess(true);
-            setMessage("¡Categoría creada con éxito!");
-            setShowModal(true);
-            setShowAddModal(false);
+            setFormMessage({
+                text: "¡Categoría creada con éxito!",
+                type: "success",
+            });
             setNewCategory({ name: "", range_course: [] });
             fetchCategories();
         } catch (error) {
-            setModalSuccess(false);
-            setMessage("Error al crear la categoría.");
-            setShowModal(true);
+            setFormMessage({
+                text: error.response?.data?.errors?.name?.[0] || "Error al crear la categoría.",
+                type: "danger",
+            });
         }
     };
 
-    return (
-        <div className="categories-container">
-            <h2>Categorías del Área</h2>
-            <button className="add-btn" onClick={() => setShowAddModal(true)}>+ Añadir Nueva Categoría</button>
 
-            <table className="categories-table">
-                <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Rango de Cursos</th>
-                    <th>Area asociada</th>
-                </tr>
-                </thead>
-                <tbody>
-                {categories.map((cat) => (
-                    <tr key={cat.id}>
-                        <td>{cat.name}</td>
-                        <td>{
-                            <span> {cat.range_course}</span>
-                        }</td>
-                        <td>{cat.area.name}</td>
+    const closeModal = () => {
+        setShowAddModal(false);
+        setFormMessage({ type: "", text: "" });
+    };
+
+    return (
+        <div className="container my-4">
+            <Button
+                variant="link"
+                onClick={() => navigate(-1)}
+                className="mb-3 p-0 d-flex align-items-center text-decoration-none"
+            >
+                <ArrowLeft size={18} className="me-2" />
+                Volver
+            </Button>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <h2 className="mb-0">Categorías del Área</h2>
+                <button
+                    className="btn btn-primary"
+                    onClick={() => setShowAddModal(true)}
+                >
+                    + Añadir Nueva Categoría
+                </button>
+            </div>
+
+            <div className="table-responsive">
+                {formMessage.text && !showAddModal && (
+                    <Alert color={formMessage.type === "success" ? "success" : "danger"}>
+                        {formMessage.text}
+                    </Alert>
+                )}
+                <table className="table table-striped table-bordered">
+                    <thead className="table-dark">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Rango de Cursos</th>
+                        <th>Área Asociada</th>
                     </tr>
-                ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {categories.length > 0 ? (
+                        categories.map((cat) => (
+                            <tr key={cat.id}>
+                                <td>{cat.name}</td>
+                                <td>{cat.range_course.join(", ")}</td>
+                                <td>{cat.area.name}</td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="3" className="text-center">
+                                No hay categorías disponibles
+                            </td>
+                        </tr>
+                    )}
+                    </tbody>
+                </table>
+            </div>
 
             {showAddModal && (
-                <div className="modal-backdrop">
-                    <div className="modal-content">
-                        <h3>Nueva Categoría</h3>
-                        <input
-                            type="text"
-                            placeholder="Nombre"
-                            value={newCategory.name}
-                            onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-                        />
-                        <div className="checkboxes">
-                            {allCourses.map((course) => (
-                                <label key={course}>
+                <div
+                    className="modal fade show d-block"
+                    tabIndex="-1"
+                    role="dialog"
+                    aria-labelledby="addCategoryModal"
+                    style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                >
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="addCategoryModal">
+                                    Nueva Categoría
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    onClick={() => {
+                                        setShowAddModal(false);
+                                        setFormMessage({ text: "", type: "" });
+                                    }}
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                            <div className="modal-body">
+                                {formMessage.text && (
+                                    <div className={`alert alert-${formMessage.type}`}>
+                                        {formMessage.text}
+                                    </div>
+                                )}
+                                <div className="mb-3">
+                                    <label htmlFor="categoryName" className="form-label">
+                                        Nombre
+                                    </label>
                                     <input
-                                        type="checkbox"
-                                        checked={newCategory.range_course.includes(course)}
-                                        onChange={() => handleCheckboxChange(course)}
+                                        type="text"
+                                        className="form-control"
+                                        id="categoryName"
+                                        placeholder="Nombre de la categoría"
+                                        value={newCategory.name}
+                                        onChange={(e) =>
+                                            setNewCategory({ ...newCategory, name: e.target.value })
+                                        }
                                     />
-                                    {course}
-                                </label>
-                            ))}
-                        </div>
-                        <div className="modal-buttons">
-                            <button className="create" onClick={handleCreateCategory}>Crear</button>
-                            <button className="cancel" onClick={() => setShowAddModal(false)}>Cancelar</button>
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label">Rango de Cursos</label>
+                                    <div className="row">
+                                        {allCourses.map((course) => (
+                                            <div key={course} className="col-6 mb-2">
+                                                <div className="form-check">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="checkbox"
+                                                        id={course}
+                                                        checked={newCategory.range_course.includes(course)}
+                                                        onChange={() => handleCheckboxChange(course)}
+                                                    />
+                                                    <label className="form-check-label" htmlFor={course}>
+                                                        {course}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={() => {
+                                        setShowAddModal(false);
+                                        setFormMessage({ text: "", type: "" });
+                                    }}
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={handleCreateCategory}
+                                >
+                                    Crear
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            )}
-
-            {showModal && (
-                <Modal success={modalSuccess} onClose={() => setShowModal(false)}>
-                    {message}
-                </Modal>
             )}
         </div>
     );
