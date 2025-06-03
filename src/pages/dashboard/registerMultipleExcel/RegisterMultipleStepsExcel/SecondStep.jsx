@@ -1,70 +1,96 @@
-import React, { useState } from 'react';
-import { useSteps } from 'react-step-builder';
-import { ProgressBar } from 'react-bootstrap';
-import { useRegisterContext } from '../../../../Context/RegisterContext.jsx';
-import * as XLSX from 'xlsx';
+import React, {useState} from 'react';
+import {useSteps} from 'react-step-builder'
+import {Dropdown, Form, FormControl, ProgressBar, Spinner} from 'react-bootstrap'
+import { Search, Check, X } from 'lucide-react';
+import {Button, InputGroup} from "reactstrap";
+import axios from "axios";
+import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
+import {API_URL} from "../../../../Constants/Utils.js";
+import {grades, provincies, schools, states} from "../../../../Constants/Provincies.js";
 
 export const SecondStep = () => {
-    const stepsState = useSteps();
-    const { registerData, setRegisterData } = useRegisterContext();
+    const stepsState = useSteps()
+    const { registerData, setRegisterData } = useRegisterContext()
+    const [found, setFound] = useState(false)
+    const [hasBeenQueried, setHasBeenQueried] = useState(false)
+    const [olympiads, setOlympiads] = useState()
+    const [loading, setLoading] = useState(false)
 
-    const [fileName, setFileName] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState(false);
+    const [selected, setSelected] = useState(null);
+    const [selectedState, setSelectedState] = useState(null);
+    const [selectedProvince, setSelectedProvince] = useState(null);
+    const [selectedSchool, setSelectedSchool] = useState(null);
 
-    const handleFileUpload = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+    const handleSelect = (index) => {
+        setSelected(grades[index]);
+    };
 
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const binaryStr = event.target.result;
-            const workbook = XLSX.read(binaryStr, { type: 'binary' });
-            const sheetName = workbook.SheetNames[0];
-            const sheet = workbook.Sheets[sheetName];
-            const data = XLSX.utils.sheet_to_json(sheet);
+    const handleSelectState = (index) => {
+        setSelectedState(states[index]);
+    };
 
-            if (data.length === 0) {
-                setError('El archivo está vacío o mal formado.');
-                return;
+    const handleSelectProvince = (index) => {
+        setSelectedProvince(provincies[index]);
+    };
+
+    const handleSelectSchool = (index) => {
+        setSelectedSchool(schools[index]);
+    };
+
+    const submit = () => {
+        setRegisterData({
+            ...registerData,
+            competitor: {
+                ...registerData.competitor,
+                school_data: {
+                    name: selectedSchool,
+                    department: selectedState,
+                    province: selectedProvince,
+                    course: selected
+                },
             }
+        })
+        stepsState.next()
+    }
 
-            const student = data[0];
-            if (!student.ci || !student.names) {
-                setError('El archivo no contiene los campos necesarios.');
-                return;
-            }
-
+    const storeSchoolData = async () => {
+        try {
+            await axios.post(`${API_URL}/api/olympiads/${registerData.olympic_id}/inscriptions/${registerData.inscription_id}/schools`, {
+                name: selectedSchool,
+                department: selectedState,
+                province: selectedProvince,
+                course: selected
+            })
             setRegisterData({
                 ...registerData,
                 competitor: {
-                    ci: Number(student.ci),
-                    ci_expedition: student.ci_expedition || '',
-                    names: student.names || '',
-                    last_names: student.last_names || '',
-                    birthdate: student.birthdate || '',
-                    email: student.email || '',
-                    phone_number: student.phone_number || '',
+                    ...registerData.competitor,
+                    school_data: {
+                        name: selectedSchool,
+                        department: selectedState,
+                        province: selectedProvince,
+                        course: selected
+                    },
                 }
-            });
-
-            setFileName(file.name);
-            setError('');
-            setSuccess(true);
-        };
-        reader.readAsBinaryString(file);
-    };
-
-    const handleNext = () => {
-        if (success) {
-            stepsState.next();
+            })
+            stepsState.next()
+        } catch (e) {
+            console.log(e)
         }
-    };
+    }
+
+    function validate() {
+        if (selected == null) return false;
+        if (selectedState == null) return false;
+        if (selectedSchool == null) return false;
+        return selectedProvince != null;
+
+    }
 
     return (
         <div className="container d-flex justify-content-center">
-            <div className="card p-4">
-                <span>Paso {stepsState.current} de {stepsState.total}</span>
+            <div className="card p-4" >
+                <span>Paso {stepsState.current} de {stepsState.total} </span>
                 <ProgressBar
                     now={stepsState.progress * 100}
                     label={`${Math.round(stepsState.progress * 100)}%`}
@@ -73,56 +99,127 @@ export const SecondStep = () => {
                     variant={"success"}
                     style={{ height: '1.5rem', fontSize: '0.9rem' }}
                 />
-                <h2 className="mb-3 mt-4">Paso 2: Subir datos del estudiante</h2>
-
+                <h2 className="mb-3 mt-4">Paso 3: Datos Académicos</h2>
                 <p className="text-muted mb-4">
-                    Descarga la plantilla, complétala y súbela aquí.
+                    Completa la siguiente información académica del estudiante. Estos datos nos permiten clasificar adecuadamente su participación en la olimpiada según su nivel educativo, institución y ubicación.
                 </p>
 
-                <div className="mb-3">
-                    <a
-                        href="../../../../Constants/plantilla_estudiante.xlsx"
-                        download
-                        className="btn btn-outline-primary"
-                    >
-                        Descargar plantilla Excel
-                    </a>
-                </div>
+                <form>
+                    {loading ? (
+                        <div className="d-flex justify-content-center">
+                            <Spinner animation="border" variant="primary" />
+                        </div>
+                    ) : (
+                        <Form.Group className="d-flex align-items-center mt-3">
+                            <Form.Label className="me-3 mb-0 w-25">Departamento:</Form.Label>
+                            <Dropdown onSelect={handleSelectState}>
+                                <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                                    {selectedState ? selectedState : 'Seleccionar Departamento'}
+                                </Dropdown.Toggle>
 
-                <div className="mb-3">
-                    <label htmlFor="formFile" className="form-label">Sube tu archivo Excel</label>
-                    <input
-                        className="form-control"
-                        type="file"
-                        accept=".xlsx, .xls"
-                        id="formFile"
-                        onChange={handleFileUpload}
-                    />
-                </div>
+                                <Dropdown.Menu>
+                                    {states.map((state, index) => (
+                                        <Dropdown.Item key={index} eventKey={index}>
+                                            {state}
+                                        </Dropdown.Item>
+                                    ))}
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </Form.Group>
+                    )}
 
-                {fileName && <p className="text-success">Archivo cargado: {fileName}</p>}
-                {error && <p className="text-danger">{error}</p>}
+                    {loading ? (
+                        <div className="d-flex justify-content-center">
+                            <Spinner animation="border" variant="primary" />
+                        </div>
+                    ) : (
+                        <Form.Group className="d-flex align-items-center mt-3">
+                            <Form.Label className="me-3 mb-0 w-25">Provincia:</Form.Label>
+                            <Dropdown onSelect={handleSelectProvince}>
+                                <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                                    {selectedProvince ? selectedProvince : 'Seleccionar Provincia'}
+                                </Dropdown.Toggle>
 
-                <div className="d-flex gap-2">
-                    <button
-                        disabled={!stepsState.hasPrev}
-                        type="button"
-                        className="btn btn-secondary w-50"
-                        onClick={stepsState.prev}
-                    >
-                        Anterior
-                    </button>
-                    <button
-                        disabled={!stepsState.hasNext || !success}
-                        type="button"
-                        className="btn btn-primary w-50"
-                        onClick={handleNext}
-                    >
-                        Siguiente
-                    </button>
-                </div>
+                                <Dropdown.Menu>
+                                    {provincies.map((province, index) => (
+                                        <Dropdown.Item key={index} eventKey={index}>
+                                            {province}
+                                        </Dropdown.Item>
+                                    ))}
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </Form.Group>
+                    )}
+
+                    {loading ? (
+                        <div className="d-flex justify-content-center">
+                            <Spinner animation="border" variant="primary" />
+                        </div>
+                    ) : (
+                        <Form.Group className="d-flex align-items-center mt-3">
+                            <Form.Label className="me-3 mb-0 w-25">Colegio:</Form.Label>
+                            <Dropdown onSelect={handleSelectSchool}>
+                                <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                                    {selectedSchool ? selectedSchool : 'Seleccionar Colegio'}
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                    {schools.map((school, index) => (
+                                        <Dropdown.Item key={index} eventKey={index}>
+                                            {school}
+                                        </Dropdown.Item>
+                                    ))}
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </Form.Group>
+                    )}
+
+                    {loading ? (
+                        <div className="d-flex justify-content-center">
+                            <Spinner animation="border" variant="primary" />
+                        </div>
+                    ) : (
+                        <Form.Group className="d-flex align-items-center mt-3">
+                            <Form.Label className="me-3 mb-0 w-25">Grado:</Form.Label>
+                            <Dropdown onSelect={handleSelect}>
+                                <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                                    {selected ? selected : 'Seleccionar Grado'}
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                    {grades.map((grade, index) => (
+                                        <Dropdown.Item key={index} eventKey={index}>
+                                            {grade}
+                                        </Dropdown.Item>
+                                    ))}
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </Form.Group>
+                    )}
+
+                    {hasBeenQueried && !found ? <p className="text-danger">Carnet no encontrado, ingresa los datos manualmente</p> : null}
+                    {hasBeenQueried && found ?  <p className="text-success">Datos cargados correctamente.</p> : null}
+
+                    <div className="d-flex gap-2 mt-4">
+                        <button
+                            disabled={!stepsState.hasPrev}
+                            type="button"
+                            className="btn btn-secondary w-50"
+                            onClick={stepsState.prev}
+                        >
+                            Anterior
+                        </button>
+                        <button
+                            disabled={!stepsState.hasNext || !validate()}
+                            type="button"
+                            className="btn btn-primary w-50"
+                            onClick={async () => await storeSchoolData()}
+                        >
+                            Siguiente
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-    );
-};
-export default SecondStep;
+    )
+}
