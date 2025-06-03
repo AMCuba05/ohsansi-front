@@ -5,6 +5,7 @@ import { Search, Check, X, Plus, Trash } from 'lucide-react';
 import { Button, InputGroup } from "reactstrap";
 import axios from "axios";
 import { useRegisterContext } from "../../../../Context/RegisterContext.jsx";
+import {grades} from "../../../../Constants/Provincies.js";
 
 const emptyStudent = {
     found: false,
@@ -16,6 +17,8 @@ const emptyStudent = {
     ci: '',
     ciExp: '',
     birthDate: '',
+    course: '',
+    gender: ''
 };
 
 export const SecondStep = () => {
@@ -56,6 +59,8 @@ export const SecondStep = () => {
                     birthDate: data.birthdate,
                     email: data.email,
                     phone: data.phone_number,
+                    course: data.course,
+                    gender: data.gender,
                 };
             }
 
@@ -122,7 +127,7 @@ export const SecondStep = () => {
                                         placeholder="Carnet de identidad"
                                     />
                                     <Button onClick={() => onSearchStudent(index)} variant="outline-secondary">
-                                        {student.found ? <Check size={16} /> : <Search size={16} />}
+                                        {student.found ? <Check size={16}/> : <Search size={16}/>}
                                     </Button>
                                 </InputGroup>
 
@@ -139,7 +144,7 @@ export const SecondStep = () => {
                                         type="text"
                                         className="form-control"
                                         value={student.ciExp}
-                                        style={{ textTransform: 'uppercase' }}
+                                        style={{textTransform: 'uppercase'}}
                                         onChange={e => handleStudentChange(index, 'ciExp', e.target.value)}
                                     />
                                 </div>
@@ -150,7 +155,7 @@ export const SecondStep = () => {
                                         type="text"
                                         className="form-control"
                                         value={student.name}
-                                        style={{ textTransform: 'uppercase' }}
+                                        style={{textTransform: 'uppercase'}}
                                         onChange={e => handleStudentChange(index, 'name', e.target.value)}
                                     />
                                 </div>
@@ -161,7 +166,7 @@ export const SecondStep = () => {
                                         type="text"
                                         className="form-control"
                                         value={student.lastName}
-                                        style={{ textTransform: 'uppercase' }}
+                                        style={{textTransform: 'uppercase'}}
                                         onChange={e => handleStudentChange(index, 'lastName', e.target.value)}
                                     />
                                 </div>
@@ -196,10 +201,40 @@ export const SecondStep = () => {
                                     />
                                 </div>
 
+                                <div className="mb-3">
+                                    <label htmlFor="grado" className="form-label">Grado</label>
+                                    <select
+                                        className="form-select"
+                                        id="grado"
+                                        value={student.course || ''}
+                                        onChange={e => handleStudentChange(index, 'course', e.target.value)}
+                                    >
+                                        <option value="">Selecciona una opción</option>
+                                        {grades.map((grade, index) => (
+                                            <option key={index} value={grade}>
+                                                {grade}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="generoStudent" className="form-label">Género</label>
+                                    <select
+                                        className="form-select"
+                                        id="generoStudent"
+                                        value={student.gender}
+                                        onChange={e => handleStudentChange(index, 'gender', e.target.value)}
+                                    >
+                                        <option value="">Selecciona una opción</option>
+                                        <option value="M">Masculino</option>
+                                        <option value="F">Femenino</option>
+                                    </select>
+                                </div>
+
                                 <div className="text-end">
                                     {students.length > 1 && (
                                         <Button color="danger" onClick={() => removeStudent(index)}>
-                                            <Trash size={16} /> Eliminar estudiante
+                                            <Trash size={16}/> Eliminar estudiante
                                         </Button>
                                     )}
                                 </div>
@@ -210,7 +245,7 @@ export const SecondStep = () => {
 
                 <div className="d-flex justify-content-between mt-4">
                     <Button color="success" onClick={addStudent}>
-                        <Plus size={16} /> Agregar Estudiante
+                        <Plus size={16}/> Agregar Estudiante
                     </Button>
 
                     <div className="d-flex gap-2">

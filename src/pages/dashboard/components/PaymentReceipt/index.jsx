@@ -1,4 +1,3 @@
-// components/BoletaPagoPDF.jsx
 import React from "react";
 import {
     Document,
@@ -67,8 +66,6 @@ const styles = StyleSheet.create({
 });
 
 const BoletaPagoPDF = ({ data }) => {
-    const numeroOrden = Math.floor(Math.random() * 1000000).toString().padStart(6, "0");
-
     return (
         <Document>
             <Page size="A4" style={styles.page}>
@@ -85,7 +82,7 @@ const BoletaPagoPDF = ({ data }) => {
                     </View>
 
                     <View style={styles.headerRight}>
-                        <Text>N° {numeroOrden}</Text>
+                        <Text>N° {data.numero_orden_de_pago}</Text>
                     </View>
                 </View>
 
@@ -96,12 +93,8 @@ const BoletaPagoPDF = ({ data }) => {
                         <Text>{data.nombre}</Text>
                     </View>
                     <View style={styles.row}>
-                        <Text>CI:</Text>
-                        <Text>{data.ci}</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text>Fecha:</Text>
-                        <Text>{data.fechaPago}</Text>
+                        <Text>Fecha de Nacimiento:</Text>
+                        <Text>{data.fecha_nacimiento}</Text>
                     </View>
                 </View>
 
@@ -112,12 +105,10 @@ const BoletaPagoPDF = ({ data }) => {
                         <Text style={styles.colMonto}>Monto (Bs)</Text>
                     </View>
 
-                    {data.detalles.map((item, index) => (
-                        <View key={index} style={styles.tableRow}>
-                            <Text style={styles.colConcepto}>{item.concepto}</Text>
-                            <Text style={styles.colMonto}>{item.monto.toFixed(2)}</Text>
-                        </View>
-                    ))}
+                    <View style={styles.tableRow}>
+                        <Text style={styles.colConcepto}>{data.concepto}</Text>
+                        <Text style={styles.colMonto}>{data.importe.toFixed(2)}</Text>
+                    </View>
 
                     <Text style={styles.total}>Total: {data.total.toFixed(2)} Bs</Text>
                 </View>

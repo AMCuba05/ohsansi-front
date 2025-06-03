@@ -13,10 +13,10 @@ const Inscripciones = () => {
         <div className="inscripciones-container">
             <Steps>
                 <div>
-                    <FirstStep/>
+                    <SecondStep/>
                 </div>
                 <div>
-                    <SecondStep/>
+                    <FirstStep/>
                 </div>
             </Steps>
         </div>

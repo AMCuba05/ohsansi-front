@@ -7,19 +7,19 @@ import axios from "axios";
 import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
 import {API_URL} from "../../../../Constants/Utils.js";
 
-export const ThirdStep = () => {
+export const NewFourthStep = () => {
     const stepsState = useSteps()
-    const [found, setFound] = useState(false)
     const { registerData, setRegisterData } = useRegisterContext()
-    const [hasBeenQueried, setHasBeenQueried] = useState(false)
-    const [gender, setGender] = useState("")
     const [name, setName] = useState("")
+    const [gender, setGender] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
     const [phone, setPhone] = useState("")
     const [ci, setCi] = useState("")
     const [ciExp, setCiExp] = useState("")
     const [birthDate, setBirthDate] = useState('');
+
+
     const validate = () => {
         if (!name.trim()) return false;
         if (!lastName.trim()) return false;
@@ -30,34 +30,20 @@ export const ThirdStep = () => {
         return true;
     }
 
-    const submit = () => {
-        setRegisterData({
-            ...registerData,
-            legal_tutor: {
-                ci: Number(ci),
-                ci_expedition: ciExp,
-                names: name,
-                last_names: lastName,
-                birthdate: birthDate,
-                email: email,
-                phone_number: phone
-            },
-        })
-        stepsState.next()
-    }
-
-    const storeTutor = async () => {
+    const storeAccountable = async () => {
         try {
-            await axios.post(`${API_URL}/api/olympiads/${registerData.olympic_id}/inscriptions/${registerData.inscription_id}/tutors`,
+            await axios.post(`${API_URL}/inscription/olympic`,
                 {
-                    ci: Number(ci),
-                    ci_expedition: ciExp,
-                    names: name,
-                    last_names: lastName,
-                    birthdate: birthDate,
-                    email: email,
-                    phone_number: phone,
-                    gender: gender
+                    accountable: {
+                        ci: Number(ci),
+                        ci_expedition: ciExp,
+                        names: name,
+                        last_names: lastName,
+                        birthdate: birthDate,
+                        email: email,
+                        phone_number: phone,
+                        gender: gender
+                    }
                 })
             setRegisterData({
                 ...registerData,
@@ -71,45 +57,33 @@ export const ThirdStep = () => {
                     phone_number: phone
                 },
             })
+            alert("La pre inscripcion se ha realizado con exito")
             stepsState.next()
         } catch (e) {
             alert(e.response.data.errors.details)
         }
     }
 
-    const onSearchTutor = async () => {
-        try {
-            const {data} = await axios.get(
-                `${API_URL}/api/legal-tutor/${ci}`
-            );
-            setHasBeenQueried(true)
-            const {personal_data} = data
-            if (Object.keys(personal_data).length === 0) {
-                setFound(false)
-            } else {
-                setFound(true)
-                setName(personal_data.names)
-                setLastName(personal_data.last_names)
-                setCiExp(personal_data.ci_expedition)
-                setBirthDate(personal_data.birthdate)
-                setEmail(personal_data.email)
-                setPhone(personal_data.phone_number)
+
+    const skip = () => {
+        setRegisterData({
+            ...registerData,
+            responsable:{
+                ci: "",
+                ci_expedition: "",
+                names: "",
+                last_names: "",
+                birthdate: "",
+                email: "",
+                phone_number: ""
             }
-        } catch (error) {
-            setHasBeenQueried(true)
-            setFound(false)
-            setName("")
-            setLastName("")
-            setCiExp("")
-            setBirthDate("")
-            setEmail("")
-            setPhone("")
-        }
-    };
+        })
+        stepsState.next()
+    }
 
     return (
         <div className="container d-flex justify-content-center">
-            <div className="card p-4">
+            <div className="card p-4" >
                 <span>Paso {stepsState.current} de {stepsState.total} </span>
                 <ProgressBar
                     now={stepsState.progress * 100}
@@ -119,14 +93,14 @@ export const ThirdStep = () => {
                     variant={"success"}
                     style={{ height: '1.5rem', fontSize: '0.9rem' }}
                 />
-                <h2 className="mb-3 mt-4">Paso 4: Información del tutor legal o apoderado</h2>
+                <h2 className="mb-3 mt-4">Paso 6: Información del responsable de pago</h2>
                 <p className="text-muted mb-4">
-                    Por favor, ingresa los datos del tutor legal del estudiante para completar su inscripción en la olimpiada. Esta información es necesaria para validar el consentimiento y garantizar la autorización correspondiente.
+                    Puedes registrar un tutor académico que apoye al estudiante durante la olimpiada. Esta información es opcional
                 </p>
 
                 <form>
                     <InputGroup className="mb-3">
-                        <div className="form-label w-100">Carnet de identidad del tutor</div>
+                        <div className="form-label w-100">Carnet de identidad del responsable</div>
                         <FormControl
                             type="text"
                             placeholder="Ingresa el carnet de identidad"
@@ -134,13 +108,7 @@ export const ThirdStep = () => {
                             value={ci}
                             onChange={e => setCi(e.target.value)}
                         />
-                        <Button onClick={onSearchTutor} variant="outline-secondary">
-                            {
-                                found ? <Check size={16}/> : <Search size={16}/>
-                            }
-                        </Button>
                     </InputGroup>
-
                     <div className="mb-3">
                         <label htmlFor="exp" className="form-label">Lugar de Expedición</label>
                         <input
@@ -153,7 +121,6 @@ export const ThirdStep = () => {
                             onChange={e => setCiExp(e.target.value)}
                         />
                     </div>
-
                     <div className="mb-3">
                         <label htmlFor="nombre" className="form-label">Nombres</label>
                         <input
@@ -227,9 +194,28 @@ export const ThirdStep = () => {
                             <option value="F">Femenino</option>
                         </select>
                     </div>
+
+
+                    <div className="d-flex gap-2">
+                        <button
+                            disabled={!stepsState.hasPrev}
+                            type="button"
+                            className="btn btn-secondary w-50"
+                            onClick={stepsState.prev}
+                        >
+                            Anterior
+                        </button>
+                        <button
+                            disabled={ !validate()}
+                            type="button"
+                            className="btn btn-primary w-50"
+                            onClick={async () => await storeAccountable()}
+                        >
+                            Siguiente
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
     )
 }
-

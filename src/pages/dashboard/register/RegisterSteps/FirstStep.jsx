@@ -96,8 +96,6 @@ export const FirstStep = () => {
                             </Card.Body>
                         </Card>
                     )}
-                    {hasBeenQueried && !found ? <p className="text-danger">Carnet no encontrado, ingresa los datos manualmente</p> : null}
-                    {hasBeenQueried && found ?  <p className="text-success">Datos cargados correctamente.</p> : null}
 
                     <div className="d-flex gap-2 mt-4">
                         <button

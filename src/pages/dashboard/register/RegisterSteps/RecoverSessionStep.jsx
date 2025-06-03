@@ -26,9 +26,40 @@ export const RecoverSessionStep = () => {
         return true;
     }
 
-    const submit = () => {
-
-
+    const getInscriptionForm = async () => {
+        try {
+            const {data} = await axios.get(
+                `${API_URL}/inscription/form?ci=${ci}&birthdate=${birthDate}&olympicId=${registerData.olympic_id}&type=single`
+            );
+            //Esperar para ver que retorna esto
+            console.log(ci, birthDate)
+            console.log(data)
+            if (Object.keys(data).length === 0) {
+                setFound(false)
+            } else {
+                setFound(true)
+                setName(data.names)
+                setLastName(data.last_names)
+                setCiExp(data.ci_expedition)
+                setBirthDate(data.birthdate)
+                setEmail(data.email)
+                setPhone(data.phone_number)
+            }
+            if (data.data.is_accountable) {
+                stepsState.jump(8)
+            } else {
+                stepsState.next()
+            }
+        } catch (error) {
+            setHasBeenQueried(true)
+            setFound(false)
+            setName("")
+            setLastName("")
+            setCiExp("")
+            setEmail("")
+            setPhone("")
+            stepsState.next()
+        }
     }
 
     const onSearchStudent = async () => {
