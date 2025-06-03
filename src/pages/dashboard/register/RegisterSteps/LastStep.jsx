@@ -30,6 +30,7 @@ export const LastStep = () => {
         nombre: `${registerData.responsable?.names || ''} ${registerData.responsable?.last_names || ''}`,
         apellido: `${registerData.responsable?.last_names || ''}`,
         fecha_nacimiento: `${registerData.responsable?.birthdate || ''}`,
+        ci: registerData.responsable.ci,
         cantidad: 1,
         numero_orden_de_pago: randomNumber,
         concepto:  `Inscripción Olimpiada: ${registerData.olympic_name || ''}`,

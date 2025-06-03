@@ -69,6 +69,18 @@ export const RecoverSessionStep = () => {
             setCiExp("")
             setEmail("")
             setPhone("")
+            setRegisterData({
+                ...registerData,
+                identity: {
+                    ci: ci,
+                    birthdate: birthDate,
+                    olympicId: registerData.olympic_id
+                },
+                olympiad: {
+                    id: registerData.olympic_id,
+                    price: registerData.olympic_price
+                },
+            })
             stepsState.next()
         }
     }

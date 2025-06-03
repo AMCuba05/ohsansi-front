@@ -89,8 +89,15 @@ const BoletaPagoPDF = ({ data }) => {
                 {/* Información del estudiante */}
                 <View style={styles.infoSection}>
                     <View style={styles.row}>
+                        <Text>Responsable de Pago:</Text>
+                    </View>
+                    <View style={styles.row}>
                         <Text>Nombre:</Text>
                         <Text>{data.nombre}</Text>
+                    </View>
+                    <View style={styles.row}>
+                        <Text>CI:</Text>
+                        <Text>{data.ci}</Text>
                     </View>
                     <View style={styles.row}>
                         <Text>Fecha de Nacimiento:</Text>

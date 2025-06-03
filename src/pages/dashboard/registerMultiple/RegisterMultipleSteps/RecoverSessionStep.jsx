@@ -26,7 +26,6 @@ export const RecoverSessionStep = () => {
                 `${API_URL}/api/inscription/form?ci=${ci}&birthdate=${birthDate}&olympicId=${registerData.olympic_id}&type=multiple`
             );
             //Esperar para ver que retorna esto
-            console.log(data.data)
             setRegisterData({
                 ...registerData,
                 identity: {
@@ -56,13 +55,18 @@ export const RecoverSessionStep = () => {
                 stepsState.next()
             }
         } catch (error) {
-            setHasBeenQueried(true)
-            setFound(false)
-            setName("")
-            setLastName("")
-            setCiExp("")
-            setEmail("")
-            setPhone("")
+            setRegisterData({
+                ...registerData,
+                identity: {
+                    ci: ci,
+                    birthdate: birthDate,
+                    olympicId: registerData.olympic_id
+                },
+                olympiad: {
+                    id: registerData.olympic_id,
+                    price: registerData.olympic_price
+                },
+            })
             stepsState.next()
         }
     }
