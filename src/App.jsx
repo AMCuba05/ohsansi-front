@@ -35,10 +35,10 @@ function App() {
                     <Route path="inscripcion-excel" element={<RegisterExcel />} />
                     <Route path="areas" element={<Areas />} />
                     <Route path="areas/:id/categories" element={<AreaCategories />} />
+                    <Route path="payments" element={<Payment />} />
 
                     {/* RUTAS PRIVADAS */}
                     <Route element={<PrivateRoute />}>
-                        <Route path="payments" element={<Payment />} />
                         <Route path="records" element={<Records />} />
                         <Route path="listInscriptions" element={<ListOfInscriptions />} />
                         <Route path="createOlympiad" element={<CreateOlympiad />} />
