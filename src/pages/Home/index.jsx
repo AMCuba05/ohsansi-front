@@ -42,7 +42,8 @@ const Home = () => {
         const fetchOlympiads = async () => {
             try {
                 const res = await axios.get(`${API_URL}/api/olympiads`);
-                const filtered = res.data.data.filter(o => o.status === true || o.status === 'published');
+                console.log(res.data.data);
+                const filtered = res.data.data.filter(o => o.status === true || o.publish === 'inscripción');
                 setOlympiads(filtered);
             } catch (err) {
                 console.error('Error al cargar las olimpiadas', err);
