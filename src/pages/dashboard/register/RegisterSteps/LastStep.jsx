@@ -36,7 +36,7 @@ export const LastStep = () => {
         concepto:  `Inscripción Olimpiada: ${registerData.olympic_name || ''}`,
         importe: registerData.olympiad.price,
         precio_unitario: registerData.olympiad.price,
-        total: 15,
+        total: registerData.olympiad.price,
     };
 
     useEffect(() => {
