@@ -33,7 +33,8 @@ export const LastStep = () => {
         cantidad: 1,
         numero_orden_de_pago: randomNumber,
         concepto:  `Inscripción Olimpiada: ${registerData.olympic_name || ''}`,
-        importe: 15,
+        importe: registerData.olympiad.price,
+        precio_unitario: registerData.olympiad.price,
         total: 15,
     };
 
@@ -88,6 +89,7 @@ export const LastStep = () => {
                     <PDFDownloadLink
                         document={<PaymentReceipt data={boletaData}/>}
                         fileName="boleta_pago.pdf"
+                        onClick={generarBoleta}
                     >
                         {({loading}) => (loading ? 'Generando PDF...' : 'Descargar Boleta de pago')}
                     </PDFDownloadLink>

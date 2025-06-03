@@ -191,8 +191,6 @@ export const NewThirdStep = () => {
                     <h5>Selecciona hasta 2 áreas</h5>
                     {loading ? (
                         <Spinner animation="border" variant="primary" />
-                    ) : !error ? (
-                        <Alert variant="danger">{error}</Alert>
                     ) : filteredAreas.length === 0 ? (
                         <Alert variant="warning">No hay áreas disponibles para el curso seleccionado.</Alert>
                     ) : (
@@ -322,6 +320,10 @@ export const NewThirdStep = () => {
                             Has seleccionado el máximo de 2 áreas.
                         </Alert>
                     )}
+                    {
+                        error ? <Alert variant="danger">{error}</Alert> : null
+                    }
+
 
                     <div className="d-flex gap-2 mt-4">
                         <button

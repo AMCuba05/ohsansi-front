@@ -35,7 +35,7 @@ export const NewFourthStep = () => {
             await axios.post(`${API_URL}/api/inscription/olympic`,
                 {
                     accountable: {
-                        ci: Number(ci),
+                        ci: ci,
                         ci_expedition: ciExp,
                         names: name,
                         last_names: lastName,
