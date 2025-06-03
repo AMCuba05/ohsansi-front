@@ -73,14 +73,12 @@ export const NewSecondStep = () => {
     };
 
     const submit = async () => {
-
-
         try {
             const {data} = await axios.post(
-                `${API_URL}/inscription/olympic`, {
+                `${API_URL}/api/inscription/olympic`, {
                     student: {
                         data: {
-                            ci: Number(ci),
+                            ci: ci,
                             ci_expedition: ciExp,
                             names: name,
                             last_names: lastName,
@@ -92,7 +90,7 @@ export const NewSecondStep = () => {
                         course: selected
                     },
                     legal_tutor: {
-                        ci: Number(ciTutor),
+                        ci: ciTutor,
                         ci_expedition: ciExpTutor,
                         names: nameTutor,
                         last_names: lastNameTutor,
@@ -100,6 +98,11 @@ export const NewSecondStep = () => {
                         email: emailTutor,
                         phone_number: phoneTutor,
                         gender: genderTutor
+                    }
+                }, {
+                    headers: {
+                        Identity: JSON.stringify(registerData.identity),
+                        Step: 2
                     }
                 }
             );
@@ -291,8 +294,8 @@ export const NewSecondStep = () => {
                                         type="text"
                                         placeholder="Ingresa el carnet de identidad"
                                         aria-label="Carnet de identidad del tutor"
-                                        value={ci}
-                                        onChange={e => setCi(e.target.value)}
+                                        value={ciTutor}
+                                        onChange={e => setCiTutor(e.target.value)}
                                     />
                                     <Button onClick={onSearchTutor} variant="outline-secondary">
                                         {found ? <Check size={16}/> : <Search size={16}/>}
@@ -305,9 +308,9 @@ export const NewSecondStep = () => {
                                         className="form-control"
                                         id="expTutor"
                                         placeholder="Lugar de Expedición"
-                                        value={ciExp}
+                                        value={ciExpTutor}
                                         style={{textTransform: 'uppercase'}}
-                                        onChange={e => setCiExp(e.target.value)}
+                                        onChange={e => setCiExpTutor(e.target.value)}
                                     />
                                 </div>
                                 <div className="mb-3">
@@ -317,9 +320,9 @@ export const NewSecondStep = () => {
                                         className="form-control"
                                         id="nombreTutor"
                                         placeholder="Nombres"
-                                        value={name}
+                                        value={nameTutor}
                                         style={{textTransform: 'uppercase'}}
-                                        onChange={e => setName(e.target.value)}
+                                        onChange={e => setNameTutor(e.target.value)}
                                     />
                                 </div>
                                 <div className="mb-3">
@@ -329,9 +332,9 @@ export const NewSecondStep = () => {
                                         className="form-control"
                                         id="apellidoTutor"
                                         placeholder="Apellidos"
-                                        value={lastName}
+                                        value={lastNameTutor}
                                         style={{textTransform: 'uppercase'}}
-                                        onChange={e => setLastName(e.target.value)}
+                                        onChange={e => setLastNameTutor(e.target.value)}
                                     />
                                 </div>
                                 <div className="mb-3">
@@ -341,8 +344,8 @@ export const NewSecondStep = () => {
                                         type="date"
                                         className="form-control"
                                         id="fechaNacimientoTutor"
-                                        value={birthDate}
-                                        onChange={e => setBirthDate(e.target.value)}
+                                        value={birthDateTutor}
+                                        onChange={e => setBirthDateTutor(e.target.value)}
                                     />
                                 </div>
                                 <div className="mb-3">
@@ -352,8 +355,8 @@ export const NewSecondStep = () => {
                                         className="form-control"
                                         id="correoTutor"
                                         placeholder="ejemplo@correo.com"
-                                        value={email}
-                                        onChange={e => setEmail(e.target.value)}
+                                        value={emailTutor}
+                                        onChange={e => setEmailTutor(e.target.value)}
                                     />
                                 </div>
                                 <div className="mb-3">
@@ -363,8 +366,8 @@ export const NewSecondStep = () => {
                                         className="form-control"
                                         id="telefonoTutor"
                                         placeholder="+591 70000000"
-                                        value={phone}
-                                        onChange={e => setPhone(e.target.value)}
+                                        value={phoneTutor}
+                                        onChange={e => setPhoneTutor(e.target.value)}
                                     />
                                 </div>
                                 <div className="mb-3">
@@ -372,8 +375,8 @@ export const NewSecondStep = () => {
                                     <select
                                         className="form-select"
                                         id="generoTutor"
-                                        value={gender}
-                                        onChange={e => setGender(e.target.value)}
+                                        value={genderTutor}
+                                        onChange={e => setGenderTutor(e.target.value)}
                                     >
                                         <option value="">Selecciona una opción</option>
                                         <option value="M">Masculino</option>

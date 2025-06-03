@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import OCR6DigitVerifier from "../components/OCRComponent/OCR6DigitVerifier.jsx";
 
 const Payment = () => {
     const [ci, setCi] = useState('');
@@ -35,7 +36,11 @@ const Payment = () => {
     return (
         <div className="container mt-5">
             <h2 className="mb-4">Subir Comprobante de Pago</h2>
-
+            <div className="container mt-5">
+                <h2>Selecciona una foto o captura del comprobante de pago</h2>
+                <p>Asegúrate que el número de la orden de pago sea visible en la foto</p>
+                <OCR6DigitVerifier targetNumber={'408846'} />
+            </div>
             <div className="mb-3 row">
                 <div className="col-md-6">
                     <label htmlFor="ci" className="form-label">CI</label>

@@ -29,11 +29,22 @@ export const RecoverSessionStep = () => {
     const getInscriptionForm = async () => {
         try {
             const {data} = await axios.get(
-                `${API_URL}/inscription/form?ci=${ci}&birthdate=${birthDate}&olympicId=${registerData.olympic_id}&type=single`
+                `${API_URL}/api/inscription/form?ci=${ci}&birthdate=${birthDate}&olympicId=${registerData.olympic_id}&type=single`
             );
             //Esperar para ver que retorna esto
-            console.log(ci, birthDate)
-            console.log(data)
+            console.log(data.data)
+            setRegisterData({
+                ...registerData,
+                identity: {
+                    ci: ci,
+                    birthdate: birthDate,
+                    olympicId: registerData.olympic_id
+                },
+                olympiad: {
+                    id: registerData.olympic_id,
+                    price: data.data.olympiad.price
+                },
+            })
             if (Object.keys(data).length === 0) {
                 setFound(false)
             } else {
@@ -152,7 +163,7 @@ export const RecoverSessionStep = () => {
                             disabled={!stepsState.hasNext || !validate()}
                             type="button"
                             className="btn btn-primary w-50"
-                            onClick={ async () => await onSearchStudent()}
+                            onClick={ async () => await getInscriptionForm()}
                         >
                             Siguiente
                         </button>

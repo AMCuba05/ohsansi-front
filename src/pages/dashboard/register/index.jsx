@@ -18,6 +18,7 @@ import {LastStep} from "./RegisterSteps/LastStep.jsx";
 import {NewFirstStep} from "./RegisterSteps/NewFirstStep.jsx";
 import {NewSecondStep} from "./RegisterSteps/NewSecondStep.jsx";
 import {NewFourthStep} from "./RegisterSteps/NewFourthStep.jsx";
+import {NewThirdStep} from "./RegisterSteps/NewThirdStep.jsx";
 
 const Inscripciones = () => {
     const [showModal, setShowModal] = useState(false);
@@ -163,7 +164,7 @@ const Inscripciones = () => {
                     <NewSecondStep/>
                 </div>
                 <div>
-                    <ThirdStep/>
+                    <NewThirdStep/>
                 </div>
                 <div>
                     <NewFourthStep/>

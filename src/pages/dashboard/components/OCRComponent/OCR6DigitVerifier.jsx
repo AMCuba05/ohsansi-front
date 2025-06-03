@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import Tesseract from 'tesseract.js';
 
-const OCR6DigitVerifier = () => {
+const OCR6DigitVerifier = ({ targetNumber = '408846' }) => {
     const [image, setImage] = useState(null);
     const [result, setResult] = useState('');
-    const [isValid, setIsValid] = useState(null);
+    const [isMatch, setIsMatch] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
 
     const handleImageChange = async (e) => {
@@ -22,11 +22,11 @@ const OCR6DigitVerifier = () => {
             const digits = text.replace(/\D/g, '');
             setResult(digits);
 
-            const isValidNumber = /^\d{6}$/.test(digits);
-            setIsValid(isValidNumber);
+            const isNumberFound = digits.includes(targetNumber);
+            setIsMatch(isNumberFound);
         } catch (error) {
-            setResult('Error processing image');
-            setIsValid(false);
+            setResult('Error al procesar la imagen');
+            setIsMatch(false);
         } finally {
             setIsProcessing(false);
         }
@@ -44,13 +44,13 @@ const OCR6DigitVerifier = () => {
                 <img src={image} alt="Uploaded" className="img-fluid mb-3" style={{ maxWidth: '300px' }} />
             )}
             {isProcessing ? (
-                <p>Processing...</p>
+                <p>Procesando...</p>
             ) : (
                 <p>
-                    Result: {result || 'No result yet'}
-                    {isValid !== null && (
-                        <span className={isValid ? 'text-success' : 'text-danger'}>
-              {isValid ? ' (Valid 6-digit number)' : ' (Invalid, must be 6 digits)'}
+                    Resultado: {result || 'No hay resultados aún'}
+                    {isMatch !== null && (
+                        <span className={isMatch ? 'text-success' : 'text-danger'}>
+              {isMatch ? ` (Se encontro ${targetNumber})` : ` (No se encontró ${targetNumber})`}
             </span>
                     )}
                 </p>

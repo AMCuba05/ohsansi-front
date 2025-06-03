@@ -32,7 +32,7 @@ export const NewFourthStep = () => {
 
     const storeAccountable = async () => {
         try {
-            await axios.post(`${API_URL}/inscription/olympic`,
+            await axios.post(`${API_URL}/api/inscription/olympic`,
                 {
                     accountable: {
                         ci: Number(ci),
@@ -44,10 +44,15 @@ export const NewFourthStep = () => {
                         phone_number: phone,
                         gender: gender
                     }
+                }, {
+                    headers: {
+                        Identity: JSON.stringify(registerData.identity),
+                        Step: 4
+                    }
                 })
             setRegisterData({
                 ...registerData,
-                legal_tutor: {
+                responsable: {
                     ci: Number(ci),
                     ci_expedition: ciExp,
                     names: name,
@@ -62,23 +67,6 @@ export const NewFourthStep = () => {
         } catch (e) {
             alert(e.response.data.errors.details)
         }
-    }
-
-
-    const skip = () => {
-        setRegisterData({
-            ...registerData,
-            responsable:{
-                ci: "",
-                ci_expedition: "",
-                names: "",
-                last_names: "",
-                birthdate: "",
-                email: "",
-                phone_number: ""
-            }
-        })
-        stepsState.next()
     }
 
     return (

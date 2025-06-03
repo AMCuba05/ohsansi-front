@@ -53,12 +53,17 @@ export const NewFirstStep = () => {
 
     const storeSchoolData = async () => {
         try {
-            await axios.post(`${API_URL}/inscription/olympic`, {
+            await axios.post(`${API_URL}/api/inscription/olympic`, {
                 school: {
                     department: selectedState,
                     name: selectedSchool,
                     province: selectedProvince,
                 },
+            }, {
+                headers: {
+                    Identity: JSON.stringify(registerData.identity),
+                    Step: 1
+                }
             })
             setRegisterData({
                 ...registerData,
