@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {ArrowLeft} from "lucide-react";
 import {Button} from "react-bootstrap";
+import { API_URL } from '../../../../Constants/Utils';
 
 const EditOlympiad = () => {
     const navigate = useNavigate();
@@ -16,7 +17,6 @@ const EditOlympiad = () => {
     const [errors, setErrors] = useState({});
     const [successMessage, setSuccessMessage] = useState('');
     const [loading, setLoading] = useState(true);
-    const API_URL = 'https://willypaz.dev/projects/ohsansi-api';
 
     useEffect(() => {
         const fetchOlympiad = async () => {

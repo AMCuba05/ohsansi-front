@@ -167,7 +167,7 @@ export const ThirdStep = () => {
     const onSearchStudent = async (index) => {
         const ci = students[index].student.ci;
         try {
-            const { data } = await axios.get(`https://willypaz.dev/projects/ohsansi-api/api/search-student/${ci}`);
+            const { data } = await axios.get(`${API_URL}/api/search-student/${ci}`);
             const updated = [...students];
             updated[index].hasBeenQueried = true;
 
@@ -229,7 +229,7 @@ export const ThirdStep = () => {
                 selected_areas: convertAreasToSelectedFormat(index)
             }));
 
-            await axios.post(`${base_url}/inscription/olympic/multiple`, formattedData);
+            await axios.post(`${API_URL}/api/inscription/olympic/multiple`, formattedData);
             setRegisterData({
                 ...registerData,
                 competitors: formattedData

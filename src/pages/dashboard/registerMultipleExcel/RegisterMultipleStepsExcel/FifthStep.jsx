@@ -4,6 +4,7 @@ import {Dropdown, ProgressBar, Form, Spinner} from 'react-bootstrap'
 import axios from "axios";
 import {grades, provincies, schools, states} from "../../../../Constants/Provincies.js";
 import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
+import { API_URL } from '../../../../Constants/Utils.js';
 
 export const FifthStep = () => {
     const stepsState = useSteps()
@@ -51,7 +52,7 @@ export const FifthStep = () => {
     }
 
     useEffect(() => {
-        axios.get('https://willypaz.dev/projects/ohsansi-api/api/olympiads')
+        axios.get(`${API_URL}/api/olympiads`)
             .then(response => {
                 setOlympiads(response.data.Olympics);
                 setLoading(false);

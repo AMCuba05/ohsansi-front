@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Login.scss";
+import { API_URL } from "../../Constants/Utils";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -16,7 +17,7 @@ const Login = () => {
 
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post("https://willypaz.dev/projects/ohsansi-api/api/login", {
+            const response = await axios.post(`${API_URL}/api/login`, {
                 email: data.email,
                 password: data.password,
             });

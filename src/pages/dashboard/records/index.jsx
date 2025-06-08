@@ -5,8 +5,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { grades, provincies, states } from '../../../Constants/Provincies.js';
-
-const API_URL = 'https://willypaz.dev/projects/ohsansi-api';
+import { API_URL } from '../../../Constants/Utils.js';
 
 const Records = () => {
     const [currentPage, setCurrentPage] = useState(1);

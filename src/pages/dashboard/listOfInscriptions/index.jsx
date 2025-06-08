@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Table, Spinner, Form, Row, Col, Alert, Button } from 'react-bootstrap';
+import { API_URL } from '../../../Constants/Utils';
 
 const ListOfInscriptions = () => {
     const [inscriptions, setInscriptions] = useState([]);
@@ -14,7 +15,7 @@ const ListOfInscriptions = () => {
     const fetchInscriptions = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://willypaz.dev/projects/ohsansi-api/api/inscriptions');
+            const response = await axios.get(`${API_URL}/api/inscriptions`);
             const data = response.data || [];
             console.log(response.data)
             setInscriptions(data);
