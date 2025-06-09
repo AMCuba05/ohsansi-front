@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 import Tesseract from 'tesseract.js';
 
-const OCR6DigitVerifier = ({ targetNumber = '408846' }) => {
+const OCR6DigitVerifier = ({ targetNumber = '408846', onFinalize }) => {
     const [image, setImage] = useState(null);
     const [result, setResult] = useState('');
     const [isMatch, setIsMatch] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [file, setFile] = useState(null);
 
     const handleImageChange = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+        const selectedFile = e.target.files[0];
+        if (!selectedFile) return;
 
-        setImage(URL.createObjectURL(file));
+        setFile(selectedFile);
+        setImage(URL.createObjectURL(selectedFile));
         setIsProcessing(true);
 
         try {
-            const { data: { text } } = await Tesseract.recognize(file, 'eng', {
+            const { data: { text } } = await Tesseract.recognize(selectedFile, 'eng', {
                 tessedit_char_whitelist: '0123456789',
             });
 
@@ -29,6 +31,12 @@ const OCR6DigitVerifier = ({ targetNumber = '408846' }) => {
             setIsMatch(false);
         } finally {
             setIsProcessing(false);
+        }
+    };
+
+    const handleFinalize = () => {
+        if (isMatch && file && onFinalize) {
+            onFinalize({ isMatch, file, digits: result });
         }
     };
 
@@ -50,11 +58,18 @@ const OCR6DigitVerifier = ({ targetNumber = '408846' }) => {
                     Resultado: {result || 'No hay resultados aún'}
                     {isMatch !== null && (
                         <span className={isMatch ? 'text-success' : 'text-danger'}>
-              {isMatch ? ` (Se encontro ${targetNumber})` : ` (No se encontró ${targetNumber})`}
+              {isMatch ? ` (Se encontró ${targetNumber})` : ` (No se encontró ${targetNumber})`}
             </span>
                     )}
                 </p>
             )}
+            <button
+                className="btn btn-success"
+                onClick={handleFinalize}
+                disabled={!isMatch || isProcessing}
+            >
+                Finalizar Pago
+            </button>
         </div>
     );
 };
