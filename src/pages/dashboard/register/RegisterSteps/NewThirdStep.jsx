@@ -8,7 +8,8 @@ import {Check, Search} from "lucide-react";
 
 export const NewThirdStep = () => {
     const stepsState = useSteps();
-    const { registerData } = useRegisterContext();
+    const { registerData, setRegisterData } = useRegisterContext();
+    console.log(registerData.competitor.selected_areas, 'ajajajajaj');
     const [areas, setAreas] = useState([]);
     const [seleccionadas, setSeleccionadas] = useState([]);
     const [categorias, setCategorias] = useState([]);
@@ -34,14 +35,40 @@ export const NewThirdStep = () => {
                 setError('No se pudieron cargar las áreas. Por favor intenta de nuevo.');
                 setLoading(false);
             });
+        if(registerData.competitor.selected_areas != null){
+            const data = registerData.competitor.selected_areas;
+            console.log(registerData.competitor.selected_areas);
+            const areas = data.map(item => item.data.area_id);
+            const cats = data.map(item => item.data.category_id);
+            setSeleccionadas(areas);
+            setCategorias(cats);
+            const initialOpenAreas = areas.reduce((acc, id) => ({
+                ...acc,
+                [id]: true
+            }), {});
+            setOpenAreas(initialOpenAreas);
+        }
     }, []);
 
-    const onSearchTeacher = async (ci) => {
+    const onSearchTeacher = async (ci, areaId) => {
         try {
             const { data } = await axios.get(`${API_URL}/api/search-student/${ci}`);
             setClickOnSearch(true)
             if(data.names){
+                console.log(data, 'yyyyy');
                 setFoundTeacher(true)
+                setTutors(() => ({
+                    [areaId]: {
+                        ci: ci,
+                        birthdate: data.birthdate,
+                        ci_expedition: data.ci_expedition,
+                        email: data.email,
+                        gender: data.gender,
+                        names: data.names,
+                        last_names: data.last_names,
+                        phone_number: data.phone_number
+                    }
+                }));
 
             }else {
                 setFoundTeacher(false)
@@ -87,6 +114,8 @@ export const NewThirdStep = () => {
     };
 
     const toggleTutor = (areaId) => {
+        setClickOnSearch(false)
+        setFoundTeacher(false)
         setTutors((prev) => ({
             ...prev,
             [areaId]: prev[areaId] ? undefined : {
@@ -178,11 +207,22 @@ export const NewThirdStep = () => {
                     }
                 }
             );
+            setRegisterData({
+                ...registerData,
+                competitor: {
+                    ...registerData.competitor,
+                    selected_areas: convertAreasToSelectedFormat()
+                }
+            })
             setShowReceipt(true);
             stepsState.next();
         } catch (error) {
-            console.error('Submission error:', error);
-            setError('Error al enviar la inscripción. Verifica los datos.');
+            if(error.response.data.error) {
+                setError(error.response.data.error)
+            }else {
+                setError('Error al enviar la inscripción. Verifica los datos.');
+            }
+
         }
     };
 
@@ -273,7 +313,7 @@ export const NewThirdStep = () => {
                                                         value={tutors[area.id]?.ci || ''}
                                                         onChange={(e) => updateTutorData(area.id, 'ci', e.target.value)}
                                                     />
-                                                    <Button onClick={() => onSearchTeacher(tutors[area.id]?.ci)} variant="outline-secondary">
+                                                    <Button onClick={() => onSearchTeacher(tutors[area.id]?.ci, area.id)} variant="outline-secondary">
                                                         {foundTeacher ? <Check size={16}/> : <Search size={16}/>}
                                                     </Button>
                                                 </InputGroup>
@@ -284,7 +324,15 @@ export const NewThirdStep = () => {
                                                 }
                                                 <InputGroup className="mb-2">
                                                     <FormControl
+                                                        placeholder="Expedición CI (e.g., CB)"
+                                                        value={tutors[area.id]?.ci_expedition || ''}
+                                                        onChange={(e) => updateTutorData(area.id, 'ci_expedition', e.target.value)}
+                                                    />
+                                                </InputGroup>
+                                                <InputGroup className="mb-2">
+                                                    <FormControl
                                                         placeholder="Nombres"
+                                                        style={{textTransform: 'uppercase'}}
                                                         value={tutors[area.id]?.names || ''}
                                                         onChange={(e) => updateTutorData(area.id, 'names', e.target.value)}
                                                     />
@@ -292,15 +340,9 @@ export const NewThirdStep = () => {
                                                 <InputGroup className="mb-2">
                                                     <FormControl
                                                         placeholder="Apellidos"
+                                                        style={{textTransform: 'uppercase'}}
                                                         value={tutors[area.id]?.last_names || ''}
                                                         onChange={(e) => updateTutorData(area.id, 'last_names', e.target.value)}
-                                                    />
-                                                </InputGroup>
-                                                <InputGroup className="mb-2">
-                                                    <FormControl
-                                                        placeholder="Expedición CI (e.g., CB)"
-                                                        value={tutors[area.id]?.ci_expedition || ''}
-                                                        onChange={(e) => updateTutorData(area.id, 'ci_expedition', e.target.value)}
                                                     />
                                                 </InputGroup>
                                                 <InputGroup className="mb-2">

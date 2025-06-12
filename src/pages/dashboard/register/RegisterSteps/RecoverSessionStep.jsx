@@ -33,36 +33,90 @@ export const RecoverSessionStep = () => {
                 `${API_URL}/api/inscription/form?ci=${ci}&birthdate=${birthDate}&olympicId=${registerData.olympic_id}&type=single`
             );
             //Esperar para ver que retorna esto
-            console.log(data.data)
-            setRegisterData({
-                ...registerData,
-                identity: {
-                    ci: ci,
-                    birthdate: birthDate,
-                    olympicId: registerData.olympic_id
-                },
-                olympiad: {
-                    id: registerData.olympic_id,
-                    price: data.data.olympiad.price
-                },
-            })
-            if (Object.keys(data).length === 0) {
-                setFound(false)
-            } else {
-                setFound(true)
-                setName(data.names)
-                setLastName(data.last_names)
-                setCiExp(data.ci_expedition)
-                setBirthDate(data.birthdate)
-                setEmail(data.email)
-                setPhone(data.phone_number)
-            }
-            if (data.data.is_accountable) {
-                stepsState.jump(8)
-            } else {
+            console.log(data.data, 'gary hay data')
+            if(data.data.step != null){
+                if(data.data.step == 1){
+                    setRegisterData({
+                        ...registerData,
+                        identity: {
+                            ci: ci,
+                            birthdate: birthDate,
+                            olympicId: registerData.olympic_id
+                        },
+                        olympiad: {
+                            id: registerData.olympic_id,
+                            price: data.data.olympiad.price
+                        },
+                        competitor: {
+                            school_data: {
+                                name: data.data.inscription.school.name,
+                                department: data.data.inscription.school.department,
+                                province: data.data.inscription.school.province
+                            },
+                        },
+                    })
+                } else if (data.data.step == 2){
+
+                } else if (data.data.step == 3){
+                    setRegisterData({
+                        ...registerData,
+                        identity: {
+                            ci: ci,
+                            birthdate: birthDate,
+                            olympicId: registerData.olympic_id
+                        },
+                        olympiad: {
+                            id: registerData.olympic_id,
+                            price: data.data.olympiad.price
+                        },
+                        competitor: {
+                            ci: data.data.inscription.competitor_data.ci,
+                            ci_expedition: data.data.inscription.competitor_data.ci_expedition,
+                            names: data.data.inscription.competitor_data.names,
+                            last_names: data.data.inscription.competitor_data.last_names,
+                            birthdate: data.data.inscription.competitor_data.birthdate,
+                            email: data.data.inscription.competitor_data.email,
+                            gender: data.data.inscription.competitor_data.gender,
+                            phone_number: data.data.inscription.competitor_data.phone_number,
+                            school_data: {
+                                name: data.data.inscription.school.name,
+                                department: data.data.inscription.school.department,
+                                province: data.data.inscription.school.province
+                            },
+                            selected_areas: data.data.inscription.selected_areas.map(area => ({
+                                data: {
+                                    area_id: area.area_id,
+                                    category_id: area.category_id
+                                }
+                            }))
+                        },
+                        legal_tutor: data.data.inscription.legal_tutor.personal_data
+                    })
+                }
+
+                stepsState.next()
+            }else{
+                setRegisterData({
+                    ...registerData,
+                    identity: {
+                        ci: ci,
+                        birthdate: birthDate,
+                        olympicId: registerData.olympic_id
+                    },
+                    olympiad: {
+                        id: registerData.olympic_id,
+                        price: data.data.olympiad.price
+                    },
+                })
                 stepsState.next()
             }
+            if (data.data.is_accountable) {
+                //stepsState.jump(8)
+            } else {
+                //stepsState.next()
+            }
         } catch (error) {
+            console.log('gary fue atrapado')
             setHasBeenQueried(true)
             setFound(false)
             setName("")

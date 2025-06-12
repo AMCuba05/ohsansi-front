@@ -5,8 +5,9 @@ import {FirstStep} from "./RegisterMultipleStepsExcel/FirstStep.jsx";
 import {SecondStep} from "./RegisterMultipleStepsExcel/SecondStep.jsx"
 import {Steps} from "react-step-builder";
 import {ThirdStep} from "./RegisterMultipleStepsExcel/ThirdStep.jsx";
-import {FouthStep} from "./RegisterMultipleStepsExcel/FouthStep.jsx";
-import {RecoverSessionStep} from "../register/RegisterSteps/RecoverSessionStep.jsx";
+
+import {RecoverSessionStep} from "./RegisterMultipleStepsExcel/RecoverSessionStep.jsx";
+import {LastStep} from "./RegisterMultipleStepsExcel/LastStep.jsx";
 
 const Inscripciones = () => {
     return (
@@ -25,7 +26,7 @@ const Inscripciones = () => {
                     <ThirdStep/>
                 </div>
                 <div>
-                    <FouthStep/>
+                    <LastStep/>
                 </div>
             </Steps>
         </div>

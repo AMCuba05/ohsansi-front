@@ -1,13 +1,15 @@
 import React, {useState} from 'react';
 import {useSteps} from 'react-step-builder'
 import {FormControl, ProgressBar} from 'react-bootstrap'
-import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
-import * as XLSX from "xlsx";
+import { Search, Check, X } from 'lucide-react';
+import {Button, InputGroup} from "reactstrap";
 import axios from "axios";
+import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
 import {API_URL} from "../../../../Constants/Utils.js";
-import {InputGroup} from "reactstrap";
 
-export const FouthStep = () => {
+export const NewFourthStep = ({setBoletaData}) => {
+    const today = new Date();
+    const localDate = today.toLocaleDateString('en-CA');
     const stepsState = useSteps()
     const { registerData, setRegisterData } = useRegisterContext()
     const [name, setName] = useState("")
@@ -18,6 +20,8 @@ export const FouthStep = () => {
     const [ci, setCi] = useState("")
     const [ciExp, setCiExp] = useState("")
     const [birthDate, setBirthDate] = useState('');
+    const [clickOnSearch, setClickOnSearch] = useState(false);
+    const [foundAccountable, setFoundAccountable] = useState(false);
 
 
     const validate = () => {
@@ -32,10 +36,10 @@ export const FouthStep = () => {
 
     const storeAccountable = async () => {
         try {
-            await axios.post(`${API_URL}/inscription/olympic`,
+            await axios.post(`${API_URL}/api/inscription/olympic/multiple`,
                 {
                     accountable: {
-                        ci: Number(ci),
+                        ci: ci,
                         ci_expedition: ciExp,
                         names: name,
                         last_names: lastName,
@@ -44,42 +48,62 @@ export const FouthStep = () => {
                         phone_number: phone,
                         gender: gender
                     }
+                }, {
+                    headers: {
+                        Identity: JSON.stringify(registerData.identity),
+                        Step: 3
+                    }
+                }).then((response) => {
+                setRegisterData({
+                    ...registerData,
+                    responsable: {
+                        ci: ci,
+                        ci_expedition: ciExp,
+                        names: name,
+                        last_names: lastName,
+                        birthdate: birthDate,
+                        email: email,
+                        phone_number: phone
+                    },
+                    boleta: response.data.data.boleta
                 })
-            setRegisterData({
-                ...registerData,
-                legal_tutor: {
-                    ci: Number(ci),
-                    ci_expedition: ciExp,
-                    names: name,
-                    last_names: lastName,
-                    birthdate: birthDate,
-                    email: email,
-                    phone_number: phone
-                },
             })
+
             alert("La pre inscripcion se ha realizado con exito")
             stepsState.next()
         } catch (e) {
-            alert(e.response.data.errors.details)
+            console.log(e)
         }
     }
 
-
-    const skip = () => {
-        setRegisterData({
-            ...registerData,
-            responsable:{
-                ci: "",
-                ci_expedition: "",
-                names: "",
-                last_names: "",
-                birthdate: "",
-                email: "",
-                phone_number: ""
+    const onSearchAccountable = async () => {
+        try {
+            const { data } = await axios.get(`${API_URL}/api/search-student/${ci}`);
+            setClickOnSearch(true)
+            if(data.names){
+                setFoundAccountable(true)
+                setCiExp(data.ci_expedition)
+                setName(data.names)
+                setLastName(data.last_names)
+                setBirthDate(data.birthdate)
+                setEmail(data.email)
+                setPhone(data.phone_number)
+                setGender(data.gender)
+            }else {
+                setFoundAccountable(false)
+                setCiExp("")
+                setName("")
+                setLastName("")
+                setBirthDate("")
+                setEmail("")
+                setPhone("")
+                setGender("")
             }
-        })
-        stepsState.next()
-    }
+        } catch (err) {
+            setFoundAccountable(false)
+            console.log(err)
+        }
+    };
 
     return (
         <div className="container d-flex justify-content-center">
@@ -93,7 +117,7 @@ export const FouthStep = () => {
                     variant={"success"}
                     style={{ height: '1.5rem', fontSize: '0.9rem' }}
                 />
-                <h2 className="mb-3 mt-4">Paso 6: Información del responsable de pago</h2>
+                <h2 className="mb-3 mt-4">Paso 5: Información del responsable de pago</h2>
                 <p className="text-muted mb-4">
                     Puedes registrar un tutor académico que apoye al estudiante durante la olimpiada. Esta información es opcional
                 </p>
@@ -102,13 +126,21 @@ export const FouthStep = () => {
                     <InputGroup className="mb-3">
                         <div className="form-label w-100">Carnet de identidad del responsable</div>
                         <FormControl
-                            type="text"
+                            type="number"
                             placeholder="Ingresa el carnet de identidad"
                             aria-label="Carnet de identidad del tutor"
                             value={ci}
                             onChange={e => setCi(e.target.value)}
                         />
+                        <Button onClick={onSearchAccountable} variant="outline-secondary">
+                            {foundAccountable ? <Check size={16}/> : <Search size={16}/>}
+                        </Button>
                     </InputGroup>
+                    {!foundAccountable && clickOnSearch ?
+                        <p className="text-danger">Carnet no encontrado, ingrese los datos
+                            manualmente.</p> : foundAccountable && clickOnSearch?
+                            <p className="text-success">Datos cargados correctamente.</p> : null
+                    }
                     <div className="mb-3">
                         <label htmlFor="exp" className="form-label">Lugar de Expedición</label>
                         <input
@@ -154,6 +186,7 @@ export const FouthStep = () => {
                             className="form-control"
                             id="fechaNacimiento"
                             value={birthDate}
+                            max={new Date().toLocaleDateString('en-CA')}
                             onChange={e => setBirthDate(e.target.value)}
                         />
                     </div>
@@ -173,7 +206,7 @@ export const FouthStep = () => {
                     <div className="mb-3">
                         <label htmlFor="telefono" className="form-label">Teléfono</label>
                         <input
-                            type="tel"
+                            type="number"
                             className="form-control"
                             id="telefono"
                             placeholder="+591 70000000"

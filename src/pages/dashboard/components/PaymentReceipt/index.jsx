@@ -52,7 +52,11 @@ const styles = StyleSheet.create({
         marginBottom: 2,
     },
     colConcepto: {
-        width: "70%",
+        width: "50%",
+    },
+    colCantidad: {
+        width: "20%",
+        textAlign: "center",
     },
     colMonto: {
         width: "30%",
@@ -66,6 +70,7 @@ const styles = StyleSheet.create({
 });
 
 const BoletaPagoPDF = ({ data }) => {
+    console.log(data)
     return (
         <Document>
             <Page size="A4" style={styles.page}>
@@ -109,11 +114,13 @@ const BoletaPagoPDF = ({ data }) => {
                 <View>
                     <View style={styles.tableHeader}>
                         <Text style={styles.colConcepto}>Concepto</Text>
+                        <Text style={styles.colCantidad}>Cantidad</Text>
                         <Text style={styles.colMonto}>Monto (Bs)</Text>
                     </View>
 
                     <View style={styles.tableRow}>
                         <Text style={styles.colConcepto}>{data.concepto}</Text>
+                        <Text style={styles.colCantidad}>{data?.cantidad}</Text>
                         <Text style={styles.colMonto}>{data.importe.toFixed(2)}</Text>
                     </View>
 

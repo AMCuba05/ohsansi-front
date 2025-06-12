@@ -7,6 +7,8 @@ import {FirstStep} from "./RegisterMultipleSteps/FirstStep.jsx";
 import {SecondStep} from "./RegisterMultipleSteps/SecondStep.jsx";
 import {RecoverSessionStep} from "./RegisterMultipleSteps/RecoverSessionStep.jsx";
 import {ThirdStep} from "./RegisterMultipleSteps/ThirdStep.jsx";
+import {NewFourthStep} from "./RegisterMultipleSteps/NewFourthStep.jsx";
+import {LastStep} from "./RegisterMultipleSteps/LastStep.jsx";
 
 const Inscripciones = () => {
 
@@ -26,7 +28,10 @@ const Inscripciones = () => {
                     <ThirdStep/>
                 </div>
                 <div>
-                    <FirstStep/>
+                    <NewFourthStep/>
+                </div>
+                <div>
+                    <LastStep/>
                 </div>
             </Steps>
         </div>

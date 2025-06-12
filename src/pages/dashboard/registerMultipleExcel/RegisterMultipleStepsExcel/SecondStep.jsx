@@ -1,12 +1,11 @@
-import React, {useState} from 'react';
-import {useSteps} from 'react-step-builder'
-import {Dropdown, Form, FormControl, ProgressBar, Spinner} from 'react-bootstrap'
-import { Search, Check, X } from 'lucide-react';
-import {Button, InputGroup} from "reactstrap";
+import React, { useState } from 'react';
+import { useSteps } from 'react-step-builder';
+import {FormControl, ProgressBar, Accordion, Card, Spinner, Form, Dropdown} from 'react-bootstrap';
 import axios from "axios";
-import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
-import {API_URL} from "../../../../Constants/Utils.js";
+import { useRegisterContext } from "../../../../Context/RegisterContext.jsx";
 import {grades, provincies, schools, states} from "../../../../Constants/Provincies.js";
+import {API_URL} from "../../../../Constants/Utils.js";
+
 
 export const SecondStep = () => {
     const stepsState = useSteps()
@@ -55,12 +54,6 @@ export const SecondStep = () => {
 
     const storeSchoolData = async () => {
         try {
-            await axios.post(`${API_URL}/api/olympiads/${registerData.olympic_id}/inscriptions/${registerData.inscription_id}/schools`, {
-                name: selectedSchool,
-                department: selectedState,
-                province: selectedProvince,
-                course: selected
-            })
             setRegisterData({
                 ...registerData,
                 competitor: {
@@ -69,7 +62,6 @@ export const SecondStep = () => {
                         name: selectedSchool,
                         department: selectedState,
                         province: selectedProvince,
-                        course: selected
                     },
                 }
             })
@@ -80,7 +72,6 @@ export const SecondStep = () => {
     }
 
     function validate() {
-        if (selected == null) return false;
         if (selectedState == null) return false;
         if (selectedSchool == null) return false;
         return selectedProvince != null;
@@ -173,29 +164,8 @@ export const SecondStep = () => {
                             </Dropdown>
                         </Form.Group>
                     )}
+                    {/*Mover el grado a la info de estudiante*/}
 
-                    {loading ? (
-                        <div className="d-flex justify-content-center">
-                            <Spinner animation="border" variant="primary" />
-                        </div>
-                    ) : (
-                        <Form.Group className="d-flex align-items-center mt-3">
-                            <Form.Label className="me-3 mb-0 w-25">Grado:</Form.Label>
-                            <Dropdown onSelect={handleSelect}>
-                                <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                                    {selected ? selected : 'Seleccionar Grado'}
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu>
-                                    {grades.map((grade, index) => (
-                                        <Dropdown.Item key={index} eventKey={index}>
-                                            {grade}
-                                        </Dropdown.Item>
-                                    ))}
-                                </Dropdown.Menu>
-                            </Dropdown>
-                        </Form.Group>
-                    )}
 
                     {hasBeenQueried && !found ? <p className="text-danger">Carnet no encontrado, ingresa los datos manualmente</p> : null}
                     {hasBeenQueried && found ?  <p className="text-success">Datos cargados correctamente.</p> : null}

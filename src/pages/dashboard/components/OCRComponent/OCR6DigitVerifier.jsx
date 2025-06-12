@@ -55,10 +55,10 @@ const OCR6DigitVerifier = ({ targetNumber = '408846', onFinalize }) => {
                 <p>Procesando...</p>
             ) : (
                 <p>
-                    Resultado: {result || 'No hay resultados aún'}
+                    Resultado:
                     {isMatch !== null && (
                         <span className={isMatch ? 'text-success' : 'text-danger'}>
-              {isMatch ? ` (Se encontró ${targetNumber})` : ` (No se encontró ${targetNumber})`}
+              {isMatch ? ` (Se verifo la orden de pago: ${targetNumber})` : ` (No se pudo verificar la orden de pago: ${targetNumber})`}
             </span>
                     )}
                 </p>

@@ -9,7 +9,7 @@ const ListOfInscriptions = () => {
     const [statusFilter, setStatusFilter] = useState('');
     const [loading, setLoading] = useState(false);
     const [totals, setTotals] = useState({ paid: 0, pending: 0 });
-
+    console.log(inscriptions);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const fetchInscriptions = async () => {
@@ -28,28 +28,35 @@ const ListOfInscriptions = () => {
     };
 
     const calculateTotals = (data) => {
-        let paid = 0;
+        let draft = 0;
         let pending = 0;
+        let completed = 0;
 
         data.forEach(item => {
-            const areas = item.inscription?.selected_areas || [];
-            const hasPaidAll = areas.length > 0 && areas.every(area => area.paid_at !== null);
+            const status = item.status;
 
-            if (hasPaidAll) paid++;
-            else pending++;
+            if (status === 'draft') {
+                draft++;
+            } else if (status === 'pending') {
+                pending++;
+            } else if (status === 'completed') {
+                completed++;
+            }
         });
 
-        setTotals({ paid, pending });
+        setTotals({ draft, pending, completed });
     };
+
 
     const fetchByStatus = async (status) => {
         setLoading(true);
-        const statusEs = status === 'completed' ? 'completed' : 'pending'
-        const data  = inscriptions.filter(i => i.status === statusEs)
+
+        const data = inscriptions.filter(i => i.status === status);
         setFilteredInscriptions(data);
 
         setLoading(false);
     };
+
 
     useEffect(() => {
         fetchInscriptions();
@@ -89,18 +96,22 @@ const ListOfInscriptions = () => {
                 <Col md={4}>
                     <Form.Select value={statusFilter} onChange={handleStatusChange}>
                         <option value="">Filtrar por estado</option>
-                        <option value="Pendiente">Pendiente</option>
-                        <option value="En proceso">Pagados</option>
+                        <option value="draft">No completados</option>
+                        <option value="pending">Pendiente</option>
+                        <option value="completed">Pagados</option>
                     </Form.Select>
                 </Col>
             </Row>
 
             <Row className="mb-3">
                 <Col md={3}>
-                    <Alert variant="success">Pagados: {totals.paid}</Alert>
+                    <Alert variant="success">Pagados: {totals.completed}</Alert>
                 </Col>
                 <Col md={3}>
                     <Alert variant="warning">Pendientes: {totals.pending}</Alert>
+                </Col>
+                <Col md={3}>
+                    <Alert variant="danger">Inscripcion no completada: {totals.draft}</Alert>
                 </Col>
             </Row>
 
@@ -133,7 +144,13 @@ const ListOfInscriptions = () => {
                                     <td>{item.competitor}</td>
                                     <td>{item.accountable}</td>
                                     <td>{item.school || '-'}</td>
-                                    <td>{item.status === "completed" ? 'Pagado' : 'Pendiente'}</td>
+                                    <td>
+                                        {item.status === "completed"
+                                            ? "Pagado"
+                                            : item.status === "pending"
+                                                ? "Pendiente"
+                                                : "Borrador"}
+                                    </td>
 
 
                                 </tr>

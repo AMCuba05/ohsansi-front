@@ -16,7 +16,7 @@ const Records = () => {
         department: '',
         province: '',
         area_id: '',
-        category: '',
+        course: '',
         olympiad_id: '',
         gender: '',
         birthdate_from: '',
@@ -83,6 +83,7 @@ const Records = () => {
             }).toString();
 
             const res = await axios.get(`${API_URL}/api/filter?${params}`);
+            console.log(res.data);
             const { data: list, total, per_page, from } = res.data;
 
             if (!Array.isArray(list)) {
@@ -91,7 +92,7 @@ const Records = () => {
 
             setData(list || []);
             setTotalPages(Math.ceil(total / per_page) || 1);
-            setCurrentPage(from || 1);
+            setCurrentPage(page);
         } catch (err) {
             console.error('Error al obtener registros:', err);
             setError(`No se pudieron cargar los registros: ${err.message}. Por favor, intenta de nuevo.`);
@@ -145,7 +146,6 @@ const Records = () => {
         const worksheet = XLSX.utils.json_to_sheet(data.map((item, idx) => ({
             '#': idx + 1,
             Nombre: item.competitor || `${item.names || ''} ${item.last_names || ''}`.trim() || '-',
-            Email: item.email || '-',
             Departamento: item.school_department || '-',
             Provincia: item.school_province || '-',
             Área: item.selected_areas?.map(a => a.area || '').join(', ') || '-',
@@ -168,7 +168,7 @@ const Records = () => {
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
-            setCurrentPage(prev => prev + 1);
+            setCurrentPage(prev => Number(prev + 1));
             fetchData(currentPage + 1);
         }
     };
@@ -230,8 +230,8 @@ const Records = () => {
                 <Row className="mt-3">
                     <Col md={4}>
                         <Form.Group>
-                            <Form.Label>Categoría</Form.Label>
-                            <Form.Select name="category" value={filters.category} onChange={handleChange}>
+                            <Form.Label>Curso</Form.Label>
+                            <Form.Select name="course" value={filters.course} onChange={handleChange}>
                                 <option value="">Todas</option>
                                 {options.categories.map(cat => (
                                     <option key={cat.id} value={cat}>{cat}</option>

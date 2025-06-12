@@ -39,7 +39,6 @@ export const FirstStep = () => {
 
     const submit = () => {
         setRegisterData({
-            ...registerData,
             olympic_id: selected.id,
             olympic_name: selected.title,
             olympic_price: selected.price

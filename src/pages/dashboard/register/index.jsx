@@ -19,6 +19,7 @@ const Inscripciones = () => {
     const [areas, setAreas] = useState([]);
     const [excelFile, setExcelFile] = useState(null);
     const [boletaData, setBoletaData] = useState({});
+    const [statusForm, setStatusForm] = useState(false);
 
     const {
         register,

@@ -11,6 +11,8 @@ import {API_URL} from '../../../../Constants/Utils.js';
 const emptyStudent = {
     found: false,
     hasBeenQueried: false,
+    foundTeacher: false,
+    hasBeenQueriedTeacher: false,
     student: {
         ci: '',
         birthdate: '',
@@ -38,13 +40,15 @@ const emptyStudent = {
 };
 
 export const ThirdStep = () => {
+    const today = new Date();
+    const localDate = today.toLocaleDateString('en-CA');
     const stepsState = useSteps();
     const { registerData, setRegisterData } = useRegisterContext();
     const [students, setStudents] = useState([{ ...emptyStudent }]);
     const [areas, setAreas] = useState([]);
     const [loadingAreas, setLoadingAreas] = useState(true);
     const [errorAreas, setErrorAreas] = useState(null);
-    const [openAreas, setOpenAreas] = useState({}); // Track collapsed state per student and area
+    const [openAreas, setOpenAreas] = useState({});
     console.log(areas)
     useEffect(() => {
         setLoadingAreas(true);
@@ -64,9 +68,18 @@ export const ThirdStep = () => {
 
     const handleStudentChange = (index, section, field, value) => {
         const updated = [...students];
-        updated[index][section][field] = value;
+
+        updated[index] = {
+            ...updated[index],
+            [section]: {
+                ...updated[index][section],
+                [field]: value,
+            },
+        };
+
         setStudents(updated);
     };
+
 
     const handleCheckArea = (index, areaId) => {
         const updated = [...students];
@@ -191,6 +204,38 @@ export const ThirdStep = () => {
         } catch (err) {
             const updated = [...students];
             updated[index] = { ...emptyStudent, student: { ...emptyStudent.student, ci }, hasBeenQueried: true, found: false };
+            setStudents(updated);
+        }
+    };
+
+    console.log(students)
+    const onSearchTutor = async (index) => {
+        const ci = students[index].legal_tutor.ci;
+        try {
+            const { data } = await axios.get(`${API_URL}/api/search-student/${ci}`);
+            const updated = [...students];
+            updated[index].hasBeenQueriedTeacher = true;
+
+            if (Object.keys(data).length === 0) {
+                updated[index].foundTeacher = false;
+            } else {
+                updated[index].legal_tutor = {
+                    ci,
+                    birthdate: data.birthdate,
+                    ci_expedition: data.ci_expedition,
+                    names: data.names,
+                    last_names: data.last_names,
+                    email: data.email,
+                    phone_number: data.phone_number,
+                    course: data.course,
+                    gender: data.gender,
+                };
+                updated[index].foundTeacher = true;
+            }
+            setStudents(updated);
+        } catch (err) {
+            const updated = [...students];
+            updated[index] = { ...emptyStudent, hasBeenQueriedTeacher: true, foundTeacher: false };
             setStudents(updated);
         }
     };
@@ -332,6 +377,7 @@ export const ThirdStep = () => {
                                             type="date"
                                             className="form-control"
                                             value={student.student.birthdate}
+                                            max={new Date().toLocaleDateString('en-CA')}
                                             onChange={e => handleStudentChange(index, 'student', 'birthdate', e.target.value)}
                                         />
                                     </div>
@@ -372,15 +418,25 @@ export const ThirdStep = () => {
 
                                     {/* Legal Tutor Information */}
                                     <h5 className="mt-4">Datos del Tutor Legal</h5>
-                                    <div className="mb-3">
-                                        <label className="form-label">Carnet de identidad</label>
-                                        <input
+                                    <InputGroup className="mb-3">
+                                        <div className="form-label w-100">Carnet de identidad</div>
+                                        <FormControl
                                             type="text"
-                                            className="form-control"
                                             value={student.legal_tutor.ci}
                                             onChange={e => handleStudentChange(index, 'legal_tutor', 'ci', e.target.value)}
+                                            placeholder="Carnet de identidad"
                                         />
-                                    </div>
+                                        <StrapButton onClick={() => onSearchTutor(index)} variant="outline-secondary">
+                                            {student.foundTeacher ? <Check size={16} /> : <Search size={16} />}
+                                        </StrapButton>
+                                    </InputGroup>
+
+                                    {student.hasBeenQueriedTeacher && !student.foundTeacher && (
+                                        <p className="text-danger">Carnet no encontrado, ingrese los datos manualmente.</p>
+                                    )}
+                                    {student.hasBeenQueriedTeacher && student.foundTeacher && (
+                                        <p className="text-success">Datos cargados correctamente.</p>
+                                    )}
 
                                     <div className="mb-3">
                                         <label className="form-label">Lugar de Expedición</label>
@@ -420,6 +476,7 @@ export const ThirdStep = () => {
                                         <input
                                             type="date"
                                             className="form-control"
+                                            max={new Date().toLocaleDateString('en-CA')}
                                             value={student.legal_tutor.birthdate}
                                             onChange={e => handleStudentChange(index, 'legal_tutor', 'birthdate', e.target.value)}
                                         />

@@ -20,7 +20,7 @@ export const NewFirstStep = () => {
     const [selectedSchool, setSelectedSchool] = useState(null);
 
     useEffect(() => {
-        if(registerData.competitor.school_data != null){
+        if(registerData.competitor?.school_data != null){
             setSelectedState(registerData.competitor.school_data.department)
             setSelectedProvince(registerData.competitor.school_data.province)
             setSelectedSchool(registerData.competitor.school_data.name)

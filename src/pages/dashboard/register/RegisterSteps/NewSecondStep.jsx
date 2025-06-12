@@ -38,9 +38,10 @@ export const NewSecondStep = () => {
     const [clickOnSerach, setClickOnSerach] = useState(false);
     const [clickOnSearchTutor, setClickOnSearchTutor] = useState(false);
 
+    console.log(registerData.legal_tutor != null, registerData.legal_tutor, 'xx')
     useEffect(() => {
-        if(registerData.competitor != null){
-            setCi(registerData.competitor.ci)
+        if(registerData.competitor?.ci != null){
+            setCi(registerData.competitor.ci + '')
             setCiExp(registerData.competitor.ci_expedition)
             setName(registerData.competitor.names)
             setLastName(registerData.competitor.last_names)
@@ -49,8 +50,8 @@ export const NewSecondStep = () => {
             setPhone(registerData.competitor.phone_number)
             setGender(registerData.competitor.gender)
         }
-        if(registerData.legal_tutor != null){
-            setCiTutor(registerData.legal_tutor.ci)
+        if(registerData.legal_tutor?.ci != null){
+            setCiTutor(registerData.legal_tutor.ci+ '')
             setCiExpTutor(registerData.legal_tutor.ci_expedition)
             setNameTutor(registerData.legal_tutor.names)
             setLastNameTutor(registerData.legal_tutor.last_names)
@@ -66,13 +67,12 @@ export const NewSecondStep = () => {
         if (!lastName.trim()) return false;
         if (!email.trim()) return false;
         if (!phone.trim()) return false;
-        if (!ci.trim()) return false;
+
         if (!gender.trim()) return false;
         return true;
     }
 
     const onSearchStudent = async () => {
-
         try {
             const { data } = await axios.get(`${API_URL}/api/search-student/${ci}`);
             setClickOnSerach(true)
@@ -122,19 +122,18 @@ export const NewSecondStep = () => {
                 setGenderTutor(data.gender)
             }else {
                 setFoundTutor(false)
-                setCiTutor(data.ci_expedition)
-                setNameTutor(data.names)
-                setLastNameTutor(data.last_names)
-                setBirthDateTutor(data.birthdate)
-                setEmailTutor(data.email)
-                setPhoneTutor(data.phone_number)
-                setGenderTutor(data.gender)
-
+                setCiExpTutor("")
+                setNameTutor("")
+                setLastNameTutor("")
+                setBirthDateTutor("")
+                setEmailTutor("")
+                setPhoneTutor("")
+                setGenderTutor("")
             }
         } catch (error) {
             setHasBeenQueried(true)
             setFoundTutor(false)
-            setCiTutor("")
+            setCiExpTutor("")
             setNameTutor("")
             setLastNameTutor("")
             setBirthDateTutor("")

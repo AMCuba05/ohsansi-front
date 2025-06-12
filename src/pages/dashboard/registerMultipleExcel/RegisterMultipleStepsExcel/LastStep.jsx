@@ -27,12 +27,12 @@ export const LastStep = () => {
         apellido: `${registerData.responsable?.last_names || ''}`,
         fecha_nacimiento: `${registerData.responsable?.birthdate || ''}`,
         ci: registerData.responsable.ci,
-        cantidad: 1,
+        cantidad: registerData.boleta.cantidad,
         numero_orden_de_pago: registerData.boleta.numero_orden_de_pago,
-        concepto:  `Inscripción Olimpiada: ${registerData.olympic_name || ''}`,
+        concepto:  `Inscripciones Olimpiada: ${registerData.olympic_name || ''}`,
         importe: registerData.olympiad.price,
         precio_unitario: registerData.olympiad.price,
-        total: registerData.olympiad.price,
+        total: registerData.boleta.total,
     };
 
     useEffect(() => {
@@ -62,7 +62,7 @@ export const LastStep = () => {
                     variant="success"
                     style={{height: '1.5rem', fontSize: '0.9rem'}}
                 />
-                <h2 className="mb-3 mt-4">Paso 7: Ya puedes descargar la boleta de pago</h2>
+                <h2 className="mb-3 mt-4">Paso 6: Ya puedes descargar la boleta de pago</h2>
                 <p className="text-muted mb-4">
                     Presenta esta boleta de pagos en las cajas facultativas de la universidad, siempre puedes regresar a est pantalla con los datos del responsable del pago
                 </p>
@@ -70,7 +70,7 @@ export const LastStep = () => {
                     <PDFDownloadLink
                         document={<PaymentReceipt data={boletaData}/>}
                         fileName="boleta_pago.pdf"
-                        onClick={generarBoleta}
+                        onclick={() =>generarBoleta}
                     >
                         {({loading}) => (loading ? 'Generando PDF...' : 'Descargar Boleta de pago')}
                     </PDFDownloadLink>
