@@ -19,9 +19,13 @@ export const NewFirstStep = () => {
     const [selectedProvince, setSelectedProvince] = useState(null);
     const [selectedSchool, setSelectedSchool] = useState(null);
 
-    const handleSelect = (index) => {
-        setSelected(grades[index]);
-    };
+    useEffect(() => {
+        if(registerData.competitor.school_data != null){
+            setSelectedState(registerData.competitor.school_data.department)
+            setSelectedProvince(registerData.competitor.school_data.province)
+            setSelectedSchool(registerData.competitor.school_data.name)
+        }
+    }, []);
 
     const handleSelectState = (index) => {
         setSelectedState(states[index]);

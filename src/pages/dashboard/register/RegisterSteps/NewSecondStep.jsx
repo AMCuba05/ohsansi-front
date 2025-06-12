@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSteps} from 'react-step-builder'
 import {Dropdown, Form, FormControl, ProgressBar, Collapse} from 'react-bootstrap'
 import { Search, Check, X } from 'lucide-react';
@@ -6,9 +6,10 @@ import {Button, InputGroup} from "reactstrap";
 import axios from "axios";
 import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
 import {API_URL} from "../../../../Constants/Utils.js";
-import {grades} from "../../../../Constants/Provincies.js";
 
 export const NewSecondStep = () => {
+    const today = new Date();
+    const localDate = today.toLocaleDateString('en-CA'); // 'en-CA' da formato YYYY-MM-DD
     const stepsState = useSteps()
     const { registerData, setRegisterData } = useRegisterContext()
     const [gender, setGender] = useState("")
@@ -28,10 +29,37 @@ export const NewSecondStep = () => {
     const [ciExpTutor, setCiExpTutor] = useState("")
     const [birthDateTutor, setBirthDateTutor] = useState('');
     const [selected, setSelected] = useState(null);
-    const [found, setFound] = useState(false)
+    const [foundStudent, setFoundStudent] = useState(false)
+    const [foundTutor, setFoundTutor] = useState(false)
     const [hasBeenQueried, setHasBeenQueried] = useState(false)
     const [showStudentForm, setShowStudentForm] = useState(true);
     const [showTutorForm, setShowTutorForm] = useState(true);
+    const [hasFoundStudent, setHasFoundStudent] = useState(false);
+    const [clickOnSerach, setClickOnSerach] = useState(false);
+    const [clickOnSearchTutor, setClickOnSearchTutor] = useState(false);
+
+    useEffect(() => {
+        if(registerData.competitor != null){
+            setCi(registerData.competitor.ci)
+            setCiExp(registerData.competitor.ci_expedition)
+            setName(registerData.competitor.names)
+            setLastName(registerData.competitor.last_names)
+            setBirthDate(registerData.competitor.birthdate)
+            setEmail(registerData.competitor.email)
+            setPhone(registerData.competitor.phone_number)
+            setGender(registerData.competitor.gender)
+        }
+        if(registerData.legal_tutor != null){
+            setCiTutor(registerData.legal_tutor.ci)
+            setCiExpTutor(registerData.legal_tutor.ci_expedition)
+            setNameTutor(registerData.legal_tutor.names)
+            setLastNameTutor(registerData.legal_tutor.last_names)
+            setBirthDateTutor(registerData.legal_tutor.birthdate)
+            setEmailTutor(registerData.legal_tutor.email)
+            setPhoneTutor(registerData.legal_tutor.phone_number)
+            setGenderTutor(registerData.legal_tutor.gender)
+        }
+    }, []);
 
     const validate = () => {
         if (!name.trim()) return false;
@@ -42,33 +70,77 @@ export const NewSecondStep = () => {
         if (!gender.trim()) return false;
         return true;
     }
+
+    const onSearchStudent = async () => {
+
+        try {
+            const { data } = await axios.get(`${API_URL}/api/search-student/${ci}`);
+            setClickOnSerach(true)
+            if(data.names){
+                setFoundStudent(true)
+                setHasFoundStudent(true)
+                setCiExp(data.ci_expedition)
+                setName(data.names)
+                setLastName(data.last_names)
+                setBirthDate(data.birthdate)
+                setEmail(data.email)
+                setPhone(data.phone_number)
+                setGender(data.gender)
+            }else {
+                setFoundStudent(false)
+                setHasFoundStudent(false)
+                setCiExp("")
+                setName("")
+                setLastName("")
+                setBirthDate("")
+                setEmail("")
+                setPhone("")
+                setGender("")
+            }
+        } catch (err) {
+            setFoundStudent(false)
+            setHasFoundStudent(false)
+            console.log(err)
+        }
+    };
     const onSearchTutor = async () => {
         try {
             const {data} = await axios.get(
-                `${API_URL}/api/legal-tutor/${ci}`
+                `${API_URL}/api/search-student/${ciTutor}`
             );
+            console.log(data)
+            setClickOnSearchTutor(true)
             setHasBeenQueried(true)
-            const {personal_data} = data
-            if (Object.keys(personal_data).length === 0) {
-                setFound(false)
-            } else {
-                setFound(true)
-                setName(personal_data.names)
-                setLastName(personal_data.last_names)
-                setCiExp(personal_data.ci_expedition)
-                setBirthDate(personal_data.birthdate)
-                setEmail(personal_data.email)
-                setPhone(personal_data.phone_number)
+            if(data.names){
+                setFoundTutor(true)
+                setCiExpTutor(data.ci_expedition)
+                setNameTutor(data.names)
+                setLastNameTutor(data.last_names)
+                setBirthDateTutor(data.birthdate)
+                setEmailTutor(data.email)
+                setPhoneTutor(data.phone_number)
+                setGenderTutor(data.gender)
+            }else {
+                setFoundTutor(false)
+                setCiTutor(data.ci_expedition)
+                setNameTutor(data.names)
+                setLastNameTutor(data.last_names)
+                setBirthDateTutor(data.birthdate)
+                setEmailTutor(data.email)
+                setPhoneTutor(data.phone_number)
+                setGenderTutor(data.gender)
+
             }
         } catch (error) {
             setHasBeenQueried(true)
-            setFound(false)
-            setName("")
-            setLastName("")
-            setCiExp("")
-            setBirthDate("")
-            setEmail("")
-            setPhone("")
+            setFoundTutor(false)
+            setCiTutor("")
+            setNameTutor("")
+            setLastNameTutor("")
+            setBirthDateTutor("")
+            setEmailTutor("")
+            setPhoneTutor("")
+            setGenderTutor("")
         }
     };
 
@@ -111,7 +183,7 @@ export const NewSecondStep = () => {
                 inscription_id: data.data.inscription.id,
                 competitor: {
                     ...registerData.competitor,
-                    ci: Number(ci),
+                    ci: ci,
                     ci_expedition: ciExp,
                     names: name,
                     last_names: lastName,
@@ -119,6 +191,16 @@ export const NewSecondStep = () => {
                     email: email,
                     phone_number: phone,
                     gender: gender
+                },
+                legal_tutor: {
+                    ci: ciTutor,
+                    ci_expedition: ciExpTutor,
+                    names: nameTutor,
+                    last_names: lastNameTutor,
+                    birthdate: birthDateTutor,
+                    email: emailTutor,
+                    phone_number: phoneTutor,
+                    gender: genderTutor
                 }
             })
             console.log(data)
@@ -164,17 +246,26 @@ export const NewSecondStep = () => {
                         <div>
                             <form>
                                 <InputGroup className="mb-3">
-                                    <div className="form-label w-100">Carnet de Identidad del estudiante:</div>
+                                    <div className="form-label w-100" style={{"webkit-appearance": "none"}}>Carnet de Identidad del estudiante:</div>
                                     <FormControl
-                                        type="text"
+                                        type="number"
                                         placeholder="Ingresa el carnet de identidad"
                                         aria-label="Carnet de identidad del estudiante"
                                         value={ci}
                                         onChange={e => setCi(e.target.value)}
                                     />
+
+                                    <Button onClick={onSearchStudent} variant="outline-secondary">
+                                        {foundStudent ? <Check size={16}/> : <Search size={16}/>}
+                                    </Button>
                                 </InputGroup>
+                                {!hasFoundStudent && clickOnSerach ?
+                                    <p className="text-danger">Carnet no encontrado, ingrese los datos
+                                        manualmente.</p> : hasFoundStudent && clickOnSerach?
+                                    <p className="text-success">Datos cargados correctamente.</p> : null
+                                }
                                 <div className="mb-3">
-                                    <label htmlFor="expStudent" className="form-label">Lugar de Expedición</label>
+                                <label htmlFor="expStudent" className="form-label">Lugar de Expedición</label>
                                     <input
                                         type="text"
                                         className="form-control"
@@ -217,6 +308,7 @@ export const NewSecondStep = () => {
                                         className="form-control"
                                         id="fechaNacimientoStudent"
                                         value={birthDate}
+                                        max={new Date().toLocaleDateString('en-CA')}
                                         onChange={e => setBirthDate(e.target.value)}
                                     />
                                 </div>
@@ -234,29 +326,13 @@ export const NewSecondStep = () => {
                                 <div className="mb-3">
                                     <label htmlFor="telefonoStudent" className="form-label">Teléfono</label>
                                     <input
-                                        type="tel"
+                                        type="number"
                                         className="form-control"
                                         id="telefonoStudent"
                                         placeholder="+591 70000000"
                                         value={phone}
                                         onChange={e => setPhone(e.target.value)}
                                     />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="grado" className="form-label">Grado</label>
-                                    <select
-                                        className="form-select"
-                                        id="grado"
-                                        value={selected || ''}
-                                        onChange={e => setSelected(e.target.value)}
-                                    >
-                                        <option value="">Selecciona una opción</option>
-                                        {grades.map((grade, index) => (
-                                            <option key={index} value={grade}>
-                                                {grade}
-                                            </option>
-                                        ))}
-                                    </select>
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="generoStudent" className="form-label">Género</label>
@@ -291,16 +367,21 @@ export const NewSecondStep = () => {
                                 <InputGroup className="mb-3">
                                     <div className="form-label w-100">Carnet de identidad del tutor</div>
                                     <FormControl
-                                        type="text"
+                                        type="number"
                                         placeholder="Ingresa el carnet de identidad"
                                         aria-label="Carnet de identidad del tutor"
                                         value={ciTutor}
                                         onChange={e => setCiTutor(e.target.value)}
                                     />
                                     <Button onClick={onSearchTutor} variant="outline-secondary">
-                                        {found ? <Check size={16}/> : <Search size={16}/>}
+                                        {foundTutor ? <Check size={16}/> : <Search size={16}/>}
                                     </Button>
                                 </InputGroup>
+                                {!foundTutor && clickOnSearchTutor ?
+                                    <p className="text-danger">Carnet no encontrado, ingrese los datos
+                                        manualmente.</p> : foundTutor && clickOnSearchTutor?
+                                        <p className="text-success">Datos cargados correctamente.</p> : null
+                                }
                                 <div className="mb-3">
                                     <label htmlFor="expTutor" className="form-label">Lugar de Expedición</label>
                                     <input
@@ -345,6 +426,7 @@ export const NewSecondStep = () => {
                                         className="form-control"
                                         id="fechaNacimientoTutor"
                                         value={birthDateTutor}
+                                        max={new Date().toLocaleDateString('en-CA')}
                                         onChange={e => setBirthDateTutor(e.target.value)}
                                     />
                                 </div>
@@ -362,7 +444,7 @@ export const NewSecondStep = () => {
                                 <div className="mb-3">
                                     <label htmlFor="telefonoTutor" className="form-label">Teléfono</label>
                                     <input
-                                        type="tel"
+                                        type="number"
                                         className="form-control"
                                         id="telefonoTutor"
                                         placeholder="+591 70000000"

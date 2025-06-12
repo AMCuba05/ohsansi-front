@@ -10,6 +10,7 @@ import {API_URL} from "../../../../Constants/Utils.js";
 export const RecoverSessionStep = () => {
     const stepsState = useSteps()
     const { registerData, setRegisterData } = useRegisterContext()
+    console.log(registerData, 'yy')
     const [found, setFound] = useState(false)
     const [hasBeenQueried, setHasBeenQueried] = useState(false)
     const [name, setName] = useState("")

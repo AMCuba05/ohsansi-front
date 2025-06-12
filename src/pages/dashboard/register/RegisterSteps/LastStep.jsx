@@ -11,9 +11,6 @@ import {AcademicTutor} from "../../components/AcademicTutor/index.jsx";
 export const LastStep = () => {
     const stepsState = useSteps();
     const { registerData } = useRegisterContext();
-    const [areas, setAreas] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [academicTutorData, setAcademicTutorData] = useState({
         ci: '',
         ci_expedition: '',
@@ -38,22 +35,6 @@ export const LastStep = () => {
         precio_unitario: registerData.olympiad.price,
         total: registerData.olympiad.price,
     };
-
-    useEffect(() => {
-        setLoading(true);
-        axios
-            .get(`${API_URL}/api/olympiads/2/areas`)
-            .then((response) => {
-                console.log('API Response:', response.data.data); // Debug: Log the raw API response
-                setAreas(response.data.data || []);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching areas:', error);
-                setError('Failed to load areas. Please try again.');
-                setLoading(false);
-            });
-    }, []);
 
     useEffect(() => {
         setTutors(academicTutorData)

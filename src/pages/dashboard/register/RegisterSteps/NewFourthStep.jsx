@@ -7,7 +7,7 @@ import axios from "axios";
 import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
 import {API_URL} from "../../../../Constants/Utils.js";
 
-export const NewFourthStep = () => {
+export const NewFourthStep = ({setBoletaData}) => {
     const stepsState = useSteps()
     const { registerData, setRegisterData } = useRegisterContext()
     const [name, setName] = useState("")
@@ -49,7 +49,9 @@ export const NewFourthStep = () => {
                         Identity: JSON.stringify(registerData.identity),
                         Step: 4
                     }
-                })
+                }).then((response) => {
+                  console.log(response)
+            })
             setRegisterData({
                 ...registerData,
                 responsable: {

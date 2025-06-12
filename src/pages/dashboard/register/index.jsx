@@ -27,6 +27,7 @@ const Inscripciones = () => {
     const [method, setMethod] = useState("manual");
     const [areas, setAreas] = useState([]);
     const [excelFile, setExcelFile] = useState(null);
+    const [boletaData, setBoletaData] = useState({});
 
     const {
         register,
@@ -167,10 +168,10 @@ const Inscripciones = () => {
                     <NewThirdStep/>
                 </div>
                 <div>
-                    <NewFourthStep/>
+                    <NewFourthStep setBoletaData={setBoletaData}/>
                 </div>
                 <div>
-                    <LastStep/>
+                    <LastStep boletaData={boletaData}/>
                 </div>
             </Steps>
         </div>
