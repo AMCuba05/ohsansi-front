@@ -2,16 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import axios from "axios";
-import { Trash2, PlusCircle } from "lucide-react";
-import Modal from "./Modal/index.jsx";
 import "./index.scss";
 import {Steps} from "react-step-builder";
 import {FirstStep} from "./RegisterSteps/FirstStep.jsx";
-import {SecondStep} from "./RegisterSteps/SecondStep.jsx";
-import {ThirdStep} from "./RegisterSteps/ThirdStep.jsx";
-import {FouthStep} from "./RegisterSteps/FouthStep.jsx";
-import {FifthStep} from "./RegisterSteps/FifthStep.jsx";
-import {SixthStep} from "./RegisterSteps/SixthStep.jsx";
 import {API_URL} from "../../../Constants/Utils.js";
 import {RecoverSessionStep} from "./RegisterSteps/RecoverSessionStep.jsx";
 import {LastStep} from "./RegisterSteps/LastStep.jsx";

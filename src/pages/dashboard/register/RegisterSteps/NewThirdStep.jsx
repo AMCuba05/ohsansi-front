@@ -4,6 +4,7 @@ import { Form, ProgressBar, Alert, Spinner, Collapse, Button, FormControl, Input
 import axios from 'axios';
 import { useRegisterContext } from '../../../../Context/RegisterContext.jsx';
 import { API_URL } from '../../../../Constants/Utils.js';
+import {Check, Search} from "lucide-react";
 
 export const NewThirdStep = () => {
     const stepsState = useSteps();
@@ -16,6 +17,8 @@ export const NewThirdStep = () => {
     const [showReceipt, setShowReceipt] = useState(false);
     const [tutors, setTutors] = useState({}); // { areaId: { teacher data } }
     const [openAreas, setOpenAreas] = useState({}); // Track collapsed state
+    const [foundTeacher, setFoundTeacher] = useState(false);
+    const [clickOnSearch, setClickOnSearch] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -32,6 +35,23 @@ export const NewThirdStep = () => {
                 setLoading(false);
             });
     }, []);
+
+    const onSearchTeacher = async (ci) => {
+        try {
+            const { data } = await axios.get(`${API_URL}/api/search-student/${ci}`);
+            setClickOnSearch(true)
+            if(data.names){
+                setFoundTeacher(true)
+
+            }else {
+                setFoundTeacher(false)
+
+            }
+        } catch (err) {
+            setFoundTeacher(false)
+            console.log(err)
+        }
+    }
 
     const handleCheckArea = (id) => {
         if (seleccionadas.includes(id)) {
@@ -249,6 +269,21 @@ export const NewThirdStep = () => {
                                                 <h6>Datos del Profesor</h6>
                                                 <InputGroup className="mb-2">
                                                     <FormControl
+                                                        placeholder="Carnet de Identidad"
+                                                        value={tutors[area.id]?.ci || ''}
+                                                        onChange={(e) => updateTutorData(area.id, 'ci', e.target.value)}
+                                                    />
+                                                    <Button onClick={() => onSearchTeacher(tutors[area.id]?.ci)} variant="outline-secondary">
+                                                        {foundTeacher ? <Check size={16}/> : <Search size={16}/>}
+                                                    </Button>
+                                                </InputGroup>
+                                                {!foundTeacher && clickOnSearch ?
+                                                    <p className="text-danger">Carnet no encontrado, ingrese los datos
+                                                        manualmente.</p> : foundTeacher && clickOnSearch?
+                                                        <p className="text-success">Datos cargados correctamente.</p> : null
+                                                }
+                                                <InputGroup className="mb-2">
+                                                    <FormControl
                                                         placeholder="Nombres"
                                                         value={tutors[area.id]?.names || ''}
                                                         onChange={(e) => updateTutorData(area.id, 'names', e.target.value)}
@@ -259,13 +294,6 @@ export const NewThirdStep = () => {
                                                         placeholder="Apellidos"
                                                         value={tutors[area.id]?.last_names || ''}
                                                         onChange={(e) => updateTutorData(area.id, 'last_names', e.target.value)}
-                                                    />
-                                                </InputGroup>
-                                                <InputGroup className="mb-2">
-                                                    <FormControl
-                                                        placeholder="Carnet de Identidad"
-                                                        value={tutors[area.id]?.ci || ''}
-                                                        onChange={(e) => updateTutorData(area.id, 'ci', e.target.value)}
                                                     />
                                                 </InputGroup>
                                                 <InputGroup className="mb-2">
