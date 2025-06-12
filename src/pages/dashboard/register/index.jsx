@@ -14,8 +14,6 @@ import {NewFourthStep} from "./RegisterSteps/NewFourthStep.jsx";
 import {NewThirdStep} from "./RegisterSteps/NewThirdStep.jsx";
 
 const Inscripciones = () => {
-    const [showModal, setShowModal] = useState(false);
-    const [modalSuccess, setModalSuccess] = useState(true);
     const [message, setMessage] = useState("");
     const [method, setMethod] = useState("manual");
     const [areas, setAreas] = useState([]);
