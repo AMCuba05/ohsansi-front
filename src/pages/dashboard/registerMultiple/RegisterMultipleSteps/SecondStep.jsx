@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSteps } from 'react-step-builder';
 import {FormControl, ProgressBar, Accordion, Card, Spinner, Form, Dropdown} from 'react-bootstrap';
 import axios from "axios";
-import { useRegisterContext } from "../../../../Context/RegisterContext.jsx";
+import { useRegisterContext } from "../../../../Context/RegisterContext.js";
 import {grades, provincies, schools, states} from "../../../../Constants/Provincies.js";
 import {API_URL} from "../../../../Constants/Utils.js";
 

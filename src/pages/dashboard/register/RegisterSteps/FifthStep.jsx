@@ -3,7 +3,7 @@ import {useSteps} from 'react-step-builder'
 import {Dropdown, ProgressBar, Form, Spinner} from 'react-bootstrap'
 import axios from "axios";
 import {grades, provincies, schools, states} from "../../../../Constants/Provincies.js";
-import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
+import {useRegisterContext} from "../../../../Context/RegisterContext.js";
 import {API_URL} from "../../../../Constants/Utils.js";
 
 export const FifthStep = () => {
@@ -73,7 +73,7 @@ export const FifthStep = () => {
             })
             stepsState.next()
         } catch (e) {
-            console.log(e)
+            console.error(e);
         }
     }
 

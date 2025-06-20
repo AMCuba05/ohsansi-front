@@ -4,7 +4,7 @@ import {FormControl, ProgressBar} from 'react-bootstrap'
 import { Search, Check, X } from 'lucide-react';
 import {Button, InputGroup} from "reactstrap";
 import axios from "axios";
-import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
+import {useRegisterContext} from "../../../../Context/RegisterContext.js";
 import {API_URL} from "../../../../Constants/Utils.js";
 
 export const ThirdStep = () => {

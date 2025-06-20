@@ -4,7 +4,7 @@ import {Accordion, Alert, Button, Collapse, Form, FormControl, InputGroup, Progr
 import {Check, Plus, Search, Trash} from 'lucide-react';
 import {Button as StrapButton} from "reactstrap";
 import axios from "axios";
-import {useRegisterContext} from "../../../../Context/RegisterContext.jsx";
+import {useRegisterContext} from "../../../../Context/RegisterContext.js";
 import {grades} from "../../../../Constants/Provincies.js";
 import {API_URL} from '../../../../Constants/Utils.js';
 

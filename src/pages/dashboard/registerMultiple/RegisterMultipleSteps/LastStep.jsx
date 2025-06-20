@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSteps } from 'react-step-builder';
 import { Form, ProgressBar, Alert, Spinner } from 'react-bootstrap';
 import axios from 'axios';
-import { useRegisterContext } from '../../../../Context/RegisterContext.jsx';
+import { useRegisterContext } from '../../../../Context/RegisterContext.js';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import PaymentReceipt from '../../components/PaymentReceipt/index.jsx';
 import { API_URL } from '../../../../Constants/Utils.js';

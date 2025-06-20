@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSteps } from 'react-step-builder';
 import { FormControl, ProgressBar, InputGroup, Button } from 'react-bootstrap';
-import { useRegisterContext } from "../../../../Context/RegisterContext.jsx";
+import { useRegisterContext } from "../../../../Context/RegisterContext.js";
 import * as XLSX from "xlsx";
 import { Search, Check, X } from 'lucide-react';
 import axios from 'axios';
@@ -114,7 +114,7 @@ export const ThirdStep = () => {
 
         try {
             const response = await axios.post(
-                `${API_URL}/inscription/olympic/excel`,
+                `${API_URL}/api/inscription/excel/olympic/${registerData.olympic_id}`,
                 formData,
                 {
                     headers: {

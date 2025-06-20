@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useSteps } from 'react-step-builder';
-import { Dropdown, ProgressBar, Card, Spinner } from 'react-bootstrap';
 import axios from 'axios';
-import { useRegisterContext } from '../../../../Context/RegisterContext.jsx';
+import { useEffect, useState } from 'react';
+import { Card, Dropdown, ProgressBar, Spinner } from 'react-bootstrap';
+import { useSteps } from 'react-step-builder';
 import { API_URL } from '../../../../Constants/Utils.js';
+import { useRegisterContext } from '../../../../Context/RegisterContext.js';
 
 export const FirstStep = () => {
-    const { registerData, setRegisterData } = useRegisterContext();
+    const { setRegisterData } = useRegisterContext();
     const stepsState = useSteps();
-    const [found, setFound] = useState(false);
-    const [hasBeenQueried, setHasBeenQueried] = useState(false);
+
     const [olympiads, setOlympiads] = useState();
     const [loading, setLoading] = useState(true);
 
@@ -24,7 +23,6 @@ export const FirstStep = () => {
             .get(`${API_URL}/api/olympiads?publish=inscripción`)
             .then((response) => {
                 setOlympiads(response.data.data);
-                console.log(response.data);
                 setLoading(false);
             })
             .catch((error) => {
@@ -43,6 +41,10 @@ export const FirstStep = () => {
             olympic_id: selected.id,
             olympic_name: selected.title,
             olympic_price: selected.price,
+            olympiad: {
+                id: selected.id,
+                price: selected.price,
+            },
         });
         stepsState.next();
     };

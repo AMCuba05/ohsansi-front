@@ -3,7 +3,7 @@ import { useSteps } from 'react-step-builder';
 import { Form, ProgressBar, Alert, Spinner, Collapse, Button, FormControl, InputGroup } from 'react-bootstrap';
 import axios from 'axios';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import { useRegisterContext } from '../../../../Context/RegisterContext.jsx';
+import { useRegisterContext } from '../../../../Context/RegisterContext.js';
 import PaymentReceipt from '../../components/PaymentReceipt/index.jsx';
 import { API_URL } from '../../../../Constants/Utils.js';
 
@@ -33,7 +33,6 @@ export const SixthStep = () => {
             .get(`${API_URL}/api/olympiads/10/areas`)
             .then((response) => {
                 setAreas(response.data.data || []);
-                console.log(response.data.data)
                 setLoading(false);
             })
             .catch((error) => {
