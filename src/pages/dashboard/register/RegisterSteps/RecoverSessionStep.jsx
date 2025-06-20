@@ -196,8 +196,9 @@ export const RecoverSessionStep = () => {
                         style={{ height: '1.5rem', fontSize: '0.9rem' }}
                     />
                     <h2 className="mb-3 mt-4">
-                        Paso 2: <strong>{registerData.olympic_name}</strong>{' '}
-                        <br /> Ingresa sus datos para iniciar o continuar con el
+                        Paso {stepsState.current}:{' '}
+                        <strong>{registerData.olympic_name}</strong> <br />{' '}
+                        Ingresa sus datos para iniciar o continuar con el
                         proceso de inscripción
                     </h2>
                     <p className="text-muted mb-4" style={{ fontSize: '1rem' }}>

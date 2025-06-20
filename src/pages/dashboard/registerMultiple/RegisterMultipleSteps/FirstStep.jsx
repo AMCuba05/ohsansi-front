@@ -20,7 +20,7 @@ export const FirstStep = () => {
     };
 
     useEffect(() => {
-        axios.get(`${API_URL}/api/olympiads`)
+        axios.get(`${API_URL}/api/olympiads?publish=inscripción`)
             .then(response => {
                 setOlympiads(response.data.data);
                 console.log(response.data);
@@ -58,7 +58,7 @@ export const FirstStep = () => {
                     variant={"success"}
                     style={{ height: '1.5rem', fontSize: '0.9rem' }}
                 />
-                <h2 className="mb-3 mt-4">Paso 1: Seleccionar Olimpiada</h2>
+                <h2 className="mb-3 mt-4">Paso {stepsState.current}: Seleccionar Olimpiada</h2>
                 <p className="text-muted mb-4">
                     Por favor, seleccione la olimpiada en la que desea inscribir al estudiante. Una vez seleccionada, podrá completar el formulario de registro correspondiente. Podrás elegir la categoría adecuada más adelante en proceso de inscripción.
                 </p>

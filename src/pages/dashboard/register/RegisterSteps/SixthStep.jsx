@@ -185,7 +185,7 @@ export const SixthStep = () => {
                     variant="success"
                     style={{ height: '1.5rem', fontSize: '0.9rem' }}
                 />
-                <h2 className="mb-3 mt-4">Paso 6: Selección de Áreas y Categorías</h2>
+                <h2 className="mb-3 mt-4">Paso {stepsState.current}: Selección de Áreas y Categorías</h2>
                 <p className="text-muted mb-4">
                     Selecciona hasta 2 áreas y una categoría por área. Opcionalmente, puedes añadir un profesor por área.
                 </p>

@@ -1,76 +1,70 @@
-import React from "react";
-import {
-    Document,
-    Page,
-    Text,
-    View,
-    StyleSheet,
-} from "@react-pdf/renderer";
+import React from 'react';
+import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
     page: {
         padding: 40,
         fontSize: 12,
-        fontFamily: "Helvetica",
+        fontFamily: 'Helvetica',
     },
     header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         marginBottom: 20,
     },
     headerLeft: {
-        width: "33%",
+        width: '33%',
     },
     headerCenter: {
-        width: "34%",
-        textAlign: "center",
+        width: '34%',
+        textAlign: 'center',
         fontSize: 14,
-        fontWeight: "bold",
-        textTransform: "uppercase",
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
     },
     headerRight: {
-        width: "33%",
-        textAlign: "right",
+        width: '33%',
+        textAlign: 'right',
         fontSize: 12,
     },
     infoSection: {
         marginBottom: 20,
     },
     row: {
-        flexDirection: "row",
-        justifyContent: "space-between",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         marginBottom: 4,
     },
     tableHeader: {
-        flexDirection: "row",
+        flexDirection: 'row',
         borderBottom: 1,
         marginBottom: 5,
-        fontWeight: "bold",
+        fontWeight: 'bold',
     },
     tableRow: {
-        flexDirection: "row",
+        flexDirection: 'row',
         marginBottom: 2,
     },
     colConcepto: {
-        width: "50%",
+        width: '50%',
     },
     colCantidad: {
-        width: "20%",
-        textAlign: "center",
+        width: '20%',
+        textAlign: 'center',
     },
     colMonto: {
-        width: "30%",
-        textAlign: "right",
+        width: '30%',
+        textAlign: 'right',
     },
     total: {
-        textAlign: "right",
+        textAlign: 'right',
         marginTop: 10,
-        fontWeight: "bold",
+        fontWeight: 'bold',
     },
 });
 
 const BoletaPagoPDF = ({ data }) => {
-    console.log(data)
+    console.log('>>>>>>', data);
     return (
         <Document>
             <Page size="A4" style={styles.page}>
@@ -121,10 +115,14 @@ const BoletaPagoPDF = ({ data }) => {
                     <View style={styles.tableRow}>
                         <Text style={styles.colConcepto}>{data.concepto}</Text>
                         <Text style={styles.colCantidad}>{data?.cantidad}</Text>
-                        <Text style={styles.colMonto}>{data.importe.toFixed(2)}</Text>
+                        <Text style={styles.colMonto}>
+                            {Number(data.importe).toFixed(2)}
+                        </Text>
                     </View>
 
-                    <Text style={styles.total}>Total: {data.total.toFixed(2)} Bs</Text>
+                    <Text style={styles.total}>
+                        Total: {Number(data.total).toFixed(2)} Bs
+                    </Text>
                 </View>
             </Page>
         </Document>

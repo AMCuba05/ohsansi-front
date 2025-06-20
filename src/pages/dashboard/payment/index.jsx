@@ -3,6 +3,8 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import OCR6DigitVerifier from '../components/OCRComponent/OCR6DigitVerifier.jsx';
 import { API_URL } from '../../../Constants/Utils.js';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import PaymentReceipt from '../components/PaymentReceipt';
 
 const Payment = () => {
     const [ci, setCi] = useState('');
@@ -54,7 +56,9 @@ const Payment = () => {
     // Handle finalize payment after OCR verification
     const handleFinalizePayment = async (boleta, { isMatch, file }) => {
         if (!isMatch) {
-            alert(`El número de orden ${boleta.numero_orden_de_pago} no se encontró en la imagen.`);
+            alert(
+                `El número de orden ${boleta.numero_orden_de_pago} no se encontró en la imagen.`,
+            );
             return;
         }
 
@@ -68,9 +72,12 @@ const Payment = () => {
 
         try {
             // Call the verification endpoint
-            await axios.post('https://ohsansi.willypaz.dev/api/verificar-comprobante', {
-                numero_orden_de_pago: boleta.numero_orden_de_pago,
-            });
+            await axios.post(
+                'https://ohsansi.willypaz.dev/api/verificar-comprobante',
+                {
+                    numero_orden_de_pago: boleta.numero_orden_de_pago,
+                },
+            );
 
             // Refetch boletas to update the status
             await buscarBoletas();
@@ -85,17 +92,28 @@ const Payment = () => {
     };
 
     // Filter boletas by status
-    const pendingBoletas = boletas.filter((boleta) => boleta.status === 'pending');
-    const paidBoletas = boletas.filter((boleta) => boleta.status === 'completed');
+    const pendingBoletas = boletas.filter(
+        (boleta) => boleta.status === 'pending',
+    );
+    const paidBoletas = boletas.filter(
+        (boleta) => boleta.status === 'completed',
+    );
 
     return (
         <div className="container mt-5">
             <h2 className="mb-4">Subir Comprobante de Pago</h2>
 
+            <p className="mb-4">
+                Introduce tu CI y la fecha de nacimiento para visualizar tus
+                boletas pendientes.
+            </p>
+
             {/* Input Form */}
             <div className="mb-3 row">
                 <div className="col-md-6">
-                    <label htmlFor="ci" className="form-label">CI</label>
+                    <label htmlFor="ci" className="form-label">
+                        CI
+                    </label>
                     <input
                         type="text"
                         id="ci"
@@ -106,7 +124,9 @@ const Payment = () => {
                     />
                 </div>
                 <div className="col-md-6">
-                    <label htmlFor="fechaNacimiento" className="form-label">Fecha de nacimiento</label>
+                    <label htmlFor="fechaNacimiento" className="form-label">
+                        Fecha de nacimiento
+                    </label>
                     <input
                         type="date"
                         id="fechaNacimiento"
@@ -134,15 +154,50 @@ const Payment = () => {
                     <ul className="list-group list-group-flush">
                         {pendingBoletas.map((boleta) => (
                             <li key={boleta.id} className="list-group-item">
-                                <p><strong>Número de Orden:</strong> {boleta.numero_orden_de_pago}</p>
-                                <p><strong>Concepto:</strong> {boleta.concepto}</p>
-                                <p><strong>Nombre:</strong> {boleta.nombre} {boleta.apellido}</p>
-                                <p><strong>Total:</strong> ${boleta.total}</p>
-                                <p><strong>Estado:</strong> Pendiente</p>
+                                <p>
+                                    <strong>Número de Orden:</strong>{' '}
+                                    {boleta.numero_orden_de_pago}
+                                </p>
+                                <p>
+                                    <strong>Concepto:</strong> {boleta.concepto}
+                                </p>
+                                <p>
+                                    <strong>Nombre:</strong> {boleta.nombre}{' '}
+                                    {boleta.apellido}
+                                </p>
+                                <p>
+                                    <strong>Total:</strong> ${boleta.total}
+                                </p>
+                                <p>
+                                    <strong>Estado:</strong> Pendiente
+                                </p>
+
+                                <PDFDownloadLink
+                                    document={<PaymentReceipt data={boleta} />}
+                                    style={{ textColor: 'blue' }}
+                                    fileName={`boleta_pago_${boleta.numero_orden_de_pago}.pdf`}
+                                    onClick={() =>
+                                        alert('Descargando boleta...')
+                                    }
+                                >
+                                    {({ loading }) =>
+                                        loading
+                                            ? 'Generando PDF...'
+                                            : 'Descargar Boleta de pago'
+                                    }
+                                </PDFDownloadLink>
+
                                 <div className="mb-2">
                                     <OCR6DigitVerifier
-                                        targetNumber={boleta.numero_orden_de_pago}
-                                        onFinalize={(result) => handleFinalizePayment(boleta, result)}
+                                        targetNumber={
+                                            boleta.numero_orden_de_pago
+                                        }
+                                        onFinalize={(result) =>
+                                            handleFinalizePayment(
+                                                boleta,
+                                                result,
+                                            )
+                                        }
                                     />
                                 </div>
                             </li>
@@ -158,11 +213,23 @@ const Payment = () => {
                     <ul className="list-group list-group-flush">
                         {paidBoletas.map((boleta) => (
                             <li key={boleta.id} className="list-group-item">
-                                <p><strong>Número de Orden:</strong> {boleta.numero_orden_de_pago}</p>
-                                <p><strong>Concepto:</strong> {boleta.concepto}</p>
-                                <p><strong>Nombre:</strong> {boleta.nombre} {boleta.apellido}</p>
-                                <p><strong>Total:</strong> ${boleta.total}</p>
-                                <p><strong>Estado:</strong> Pago realizado</p>
+                                <p>
+                                    <strong>Número de Orden:</strong>{' '}
+                                    {boleta.numero_orden_de_pago}
+                                </p>
+                                <p>
+                                    <strong>Concepto:</strong> {boleta.concepto}
+                                </p>
+                                <p>
+                                    <strong>Nombre:</strong> {boleta.nombre}{' '}
+                                    {boleta.apellido}
+                                </p>
+                                <p>
+                                    <strong>Total:</strong> ${boleta.total}
+                                </p>
+                                <p>
+                                    <strong>Estado:</strong> Pago realizado
+                                </p>
                             </li>
                         ))}
                     </ul>
@@ -170,7 +237,9 @@ const Payment = () => {
             )}
 
             {boletas.length === 0 && !loading && !error && (
-                <div className="alert alert-info">No se encontraron boletas.</div>
+                <div className="alert alert-info">
+                    No se encontraron boletas.
+                </div>
             )}
         </div>
     );

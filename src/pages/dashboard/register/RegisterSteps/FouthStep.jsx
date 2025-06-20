@@ -91,7 +91,7 @@ export const FouthStep = () => {
                     variant={"success"}
                     style={{ height: '1.5rem', fontSize: '0.9rem' }}
                 />
-                <h2 className="mb-3 mt-4">Paso 7: Información del responsable de pago</h2>
+                <h2 className="mb-3 mt-4">Paso {stepsState.current}: Información del responsable de pago</h2>
                 <p className="text-muted mb-4">
                     Puedes registrar un tutor académico que apoye al estudiante durante la olimpiada. Esta información es opcional
                 </p>

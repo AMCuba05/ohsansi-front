@@ -79,7 +79,7 @@ export const SecondStep = () => {
                     variant={"success"}
                     style={{ height: '1.5rem', fontSize: '0.9rem' }}
                 />
-                <h2 className="mb-3 mt-4">Paso 3: Registro de Estudiante para la Olimpiada {registerData.olympic_name}</h2>
+                <h2 className="mb-3 mt-4">Paso {stepsState.current}: Registro de Estudiante para la Olimpiada {registerData.olympic_name}</h2>
                 <p className="text-muted mb-4">
                     Complete el siguiente formulario para registrar al estudiante en la Olimpiada {registerData.olympic_name}. Por favor, asegúrese de ingresar correctamente los datos del estudiante, incluyendo nombre completo, edad, institución educativa, y otros detalles requeridos. Esta olimpiada tiene como objetivo promover la competencia sana entre los estudiantes. ¡Buena suerte!
                 </p>

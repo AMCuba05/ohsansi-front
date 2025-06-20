@@ -303,7 +303,7 @@ export const ThirdStep = () => {
                     variant={"success"}
                     style={{ height: '1.5rem', fontSize: '0.9rem' }}
                 />
-                <h2 className="mb-3 mt-4">Paso 4: Registro de Estudiantes para la Olimpiada {registerData.olympic_name}</h2>
+                <h2 className="mb-3 mt-4">Paso {stepsState.current}: Registro de Estudiantes para la Olimpiada {registerData.olympic_name}</h2>
                 <p className="text-muted mb-4">
                     Complete los datos de cada estudiante, tutor legal y seleccione hasta 2 áreas con sus categorías.
                 </p>
